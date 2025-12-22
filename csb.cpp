@@ -26,7 +26,7 @@ void csb::configure()
                       "ole32",    "oleaut32", "advapi32", "dinput8", "winmm",       "winspool",
                       "setupapi", "uuid",     "version",  "cse",     "SDL3-static", "glm"};
   else if (csb::host_platform == LINUX)
-    csb::libraries = {"c", "m", "pthread", "dl", "SDL3", "glm"};
+    csb::libraries = {"c", "m", "pthread", "dl", "cse", "SDL3", "glm"};
 }
 
 int csb::clean()
