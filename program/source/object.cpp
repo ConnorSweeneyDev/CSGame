@@ -5,6 +5,7 @@
 #include "SDL3/SDL_events.h"
 #include "SDL3/SDL_scancode.h"
 #include "cse/object.hpp"
+#include "cse/resource.hpp"
 #include "glm/ext/vector_float3.hpp"
 #include "glm/ext/vector_int3.hpp"
 
@@ -12,9 +13,8 @@
 
 namespace csg
 {
-  custom_object::custom_object(const std::tuple<glm::ivec3, glm::ivec3, glm::ivec3> &transform_)
-    : object(transform_, {255, 255, 255, 255}, {cse::resource::main_vertex, cse::resource::main_fragment},
-             {cse::resource::main_texture, "main"})
+  player::player(const std::tuple<glm::ivec3, glm::ivec3, glm::ivec3> &transform_)
+    : object(transform_, {255, 255, 255, 255}, {csg::main_vertex, csg::main_fragment}, {csg::main_texture, "main"})
   {
     hooks.add("event_main",
               [this](const SDL_Event &event)
@@ -60,5 +60,11 @@ namespace csg
                 state.translation.acceleration = glm::vec3{0.0f};
                 state.translation.value += state.translation.velocity;
               });
+  }
+
+  environment::environment(const std::tuple<glm::ivec3, glm::ivec3, glm::ivec3> &transform_,
+                           const cse::resource::compiled_texture &texture_)
+    : object(transform_, {255, 255, 255, 255}, {csg::main_vertex, csg::main_fragment}, {texture_, "main"})
+  {
   }
 }

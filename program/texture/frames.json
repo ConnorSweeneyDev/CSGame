@@ -15,6 +15,11 @@
     "frame_groups": [{ "name": "main", "range": [1, 1] }]
   },
   {
+    "file": "floor.png",
+    "frame_dimensions": [528, 72],
+    "frame_groups": [{ "name": "main", "range": [1, 1] }]
+  },
+  {
     "file": "main.png",
     "frame_dimensions": [50, 50],
     "frame_groups": [

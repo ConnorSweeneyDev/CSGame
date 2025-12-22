@@ -12,6 +12,7 @@
 
 #include "camera.hpp"
 #include "object.hpp"
+#include "resource.hpp"
 #include "scene.hpp"
 #include "window.hpp"
 
@@ -25,7 +26,12 @@ int try_main(int argc, char *argv[])
   if (auto scene{game->add_scene<csg::custom_scene>("scene").lock()})
   {
     scene->set_camera<csg::custom_camera>({{0.0f, 0.0f, 80.0f}, {0.0f, 0.0f, -1.0f}, {0.0f, 1.0f, 0.0f}});
-    scene->add_object<csg::custom_object>("object", {{0, 0, 0}, {0, 0, 0}, {1, 1, 1}});
+    scene->add_object<csg::player>("player", {{0, 1, 0}, {0, 0, 0}, {1, 1, 1}});
+    scene->add_object<csg::environment>("floor", {{0, -60, 0}, {0, 0, 0}, {1, 1, 1}}, csg::floor_texture);
+    scene->add_object<csg::environment>("shop", {{80, 26, 0}, {0, 0, 0}, {1, 1, 1}}, csg::shop_texture);
+    scene->add_object<csg::environment>("background1", {{0, 80, -5}, {0, 0, 0}, {1, 1, 1}}, csg::background1_texture);
+    scene->add_object<csg::environment>("background2", {{0, 80, -10}, {0, 0, 0}, {1, 1, 1}}, csg::background2_texture);
+    scene->add_object<csg::environment>("background3", {{0, 80, -15}, {0, 0, 0}, {1, 1, 1}}, csg::background3_texture);
   }
   game->set_current_scene("scene");
 

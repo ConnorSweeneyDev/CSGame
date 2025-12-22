@@ -3,13 +3,21 @@
 #include <tuple>
 
 #include "cse/object.hpp"
+#include "cse/resource.hpp"
 #include "glm/ext/vector_int3.hpp"
 
 namespace csg
 {
-  class custom_object : public cse::core::object
+  class player : public cse::core::object
   {
   public:
-    custom_object(const std::tuple<glm::ivec3, glm::ivec3, glm::ivec3> &transform_);
+    player(const std::tuple<glm::ivec3, glm::ivec3, glm::ivec3> &transform_);
+  };
+
+  class environment : public cse::core::object
+  {
+  public:
+    environment(const std::tuple<glm::ivec3, glm::ivec3, glm::ivec3> &transform_,
+                const cse::resource::compiled_texture &texture_);
   };
 }

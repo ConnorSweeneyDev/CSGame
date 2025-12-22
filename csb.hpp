@@ -33303,7 +33303,7 @@ inline void swap(nlohmann::NLOHMANN_BASIC_JSON_TPL& j1, nlohmann::NLOHMANN_BASIC
 // NOLINTEND
 // clang-format on
 
-// CSB 1.10.2
+// CSB 1.10.4
 #include <algorithm>
 #include <cctype>
 #include <concepts>
@@ -35534,7 +35534,9 @@ namespace csb
                                                          : std::filesystem::file_time_type::min()};
     auto csb_hpp_time{std::filesystem::exists("csb.hpp") ? std::filesystem::last_write_time("csb.hpp")
                                                          : std::filesystem::file_time_type::min()};
-    if (manifest_time < csb_cpp_time || manifest_time < csb_hpp_time || !manifest.contains("builtin-baseline"))
+    if (!std::filesystem::exists(vcpkg_installed_directory) || manifest_time < csb_cpp_time ||
+        manifest_time < csb_hpp_time || !manifest.contains("builtin-baseline") ||
+        utility::forced_configuration.has_value())
       utility::live_execute(
         std::format("{} install --vcpkg-root {} --triplet {} --x-manifest-root {} --x-install-root {}",
                     vcpkg_path.string(), vcpkg_path.parent_path().string(), vcpkg_triplet,
@@ -35597,31 +35599,33 @@ namespace csb
       auto subproject_path{subproject_directory / repo_name};
       auto build_path{subproject_path / "build" / (target_configuration == RELEASE ? "release" : "debug")};
 
+      auto bootstrapped = utility::bootstrap_subproject(subproject_path, name, version);
+
       auto subproject_time{std::filesystem::exists(subproject_path) ? std::filesystem::last_write_time(subproject_path)
                                                                     : std::filesystem::file_time_type::min()};
       auto csb_cpp_time{std::filesystem::exists("csb.cpp") ? std::filesystem::last_write_time("csb.cpp")
                                                            : std::filesystem::file_time_type::min()};
       auto csb_hpp_time{std::filesystem::exists("csb.hpp") ? std::filesystem::last_write_time("csb.hpp")
                                                            : std::filesystem::file_time_type::min()};
-      if (subproject_time < csb_cpp_time || subproject_time < csb_hpp_time || version.empty())
+      if (subproject_time < csb_cpp_time || subproject_time < csb_hpp_time || bootstrapped ||
+          utility::forced_configuration.has_value())
       {
-        if (utility::bootstrap_subproject(subproject_path, name, version))
-        {
-          print<COUT>("\n{}\n", utility::big_section_divider);
-          if (name.empty()) throw std::runtime_error("Subproject name not set.");
-
-          if (!std::filesystem::exists(build_path)) std::filesystem::create_directories(build_path);
-          utility::live_execute(
-            std::format("cd {} && {}{} {}", subproject_path.string(), host_platform == LINUX ? "./" : "",
-                        (std::filesystem::path{"script"} / "build.bat").string(),
-                        target_configuration == RELEASE ? "release" : "debug"),
-            [&repo_name, &version](const std::string &)
-            { print<COUT>("Building subproject {} ({})...\n", repo_name, version); }, nullptr,
-            [](const std::string &, const int return_code)
-            { throw std::runtime_error("Failed to build subproject. Exited with: " + std::to_string(return_code)); });
-
-          print<COUT>("{}\n", utility::big_section_divider);
-        }
+        print<COUT>("\n{}\n", utility::big_section_divider);
+        if (name.empty()) throw std::runtime_error("Subproject name not set.");
+        if (!std::filesystem::exists(build_path)) std::filesystem::create_directories(build_path);
+        utility::live_execute(
+          std::format("cd {} && {}{} {}", subproject_path.string(), host_platform == LINUX ? "./" : "",
+                      (std::filesystem::path{"script"} / "build.bat").string(),
+                      target_configuration == RELEASE ? "release" : "debug"),
+          [&repo_name, &version](const std::string &)
+          { print<COUT>("Building subproject {} ({})...\n", repo_name, version); },
+          [&subproject_path](const std::string &)
+          {
+            touch(subproject_path);
+            print<COUT>("{}\n", utility::big_section_divider);
+          },
+          [](const std::string &, const int return_code)
+          { throw std::runtime_error("Failed to build subproject. Exited with: " + std::to_string(return_code)); });
       }
 
       if (subproject_type == STANDALONE)
