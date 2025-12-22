@@ -1,0 +1,14 @@
+# Development Output
+.cache/
+.claude/
+.vscode/
+.vs/
+
+# Build Output
+build/
+compile_commands.json
+program/source/resource.cpp
+program/include/resource.hpp
+
+# User Files
+.env
