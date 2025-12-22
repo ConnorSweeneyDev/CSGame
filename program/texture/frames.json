@@ -16,7 +16,7 @@
   },
   {
     "file": "floor.png",
-    "frame_dimensions": [528, 72],
+    "frame_dimensions": [550, 100],
     "frame_groups": [{ "name": "main", "range": [1, 1] }]
   },
   {
@@ -29,7 +29,7 @@
   },
   {
     "file": "shop.png",
-    "frame_dimensions": [120, 100],
+    "frame_dimensions": [150, 100],
     "frame_groups": [{ "name": "main", "range": [1, 1] }]
   }
 ]
