@@ -1,2 +1,2 @@
-# CSTemplate
-A cloneable template for modern C++ projects using [CSBuild](https://github.com/ConnorSweeneyDev/CSBuild).
+# CSGame
+A simple 2D/3D hybrid game built using [CSEngine](https://github.com/ConnorSweeneyDev/CSEngine).
