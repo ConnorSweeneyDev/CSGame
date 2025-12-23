@@ -172,7 +172,7 @@ int csb::build()
          const auto &[group_name, frame_range]{frame_group};
          const auto &[start_frame, end_frame]{frame_range};
          groups_result +=
-           std::format("  static constexpr std::array<const cse::resource::compiled_texture::frame_data::group::frame, "
+           std::format("  static constexpr std::array<const cse::compiled_texture::frame_data::group::frame, "
                        "{}> {}_{}_frames{{\n    {{",
                        end_frame - start_frame + 1, name, group_name);
          for (unsigned int frame_index{start_frame - 1}; frame_index < end_frame; ++frame_index)
@@ -189,7 +189,7 @@ int csb::build()
          groups_result += "}};\n";
        }
        groups_result += std::format("  static constexpr std::array<std::pair<std::string_view, "
-                                    "cse::resource::compiled_texture::frame_data::group>, {}> {}_groups{{\n    {{",
+                                    "cse::compiled_texture::frame_data::group>, {}> {}_groups{{\n    {{",
                                     frame_groups.size(), name);
        auto sorted_frame_groups{frame_groups};
        std::sort(sorted_frame_groups.begin(), sorted_frame_groups.end(),
@@ -213,9 +213,9 @@ int csb::build()
        for (const auto &[file, name, data] : files)
        {
          if (file.extension() == ".spv")
-           result += std::format("  extern const cse::resource::compiled_shader {};\n", name);
+           result += std::format("  extern const cse::compiled_shader {};\n", name);
          else
-           result += std::format("  extern const cse::resource::compiled_texture {};\n", name);
+           result += std::format("  extern const cse::compiled_texture {};\n", name);
        }
        return result + "}";
      },
@@ -225,7 +225,7 @@ int csb::build()
        for (const auto &[file, name, data] : files)
        {
          if (file.extension() == ".spv")
-           result += std::format("  const cse::resource::compiled_shader {}{{\n    {}_data,\n    {}}};\n", name, name,
+           result += std::format("  const cse::compiled_shader {}{{\n    {}_data,\n    {}}};\n", name, name,
                                  std::get<0>(data).size());
          else
          {
@@ -233,7 +233,7 @@ int csb::build()
            const auto &[width, height, channels]{image_data};
            const auto &[frame_dimensions, frame_groups]{frame_data};
            const auto &[frame_width, frame_height]{frame_dimensions};
-           result += std::format("  const cse::resource::compiled_texture {}{{\n    {}_image,\n    "
+           result += std::format("  const cse::compiled_texture {}{{\n    {}_image,\n    "
                                  "{{{}, {}, {}}},\n    {{{}, {}, {}_groups}}}};\n",
                                  name, name, width, height, channels, frame_width, frame_height, name);
          }

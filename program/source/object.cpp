@@ -63,7 +63,7 @@ namespace csg
   }
 
   environment::environment(const std::tuple<glm::ivec3, glm::ivec3, glm::ivec3> &transform_,
-                           const cse::resource::compiled_texture &texture_)
+                           const cse::compiled_texture &texture_)
     : object(transform_, {128, 128, 128, 0}, {csg::main_vertex, csg::main_fragment}, {texture_, "main"})
   {
   }

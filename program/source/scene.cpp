@@ -8,7 +8,7 @@
 
 namespace csg
 {
-  custom_scene::custom_scene() : cse::core::scene()
+  custom_scene::custom_scene() : cse::scene()
   {
     hooks.add("event_pre",
               [this](const SDL_Event &event)

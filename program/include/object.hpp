@@ -8,16 +8,16 @@
 
 namespace csg
 {
-  class player : public cse::core::object
+  class player : public cse::object
   {
   public:
     player(const std::tuple<glm::ivec3, glm::ivec3, glm::ivec3> &transform_);
   };
 
-  class environment : public cse::core::object
+  class environment : public cse::object
   {
   public:
     environment(const std::tuple<glm::ivec3, glm::ivec3, glm::ivec3> &transform_,
-                const cse::resource::compiled_texture &texture_);
+                const cse::compiled_texture &texture_);
   };
 }

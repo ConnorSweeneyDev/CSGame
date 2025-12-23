@@ -1,4 +1,3 @@
-#include <cstdlib>
 #include <memory>
 #include <string>
 #include <tuple>
@@ -17,9 +16,9 @@
 
 int cse::main(int argc, char *argv[])
 {
-  if (argc > 1 || !argv[0]) throw cse::utility::exception("Expected 1 argument, got {}", argc);
+  if (argc > 1 || !argv[0]) throw cse::exception("Expected 1 argument, got {}", argc);
 
-  auto game{std::make_unique<cse::core::game>()};
+  auto game{std::make_unique<cse::game>()};
   game->set_window<csg::custom_window>("CSE Example", {1280, 720});
   game->set_current_scene<csg::custom_scene>(
     "scene",
@@ -36,6 +35,6 @@ int cse::main(int argc, char *argv[])
   game->run();
   game.reset();
 
-  if constexpr (cse::system::debug) cse::utility::print<COUT>("Exiting application...\n");
-  return EXIT_SUCCESS;
+  if constexpr (cse::debug) cse::print<COUT>("Exiting application...\n");
+  return cse::success;
 }
