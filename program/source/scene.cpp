@@ -20,9 +20,9 @@ namespace csg
                     break;
                   case SDL_SCANCODE_9:
                     if (!key.repeat && key.type == SDL_EVENT_KEY_DOWN)
-                      get_object_strict("player")->graphics.color = {255, 0, 0, 255};
+                      get_object_strict("player")->graphics.color = {64, 0, 0, 128};
                     else if (key.type == SDL_EVENT_KEY_UP)
-                      get_object_strict("player")->graphics.color = {255, 255, 255, 255};
+                      get_object_strict("player")->graphics.color = {128, 128, 128, 0};
                     break;
                   default: break;
                 }
