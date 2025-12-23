@@ -1,12 +1,11 @@
 #include <cstdlib>
-#include <exception>
 #include <memory>
 #include <string>
 #include <tuple>
 
-#include "SDL3/SDL_main.h"
 #include "cse/exception.hpp"
 #include "cse/game.hpp"
+#include "cse/main.hpp"
 #include "cse/print.hpp"
 #include "cse/system.hpp"
 
@@ -16,7 +15,7 @@
 #include "scene.hpp"
 #include "window.hpp"
 
-int try_main(int argc, char *argv[])
+int cse::main(int argc, char *argv[])
 {
   if (argc > 1 || !argv[0]) throw cse::utility::exception("Expected 1 argument, got {}", argc);
 
@@ -39,17 +38,4 @@ int try_main(int argc, char *argv[])
 
   if constexpr (cse::system::debug) cse::utility::print<COUT>("Exiting application...\n");
   return EXIT_SUCCESS;
-}
-
-int main(int argc, char *argv[])
-{
-  try
-  {
-    return try_main(argc, argv);
-  }
-  catch (const std::exception &error)
-  {
-    cse::utility::print<CERR>("{}\n", error.what());
-    return EXIT_FAILURE;
-  }
 }
