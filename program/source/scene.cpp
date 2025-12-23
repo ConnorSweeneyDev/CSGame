@@ -1,5 +1,7 @@
 #include "scene.hpp"
 
+#include <memory>
+
 #include "SDL3/SDL_events.h"
 #include "SDL3/SDL_scancode.h"
 #include "cse/scene.hpp"
@@ -15,14 +17,13 @@ namespace csg
                 switch (const auto &key{event.key}; key.scancode)
                 {
                   case SDL_SCANCODE_8:
-                    if (!key.repeat && key.type == SDL_EVENT_KEY_DOWN)
-                      get_camera_strict()->state.translation.value.x += 1.0f;
+                    if (!key.repeat && key.type == SDL_EVENT_KEY_DOWN) camera->state.translation.value.x += 1.0f;
                     break;
                   case SDL_SCANCODE_9:
                     if (!key.repeat && key.type == SDL_EVENT_KEY_DOWN)
-                      get_object_strict("player")->graphics.color = {64, 0, 0, 128};
+                      objects.at("player")->graphics.color = {64, 0, 0, 128};
                     else if (key.type == SDL_EVENT_KEY_UP)
-                      get_object_strict("player")->graphics.color = {128, 128, 128, 0};
+                      objects.at("player")->graphics.color = {128, 128, 128, 0};
                     break;
                   default: break;
                 }
