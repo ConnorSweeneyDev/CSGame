@@ -20,9 +20,9 @@ namespace csg
                     break;
                   case SDL_SCANCODE_9:
                     if (!key.repeat && key.type == SDL_EVENT_KEY_DOWN)
-                      get_object_strict("player")->graphics.texture.frame_group = "other";
+                      get_object_strict("player")->graphics.tint = {255, 0, 0, 255};
                     else if (key.type == SDL_EVENT_KEY_UP)
-                      get_object_strict("player")->graphics.texture.frame_group = "main";
+                      get_object_strict("player")->graphics.tint = {255, 255, 255, 255};
                     break;
                   default: break;
                 }
