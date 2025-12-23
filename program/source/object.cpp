@@ -14,7 +14,7 @@
 namespace csg
 {
   player::player(const std::tuple<glm::ivec3, glm::ivec3, glm::ivec3> &transform_)
-    : object(transform_, {255, 255, 255, 255}, {csg::main_vertex, csg::main_fragment}, {csg::main_texture, "main"})
+    : object(transform_, {128, 128, 128, 0}, {csg::main_vertex, csg::main_fragment}, {csg::main_texture, "main"})
   {
     hooks.add("event_main",
               [this](const SDL_Event &event)
@@ -64,7 +64,7 @@ namespace csg
 
   environment::environment(const std::tuple<glm::ivec3, glm::ivec3, glm::ivec3> &transform_,
                            const cse::resource::compiled_texture &texture_)
-    : object(transform_, {255, 255, 255, 255}, {csg::main_vertex, csg::main_fragment}, {texture_, "main"})
+    : object(transform_, {128, 128, 128, 0}, {csg::main_vertex, csg::main_fragment}, {texture_, "main"})
   {
   }
 }

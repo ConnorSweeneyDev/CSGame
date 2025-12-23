@@ -10,7 +10,7 @@ SamplerState Sampler : register(s0, space2);
 float4 main(Input input) : SV_Target0
 {
   float4 texture_color = Texture.Sample(Sampler, input.texture);
-  float4 tinted_color = float4(texture_color.rgb * input.color.rgb, texture_color.a);
   if (texture_color.a == 0.0f) discard;
-  return lerp(texture_color, tinted_color, input.color.a);
+  float3 tint = (input.color.rgb - 0.5) * 2.0 * input.color.a;
+  return float4(saturate(texture_color.rgb + tint), texture_color.a);
 }
