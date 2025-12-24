@@ -20,7 +20,7 @@ int cse::main(int argc, char *argv[])
 
   auto game{std::make_unique<cse::game>()};
   game->set_window<csg::custom_window>("CSE Example", {1280, 720});
-  game->set_current_scene<csg::custom_scene>(
+  game->set_current_scene(
     "scene",
     [](const std::shared_ptr<csg::custom_scene> scene)
     {
