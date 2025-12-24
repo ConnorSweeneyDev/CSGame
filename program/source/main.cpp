@@ -18,7 +18,7 @@ int cse::main(int argc, char *argv[])
 {
   if (argc > 1 || !argv[0]) throw cse::exception("Expected 1 argument, got {}", argc);
 
-  auto game{std::make_unique<cse::game>()};
+  auto game{std::make_shared<cse::game>()};
   game->set_window<csg::custom_window>("CSE Example", {1280, 720});
   game->set_current_scene(
     "scene",
