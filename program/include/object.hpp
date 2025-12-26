@@ -17,7 +17,7 @@ namespace csg
   class environment : public cse::object
   {
   public:
-    environment(const std::tuple<glm::ivec3, glm::ivec3, glm::ivec3> &transform_,
-                const cse::compiled_texture &texture_);
+    environment(const std::tuple<glm::ivec3, glm::ivec3, glm::ivec3> &transform_, const cse::compiled_image &image_,
+                const cse::compiled_frame_group &frame_group_);
   };
 }

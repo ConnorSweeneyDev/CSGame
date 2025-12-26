@@ -14,7 +14,8 @@
 namespace csg
 {
   player::player(const std::tuple<glm::ivec3, glm::ivec3, glm::ivec3> &transform_)
-    : object(transform_, {128, 128, 128, 0}, {csg::main_vertex, csg::main_fragment}, {csg::main_texture, "main"})
+    : object(transform_, {128, 128, 128, 0}, {csg::vertex::main, csg::fragment::main},
+             {csg::texture::main::image, csg::texture::main::group::main})
   {
     hooks.add("event_main",
               [this](const SDL_Event &event)
@@ -24,9 +25,9 @@ namespace csg
                 {
                   case SDL_SCANCODE_0:
                     if (!key.repeat && key.type == SDL_EVENT_KEY_DOWN)
-                      graphics.texture.frame_group = "other";
+                      graphics.texture.group = csg::texture::main::group::other;
                     else if (key.type == SDL_EVENT_KEY_UP)
-                      graphics.texture.frame_group = "main";
+                      graphics.texture.group = csg::texture::main::group::main;
                     break;
                   default: break;
                 }
@@ -63,8 +64,8 @@ namespace csg
   }
 
   environment::environment(const std::tuple<glm::ivec3, glm::ivec3, glm::ivec3> &transform_,
-                           const cse::compiled_texture &texture_)
-    : object(transform_, {128, 128, 128, 0}, {csg::main_vertex, csg::main_fragment}, {texture_, "main"})
+                           const cse::compiled_image &image_, const cse::compiled_frame_group &frame_group_)
+    : object(transform_, {128, 128, 128, 0}, {csg::vertex::main, csg::fragment::main}, {image_, frame_group_})
   {
   }
 }
