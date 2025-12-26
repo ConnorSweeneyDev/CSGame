@@ -1,6 +1,5 @@
 #include "csb.hpp"
 
-#include <algorithm>
 #include <cstddef>
 #include <filesystem>
 #include <format>
@@ -131,18 +130,20 @@ int csb::build()
            result += "  }\n  namespace texture\n  {\n";
            texture_defined = true;
          }
-         result += std::format("    namespace {}\n    {{\n", name);
-         result += std::format("      extern const cse::compiled_image image;\n");
-         result += std::format("      namespace group\n      {{\n");
+         result += std::format("    struct {}_texture\n    {{\n", name);
+         result += "      const cse::compiled_image image;\n";
+         result += std::format("      struct {}_group\n      {{\n", name);
          const auto &[binary_data, texture_data]{data};
          const auto &[image_data, frame_data]{texture_data};
          const auto &[frame_dimensions, frame_groups]{frame_data};
          for (const auto &frame_group : frame_groups)
          {
            const auto &[group_name, frame_range]{frame_group};
-           result += std::format("        extern const cse::compiled_frame_group {};\n", group_name);
+           result += std::format("        const cse::compiled_frame_group {};\n", group_name);
          }
-         result += "      }\n    }\n";
+         result += "      } const group;\n";
+         result += "    };\n";
+         result += std::format("    extern const {}_texture {};\n", name, name);
        }
 
        return result;
@@ -217,7 +218,7 @@ int csb::build()
          const auto &[group_name, frame_range]{frame_group};
          const auto &[start_frame, end_frame]{frame_range};
          groups_result += std::format("  static constexpr std::array<const cse::compiled_frame_group::frame, "
-                                      "{}> {}_texture_{}_frames{{\n    {{",
+                                      "{}> {}_texture_{}_frames\n  {{\n    {{",
                                       end_frame - start_frame + 1, name, group_name);
          for (unsigned int frame_index{start_frame - 1}; frame_index < end_frame; ++frame_index)
          {
@@ -228,9 +229,9 @@ int csb::build()
            const float bottom{static_cast<float>(frame_y * frame_height) / static_cast<float>(height)};
            const float right{static_cast<float>((frame_x + 1) * frame_width) / static_cast<float>(width)};
            groups_result += std::format("{{{:#g}f, {:#g}f, {:#g}f, {:#g}f}}", top, left, bottom, right);
-           if (frame_index < end_frame - 1) groups_result += ",\n    ";
+           if (frame_index < end_frame - 1) groups_result += ",\n     ";
          }
-         groups_result += "}};";
+         groups_result += "}\n  };";
          if (&frame_group != &frame_groups.back()) groups_result += "\n";
        }
        results.push_back(groups_result);
@@ -281,18 +282,17 @@ int csb::build()
            const auto &[width, height, channels]{image_data};
            const auto &[frame_dimensions, frame_groups]{frame_data};
            const auto &[frame_width, frame_height]{frame_dimensions};
-           result += std::format("    namespace {}\n    {{\n", name);
-           result += std::format("      const cse::compiled_image image{{{}_texture_data, {}, {}, {}, {}, {}}};\n",
-                                 name, width, height, frame_width, frame_height, channels);
-           result += "      namespace group\n      {\n";
+           result += std::format("    const {}_texture {}\n    {{\n      {{{}_texture_data, {}, {}, {}, {}, {}}},\n",
+                                 name, name, name, width, height, frame_width, frame_height, channels);
+           result += "      {";
            for (const auto &frame_group : frame_groups)
            {
              const auto &[group_name, frame_range]{frame_group};
              const auto &[start_frame, end_frame]{frame_range};
-             result += std::format("        const cse::compiled_frame_group {}{{{}, {}, {}_texture_{}_frames}};\n",
-                                   group_name, start_frame, end_frame, name, group_name);
+             result += std::format("{{{}, {}, {}_texture_{}_frames}}", start_frame, end_frame, name, group_name);
+             if (&frame_group != &frame_groups.back()) result += ",\n       ";
            }
-           result += "      }\n    }\n";
+           result += "}\n    };\n";
          }
        }
        return result + "  }\n}";
