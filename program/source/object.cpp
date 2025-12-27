@@ -6,6 +6,7 @@
 #include "SDL3/SDL_scancode.h"
 #include "cse/object.hpp"
 #include "cse/resource.hpp"
+#include "cse/scene.hpp"
 #include "glm/ext/vector_float3.hpp"
 #include "glm/ext/vector_int3.hpp"
 
@@ -23,6 +24,9 @@ namespace csg
                 if (event.type != SDL_EVENT_KEY_DOWN && event.type != SDL_EVENT_KEY_UP) return;
                 switch (const auto &key{event.key}; key.scancode)
                 {
+                  case SDL_SCANCODE_5:
+                    if (auto scene{parent.lock()}) scene->remove_object("player");
+                    break;
                   case SDL_SCANCODE_0:
                     if (!key.repeat && key.type == SDL_EVENT_KEY_DOWN)
                       graphics.texture.group = csg::texture::main.group.other;

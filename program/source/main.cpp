@@ -37,15 +37,6 @@ int cse::main(int argc, char *argv[])
       scene->set_object<csg::environment>("background3", {{0, 80, -9}, {0, 0, 0}, {1, 1, 1}},
                                           csg::texture::background3.image, csg::texture::background3.group.main);
     });
-  game->set_scene("other",
-                  [](const std::shared_ptr<csg::custom_scene> scene)
-                  {
-                    scene->set_camera<csg::custom_camera>(
-                      {{0.0f, 0.0f, 80.0f}, {0.0f, 0.0f, -1.0f}, {0.0f, 1.0f, 0.0f}});
-                    scene->set_object<csg::player>("player", {{0, 0, 0}, {0, 0, 0}, {1, 1, 1}});
-                    scene->set_object<csg::environment>("floor", {{0, -61, 0}, {0, 0, 0}, {1, 1, 1}},
-                                                        csg::texture::floor.image, csg::texture::floor.group.main);
-                  });
   game->run();
   game.reset();
 
