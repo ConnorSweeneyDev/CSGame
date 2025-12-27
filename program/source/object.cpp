@@ -17,7 +17,7 @@ namespace csg
     : object(transform_, {128, 128, 128, 0}, {csg::vertex::main, csg::fragment::main},
              {csg::texture::main.image, csg::texture::main.group.main})
   {
-    hooks.add("event_main",
+    hooks.add("event",
               [this](const SDL_Event &event)
               {
                 if (event.type != SDL_EVENT_KEY_DOWN && event.type != SDL_EVENT_KEY_UP) return;
@@ -33,7 +33,7 @@ namespace csg
                 }
               });
 
-    hooks.add("input_main",
+    hooks.add("input",
               [this](const bool *keys)
               {
                 if (keys[SDL_SCANCODE_E]) state.translation.acceleration.y += 0.01f;
@@ -44,7 +44,7 @@ namespace csg
                 if (keys[SDL_SCANCODE_R]) state.translation.acceleration.z -= 0.01f;
               });
 
-    hooks.add("simulate_main",
+    hooks.add("simulate",
               [this]()
               {
                 state.translation.velocity += state.translation.acceleration;

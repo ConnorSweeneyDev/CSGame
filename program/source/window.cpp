@@ -12,7 +12,7 @@ namespace csg
   custom_window::custom_window(const std::string &title_, const glm::uvec2 &dimensions_)
     : window(title_, dimensions_, false, true)
   {
-    hooks.add("event_main",
+    hooks.add("event",
               [this](const SDL_Event &event)
               {
                 if (event.type != SDL_EVENT_KEY_DOWN || event.key.repeat) return;

@@ -10,12 +10,18 @@ namespace csg
 {
   custom_scene::custom_scene() : cse::scene()
   {
-    hooks.add("event_pre",
+    hooks.add("pre_event",
               [this](const SDL_Event &event)
               {
                 if (event.type != SDL_EVENT_KEY_DOWN && event.type != SDL_EVENT_KEY_UP) return;
                 switch (const auto &key{event.key}; key.scancode)
                 {
+                  case SDL_SCANCODE_6:
+                    if (auto game{parent.lock()}) game->set_current_scene("main");
+                    break;
+                  case SDL_SCANCODE_7:
+                    if (auto game{parent.lock()}) game->set_current_scene("other");
+                    break;
                   case SDL_SCANCODE_8:
                     if (!key.repeat && key.type == SDL_EVENT_KEY_DOWN) camera->state.translation.value.x += 1.0f;
                     break;

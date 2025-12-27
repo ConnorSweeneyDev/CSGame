@@ -11,7 +11,7 @@ namespace csg
   custom_camera::custom_camera(const std::tuple<glm::vec3, glm::vec3, glm::vec3> &transform_)
     : camera(transform_, 45.0f)
   {
-    hooks.add("input_main",
+    hooks.add("input",
               [this](const bool *keys)
               {
                 if (keys[SDL_SCANCODE_I]) state.translation.acceleration.y += 0.01f;
@@ -22,7 +22,7 @@ namespace csg
                 if (keys[SDL_SCANCODE_O]) state.translation.acceleration.z += 0.01f;
               });
 
-    hooks.add("simulate_main",
+    hooks.add("simulate",
               [this]()
               {
                 state.translation.velocity += state.translation.acceleration;
