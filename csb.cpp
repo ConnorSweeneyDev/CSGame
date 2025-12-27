@@ -121,7 +121,7 @@ int csb::build()
            result += "  }\n  namespace fragment\n  {\n";
            fragment_defined = true;
          }
-         result += std::format("    extern const cse::compiled_shader {};\n", name);
+         result += std::format("    extern const cse::shader {};\n", name);
        }
        else
        {
@@ -131,17 +131,15 @@ int csb::build()
            texture_defined = true;
          }
          result += std::format("    struct {}_texture\n    {{\n", name);
-         result += "      const cse::compiled_image image;\n";
-         result += std::format("      struct {}_group\n      {{\n", name);
+         result += "      const cse::image image;\n";
          const auto &[binary_data, texture_data]{data};
          const auto &[image_data, frame_data]{texture_data};
          const auto &[frame_dimensions, frame_groups]{frame_data};
          for (const auto &frame_group : frame_groups)
          {
            const auto &[group_name, frame_range]{frame_group};
-           result += std::format("        const cse::compiled_frame_group {};\n", group_name);
+           result += std::format("      const cse::frame_group {};\n", group_name);
          }
-         result += "      } const group;\n";
          result += "    };\n";
          result += std::format("    extern const {}_texture {};\n", name, name);
        }
@@ -162,7 +160,7 @@ int csb::build()
        }
        else
          return std::format(
-           "  static constexpr std::array<const unsigned char, (1)> {}_texture_data{{\n    (0)}};\n(2)\n\n", name);
+           "  static constexpr std::array<const unsigned char, (1)> {}_texture_image{{\n    (0)}};\n(2)\n\n", name);
      },
      [](const std::filesystem::path &file) -> std::string
      {
@@ -217,7 +215,7 @@ int csb::build()
        {
          const auto &[group_name, frame_range]{frame_group};
          const auto &[start_frame, end_frame]{frame_range};
-         groups_result += std::format("  static constexpr std::array<const cse::compiled_frame_group::frame, "
+         groups_result += std::format("  static constexpr std::array<const cse::frame_group::frame, "
                                       "{}> {}_texture_{}_frames\n  {{\n    {{",
                                       end_frame - start_frame + 1, name, group_name);
          for (unsigned int frame_index{start_frame - 1}; frame_index < end_frame; ++frame_index)
@@ -273,7 +271,7 @@ int csb::build()
              extension = "vertex";
            else
              extension = "fragment";
-           result += std::format("    const cse::compiled_shader {}{{{}_{}_data, {}}};\n", name, name, extension,
+           result += std::format("    const cse::shader {}{{{}_{}_data, {}}};\n", name, name, extension,
                                  std::get<0>(data).size());
          }
          else
@@ -282,17 +280,17 @@ int csb::build()
            const auto &[width, height, channels]{image_data};
            const auto &[frame_dimensions, frame_groups]{frame_data};
            const auto &[frame_width, frame_height]{frame_dimensions};
-           result += std::format("    const {}_texture {}\n    {{\n      {{{}_texture_data, {}, {}, {}, {}, {}}},\n",
-                                 name, name, name, width, height, frame_width, frame_height, channels);
-           result += "      {";
+           result +=
+             std::format("    const {}_texture {}\n    {{\n      {{{}_texture_image, {}, {}, {}, {}, {}}},\n      ",
+                         name, name, name, width, height, frame_width, frame_height, channels);
            for (const auto &frame_group : frame_groups)
            {
              const auto &[group_name, frame_range]{frame_group};
              const auto &[start_frame, end_frame]{frame_range};
-             result += std::format("{{{}, {}, {}_texture_{}_frames}}", start_frame, end_frame, name, group_name);
-             if (&frame_group != &frame_groups.back()) result += ",\n       ";
+             result += std::format("{{{}_texture_{}_frames, {}, {}}}", name, group_name, start_frame, end_frame);
+             if (&frame_group != &frame_groups.back()) result += ",\n      ";
            }
-           result += "}\n    };\n";
+           result += "\n    };\n";
          }
        }
        return result + "  }\n}";
