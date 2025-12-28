@@ -18,9 +18,9 @@ namespace csg
                 if (event.type != SDL_EVENT_KEY_DOWN || event.key.repeat) return;
                 switch (const auto &key{event.key}; key.scancode)
                 {
-                  case SDL_SCANCODE_ESCAPE: running = false; break;
-                  case SDL_SCANCODE_F11: fullscreen = !fullscreen; break;
-                  case SDL_SCANCODE_F12: vsync = !vsync; break;
+                  case SDL_SCANCODE_ESCAPE: state.running = false; break;
+                  case SDL_SCANCODE_F11: state.fullscreen = !state.fullscreen; break;
+                  case SDL_SCANCODE_F12: state.vsync = !state.vsync; break;
                   default: break;
                 }
               });
