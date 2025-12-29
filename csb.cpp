@@ -30,8 +30,8 @@ void csb::configure()
 
 int csb::clean()
 {
-  csb::clean_build_directory();
-  csb::remove("program/include/resource.hpp", "program/source/resource.cpp");
+  csb::clean_build();
+  csb::clean({"program/include/resource.hpp", "program/source/resource.cpp"});
   return csb::build();
 }
 
@@ -48,7 +48,8 @@ int csb::build()
          "linux_dxc_2025_07_14.x86_64.tar.gz",
      "build/dxc",
      {csb::host_platform == WINDOWS ? "bin/" + csb::host_architecture : "bin",
-      csb::host_platform == WINDOWS ? "lib/" + csb::host_architecture : "lib"}});
+      csb::host_platform == WINDOWS ? "lib/" + csb::host_architecture : "lib"},
+     {}});
   if (csb::host_platform == LINUX)
   {
     csb::multi_task_run("chmod +x ()",
@@ -108,7 +109,6 @@ int csb::build()
                                                             const resource &data) -> std::string
      {
        std::string result{};
-
        if (file.extension() == ".spv")
        {
          if (!vertex_defined && file.stem().extension() == ".vert")
@@ -143,7 +143,6 @@ int csb::build()
          result += "    };\n";
          result += std::format("    extern const {}_texture {};\n", name, name);
        }
-
        return result;
      },
      [](const std::filesystem::path &file, const std::string &name, const resource &) -> std::string
@@ -242,7 +241,6 @@ int csb::build()
        const std::vector<std::tuple<std::filesystem::path, std::string, resource>> &files) -> std::string
      {
        std::string result{};
-
        vertex_defined = false;
        fragment_defined = false;
        texture_defined = false;
@@ -297,9 +295,9 @@ int csb::build()
      }},
     [](const std::filesystem::path &file) -> bool { return file.extension() == ".spv" || file.extension() == ".png"; },
     csb::combine(
-      csb::choose_files({"build/shader"}, [](const auto &file) { return file.stem().extension() == ".vert"; }),
-      csb::choose_files({"build/shader"}, [](const auto &file) { return file.stem().extension() == ".frag"; }),
-      csb::choose_files({"program/texture"})),
+      {csb::choose_files({"build/shader"}, [](const auto &file) { return file.stem().extension() == ".vert"; }),
+       csb::choose_files({"build/shader"}, [](const auto &file) { return file.stem().extension() == ".frag"; }),
+       csb::choose_files({"program/texture"})}),
     {"program/include/resource.hpp", "program/source/resource.cpp"});
 
   csb::subproject_install({"ConnorSweeneyDev/CSEngine", "0.0.0", COMPILED_LIBRARY});
@@ -313,7 +311,7 @@ int csb::build()
 int csb::run()
 {
   csb::run_target();
-  return CSB_SUCCESS;
+  return csb::success;
 }
 
 CSB_MAIN()
