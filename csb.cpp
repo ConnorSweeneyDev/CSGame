@@ -68,7 +68,8 @@ int csb::build()
 
   using group_name = std::string;
   using group_range = std::pair<unsigned int, unsigned int>;
-  using frame_group = std::pair<group_name, group_range>;
+  using group_times = std::vector<double>;
+  using frame_group = std::tuple<group_name, group_range, group_times>;
   using frame_groups = std::vector<frame_group>;
   using frame_dimensions = std::pair<unsigned int, unsigned int>;
   using frame_data = std::pair<frame_dimensions, frame_groups>;
@@ -79,7 +80,8 @@ int csb::build()
     const auto &dimensions{object["frame_dimensions"].get<frame_dimensions>()};
     frame_groups groups{};
     for (const auto &group : object["frame_groups"])
-      groups.emplace_back(group["name"].get<group_name>(), group["range"].get<group_range>());
+      groups.emplace_back(group["name"].get<group_name>(), group["range"].get<group_range>(),
+                          group["times"].get<group_times>());
     frame_map.emplace(file, frame_data{dimensions, groups});
   }
 
@@ -137,8 +139,8 @@ int csb::build()
          const auto &[frame_dimensions, frame_groups]{frame_data};
          for (const auto &frame_group : frame_groups)
          {
-           const auto &[group_name, frame_range]{frame_group};
-           result += std::format("      const cse::frame_group {};\n", group_name);
+           const auto &[group_name, group_range, group_times]{frame_group};
+           result += std::format("      const cse::group {};\n", group_name);
          }
          result += "    };\n";
          result += std::format("    extern const {}_texture {};\n", name, name);
@@ -212,11 +214,12 @@ int csb::build()
        std::string groups_result{};
        for (const auto &frame_group : frame_groups)
        {
-         const auto &[group_name, frame_range]{frame_group};
-         const auto &[start_frame, end_frame]{frame_range};
-         groups_result += std::format("  static constexpr std::array<const cse::frame_group::frame, "
+         const auto &[group_name, group_range, group_times]{frame_group};
+         const auto &[start_frame, end_frame]{group_range};
+         groups_result += std::format("  static constexpr std::array<const cse::group::frame, "
                                       "{}> {}_texture_{}_frames\n  {{\n    {{",
                                       end_frame - start_frame + 1, name, group_name);
+         std::size_t count{};
          for (unsigned int frame_index{start_frame - 1}; frame_index < end_frame; ++frame_index)
          {
            const unsigned int frame_x{frame_index % frames_per_row};
@@ -225,8 +228,10 @@ int csb::build()
            const float left{static_cast<float>(frame_x * frame_width) / static_cast<float>(width)};
            const float bottom{static_cast<float>(frame_y * frame_height) / static_cast<float>(height)};
            const float right{static_cast<float>((frame_x + 1) * frame_width) / static_cast<float>(width)};
-           groups_result += std::format("{{{:#g}f, {:#g}f, {:#g}f, {:#g}f}}", top, left, bottom, right);
+           groups_result += std::format("{{{{{:#g}f, {:#g}f, {:#g}f, {:#g}f}}, {:#g}}}", top, left, bottom, right,
+                                        group_times.at(count));
            if (frame_index < end_frame - 1) groups_result += ",\n     ";
+           ++count;
          }
          groups_result += "}\n  };";
          if (&frame_group != &frame_groups.back()) groups_result += "\n";
@@ -269,8 +274,7 @@ int csb::build()
              extension = "vertex";
            else
              extension = "fragment";
-           result += std::format("    const cse::shader {}{{{}_{}_data, {}}};\n", name, name, extension,
-                                 std::get<0>(data).size());
+           result += std::format("    const cse::shader {}{{{}_{}_data}};\n", name, name, extension);
          }
          else
          {
@@ -283,8 +287,8 @@ int csb::build()
                          name, name, name, width, height, frame_width, frame_height, channels);
            for (const auto &frame_group : frame_groups)
            {
-             const auto &[group_name, frame_range]{frame_group};
-             const auto &[start_frame, end_frame]{frame_range};
+             const auto &[group_name, group_range, group_times]{frame_group};
+             const auto &[start_frame, end_frame]{group_range};
              result += std::format("{{{}_texture_{}_frames, {}, {}}}", name, group_name, start_frame, end_frame);
              if (&frame_group != &frame_groups.back()) result += ",\n      ";
            }

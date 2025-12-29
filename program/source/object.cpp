@@ -15,8 +15,8 @@
 namespace csg
 {
   player::player(const std::tuple<glm::ivec3, glm::ivec3, glm::ivec3> &transform_)
-    : object(transform_, {128, 128, 128, 0}, {csg::vertex::main, csg::fragment::main},
-             {csg::texture::main.image, csg::texture::main.main})
+    : object(transform_, {128, 128, 128, 255}, {csg::vertex::main, csg::fragment::main},
+             {csg::texture::redhood.image, csg::texture::redhood.idle})
   {
     hooks.add("event",
               [this](const SDL_Event &event)
@@ -28,11 +28,19 @@ namespace csg
                     if (!key.repeat && key.type == SDL_EVENT_KEY_DOWN)
                       if (auto scene{parent.lock()}) scene->remove_object("player");
                     break;
-                  case SDL_SCANCODE_0:
+                  case SDL_SCANCODE_G:
                     if (!key.repeat && key.type == SDL_EVENT_KEY_DOWN)
-                      graphics.texture.group = csg::texture::main.other;
-                    else if (key.type == SDL_EVENT_KEY_UP)
-                      graphics.texture.group = csg::texture::main.main;
+                    {
+                      auto &animation{graphics.texture.animation};
+                      auto &group{graphics.texture.group};
+                      if (group == csg::texture::redhood.idle)
+                      {
+                        group = csg::texture::redhood.jump;
+                        animation.frame = 0;
+                        animation.elapsed = 0.0;
+                        animation.speed = 1.0;
+                      }
+                    }
                     break;
                   default: break;
                 }
@@ -52,25 +60,54 @@ namespace csg
     hooks.add("simulate",
               [this]()
               {
-                state.translation.velocity += state.translation.acceleration;
-                state.translation.acceleration = glm::vec3{-0.002f};
+                auto &velocity{state.translation.velocity};
+                auto &acceleration{state.translation.acceleration};
+                auto &value{state.translation.value};
+                velocity += acceleration;
+                acceleration = {-0.002f, -0.002f, -0.002f};
                 for (int index{}; index < 3; ++index)
                 {
-                  if (state.translation.velocity[index] < 0.0f)
-                    state.translation.velocity[index] -= state.translation.acceleration[index];
-                  if (state.translation.velocity[index] > 0.0f)
-                    state.translation.velocity[index] += state.translation.acceleration[index];
-                  if (state.translation.velocity[index] < 0.002f && state.translation.velocity[index] > -0.002f)
-                    state.translation.velocity[index] = 0.0f;
+                  if (velocity[index] < 0.0f) velocity[index] -= acceleration[index];
+                  if (velocity[index] > 0.0f) velocity[index] += acceleration[index];
+                  if (velocity[index] < 0.002f && velocity[index] > -0.002f) velocity[index] = 0.0f;
                 }
-                state.translation.acceleration = glm::vec3{0.0f};
-                state.translation.value += state.translation.velocity;
+                acceleration = {0.0f, 0.0f, 0.0f};
+                value += velocity;
+
+                auto &animation{graphics.texture.animation};
+                auto &group{graphics.texture.group};
+                auto &previous{graphics.texture.previous};
+                auto last{group.frames.size() - 1};
+                if (group == csg::texture::redhood.jump)
+                {
+                  if (animation.frame == last && animation.elapsed >= group.frames[last].duration)
+                  {
+                    graphics.texture.group = csg::texture::redhood.idle;
+                    animation.frame = 0;
+                    animation.elapsed = 0.0;
+                    animation.speed = 2.0;
+                  }
+                }
+                else if (animation.frame == last && animation.elapsed >= group.frames[last].duration)
+                {
+                  animation.frame = 0;
+                  animation.elapsed = 0.0;
+                  animation.speed = 1.0;
+                }
+                if (previous.group == group && group == csg::texture::redhood.idle)
+                  if (previous.frame == last && animation.frame == 0)
+                  {
+                    if (graphics.color.r == 128)
+                      graphics.color.r = 32;
+                    else
+                      graphics.color.r = 128;
+                  }
               });
   }
 
   environment::environment(const std::tuple<glm::ivec3, glm::ivec3, glm::ivec3> &transform_, const cse::image &image_,
-                           const cse::frame_group &frame_group_)
-    : object(transform_, {128, 128, 128, 0}, {csg::vertex::main, csg::fragment::main}, {image_, frame_group_})
+                           const cse::group &group_)
+    : object(transform_, {128, 128, 128, 0}, {csg::vertex::main, csg::fragment::main}, {image_, group_})
   {
   }
 }

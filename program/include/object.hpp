@@ -18,6 +18,6 @@ namespace csg
   {
   public:
     environment(const std::tuple<glm::ivec3, glm::ivec3, glm::ivec3> &transform_, const cse::image &image_,
-                const cse::frame_group &frame_group_);
+                const cse::group &group_);
   };
 }

@@ -2,34 +2,48 @@
   {
     "file": "background1.png",
     "frame_dimensions": [500, 250],
-    "frame_groups": [{ "name": "main", "range": [1, 1] }]
+    "frame_groups": [{ "name": "main", "range": [1, 1], "times": [0] }]
   },
   {
     "file": "background2.png",
     "frame_dimensions": [500, 250],
-    "frame_groups": [{ "name": "main", "range": [1, 1] }]
+    "frame_groups": [{ "name": "main", "range": [1, 1], "times": [0] }]
   },
   {
     "file": "background3.png",
     "frame_dimensions": [500, 250],
-    "frame_groups": [{ "name": "main", "range": [1, 1] }]
+    "frame_groups": [{ "name": "main", "range": [1, 1], "times": [0] }]
   },
   {
     "file": "floor.png",
     "frame_dimensions": [550, 100],
-    "frame_groups": [{ "name": "main", "range": [1, 1] }]
+    "frame_groups": [{ "name": "main", "range": [1, 1], "times": [0] }]
   },
   {
-    "file": "main.png",
+    "file": "redhood.png",
     "frame_dimensions": [50, 50],
     "frame_groups": [
-      { "name": "main", "range": [1, 1] },
-      { "name": "other", "range": [2, 2] }
+      {
+        "name": "idle",
+        "range": [1, 17],
+        "times": [
+          0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1,
+          0.1, 0.1, 0.1
+        ]
+      },
+      {
+        "name": "jump",
+        "range": [19, 36],
+        "times": [
+          0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1,
+          0.1, 0.1, 0.1, 0.1
+        ]
+      }
     ]
   },
   {
     "file": "shop.png",
     "frame_dimensions": [150, 100],
-    "frame_groups": [{ "name": "main", "range": [1, 1] }]
+    "frame_groups": [{ "name": "main", "range": [1, 1], "times": [0] }]
   }
 ]
