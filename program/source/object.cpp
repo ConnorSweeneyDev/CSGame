@@ -7,6 +7,7 @@
 #include "cse/object.hpp"
 #include "cse/resource.hpp"
 #include "cse/scene.hpp"
+#include "cse/utility.hpp"
 #include "glm/ext/vector_int3.hpp"
 
 #include "resource.hpp"
@@ -24,10 +25,9 @@ namespace csg
                 switch (const auto &key{event.key}; key.scancode)
                 {
                   case SDL_SCANCODE_5:
-                    if (!key.repeat && key.type == SDL_EVENT_KEY_DOWN)
-                      if (auto scene{parent.lock()}) scene->remove_object("player");
+                    if (!key.repeat && key.type == SDL_EVENT_KEY_DOWN) lock(parent)->remove_object("player");
                     break;
-                  case SDL_SCANCODE_G:
+                  case SDL_SCANCODE_0:
                     if (!key.repeat && key.type == SDL_EVENT_KEY_DOWN)
                     {
                       auto &animation{graphics.texture.animation};
