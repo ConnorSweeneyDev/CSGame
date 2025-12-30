@@ -4,6 +4,7 @@
 
 #include "SDL3/SDL_events.h"
 #include "SDL3/SDL_scancode.h"
+#include "cse/game.hpp"
 #include "cse/scene.hpp"
 #include "cse/utility.hpp"
 
@@ -15,7 +16,7 @@ namespace csg
 {
   custom_scene::custom_scene() : cse::scene()
   {
-    hooks.add("pre_event",
+    hooks.set("pre_event",
               [this](const SDL_Event &event)
               {
                 if (event.type != SDL_EVENT_KEY_DOWN && event.type != SDL_EVENT_KEY_UP) return;

@@ -18,12 +18,22 @@ namespace csg
     : object(transform_, {128, 128, 128, 255}, {csg::vertex::main, csg::fragment::main},
              {csg::texture::redhood.image, csg::texture::redhood.idle, 0, 1.0, true})
   {
-    hooks.add("event",
+    hooks.set("event",
               [this](const SDL_Event &event)
               {
                 if (event.type != SDL_EVENT_KEY_DOWN && event.type != SDL_EVENT_KEY_UP) return;
                 switch (const auto &key{event.key}; key.scancode)
                 {
+                  case SDL_SCANCODE_4:
+                    if (!key.repeat && key.type == SDL_EVENT_KEY_DOWN)
+                    {
+                      if (auto scene{throw_lock(parent)}; scene->objects.contains("temp"))
+                        scene->remove_object("temp");
+                      else
+                        scene->set_object<environment>("temp", {{-80, 24, -1}, {0, 0, 0}, {1, 1, 1}},
+                                                       csg::texture::shop.image, csg::texture::shop.main);
+                    }
+                    break;
                   case SDL_SCANCODE_5:
                     if (!key.repeat && key.type == SDL_EVENT_KEY_DOWN) throw_lock(parent)->remove_object("player");
                     break;
@@ -46,7 +56,7 @@ namespace csg
                 }
               });
 
-    hooks.add("input",
+    hooks.set("input",
               [this](const bool *keys)
               {
                 auto &acceleration{state.translation.acceleration};
@@ -58,7 +68,7 @@ namespace csg
                 if (keys[SDL_SCANCODE_R]) acceleration.z -= 0.01f;
               });
 
-    hooks.add("simulate",
+    hooks.set("simulate",
               [this]()
               {
                 auto &velocity{state.translation.velocity};

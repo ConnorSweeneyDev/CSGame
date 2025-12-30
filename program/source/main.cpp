@@ -28,7 +28,7 @@ int cse::main(int argc, char *argv[])
       main->set_object<csg::player>("player", {{0, 0, 0}, {0, 0, 0}, {1, 1, 1}});
       main->set_object<csg::environment>("floor", {{0, -61, 0}, {0, 0, 0}, {1, 1, 1}}, csg::texture::floor.image,
                                          csg::texture::floor.main);
-      main->set_object<csg::environment>("shop", {{80, 25, 0}, {0, 0, 0}, {1, 1, 1}}, csg::texture::shop.image,
+      main->set_object<csg::environment>("shop", {{80, 24, -1}, {0, 0, 0}, {1, 1, 1}}, csg::texture::shop.image,
                                          csg::texture::shop.main);
       main->set_object<csg::environment>("background1", {{0, 80, -3}, {0, 0, 0}, {1, 1, 1}},
                                          csg::texture::background1.image, csg::texture::background1.main);
