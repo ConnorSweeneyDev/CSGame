@@ -14,30 +14,31 @@ namespace csg
     hooks.add("input",
               [this](const bool *keys)
               {
-                if (keys[SDL_SCANCODE_I]) state.translation.acceleration.y += 0.01f;
-                if (keys[SDL_SCANCODE_K]) state.translation.acceleration.y -= 0.01f;
-                if (keys[SDL_SCANCODE_L]) state.translation.acceleration.x += 0.01f;
-                if (keys[SDL_SCANCODE_J]) state.translation.acceleration.x -= 0.01f;
-                if (keys[SDL_SCANCODE_U]) state.translation.acceleration.z -= 0.01f;
-                if (keys[SDL_SCANCODE_O]) state.translation.acceleration.z += 0.01f;
+                auto &acceleration{state.translation.acceleration};
+                if (keys[SDL_SCANCODE_I]) acceleration.y += 0.01f;
+                if (keys[SDL_SCANCODE_K]) acceleration.y -= 0.01f;
+                if (keys[SDL_SCANCODE_L]) acceleration.x += 0.01f;
+                if (keys[SDL_SCANCODE_J]) acceleration.x -= 0.01f;
+                if (keys[SDL_SCANCODE_U]) acceleration.z -= 0.01f;
+                if (keys[SDL_SCANCODE_O]) acceleration.z += 0.01f;
               });
 
     hooks.add("simulate",
               [this]()
               {
-                state.translation.velocity += state.translation.acceleration;
-                state.translation.acceleration = glm::vec3{-0.002f};
+                auto &velocity{state.translation.velocity};
+                auto &acceleration{state.translation.acceleration};
+                auto &value{state.translation.value};
+                velocity += acceleration;
+                acceleration = glm::vec3{-0.002f};
                 for (int index{}; index < 3; ++index)
                 {
-                  if (state.translation.velocity[index] < 0.0f)
-                    state.translation.velocity[index] -= state.translation.acceleration[index];
-                  if (state.translation.velocity[index] > 0.0f)
-                    state.translation.velocity[index] += state.translation.acceleration[index];
-                  if (state.translation.velocity[index] < 0.002f && state.translation.velocity[index] > -0.002f)
-                    state.translation.velocity[index] = 0.0f;
+                  if (velocity[index] < 0.0f) velocity[index] -= acceleration[index];
+                  if (velocity[index] > 0.0f) velocity[index] += acceleration[index];
+                  if (velocity[index] < 0.002f && velocity[index] > -0.002f) velocity[index] = 0.0f;
                 }
-                state.translation.acceleration = glm::vec3{0.0f};
-                state.translation.value += state.translation.velocity;
+                acceleration = glm::vec3{0.0f};
+                value += velocity;
               });
   }
 }
