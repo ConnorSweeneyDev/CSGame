@@ -11,34 +11,34 @@ namespace csg
   custom_camera::custom_camera(const std::tuple<glm::vec3, glm::vec3, glm::vec3> &transform_)
     : camera(transform_, 45.0f)
   {
-    hooks.set("input",
-              [this](const bool *keys)
-              {
-                auto &acceleration{state.translation.acceleration};
-                if (keys[SDL_SCANCODE_I]) acceleration.y += 0.01f;
-                if (keys[SDL_SCANCODE_K]) acceleration.y -= 0.01f;
-                if (keys[SDL_SCANCODE_L]) acceleration.x += 0.01f;
-                if (keys[SDL_SCANCODE_J]) acceleration.x -= 0.01f;
-                if (keys[SDL_SCANCODE_U]) acceleration.z -= 0.01f;
-                if (keys[SDL_SCANCODE_O]) acceleration.z += 0.01f;
-              });
+    hook.set("input",
+             [this](const bool *keys)
+             {
+               auto &acceleration{state.translation.acceleration};
+               if (keys[SDL_SCANCODE_I]) acceleration.y += 0.01f;
+               if (keys[SDL_SCANCODE_K]) acceleration.y -= 0.01f;
+               if (keys[SDL_SCANCODE_L]) acceleration.x += 0.01f;
+               if (keys[SDL_SCANCODE_J]) acceleration.x -= 0.01f;
+               if (keys[SDL_SCANCODE_U]) acceleration.z -= 0.01f;
+               if (keys[SDL_SCANCODE_O]) acceleration.z += 0.01f;
+             });
 
-    hooks.set("simulate",
-              [this]()
-              {
-                auto &velocity{state.translation.velocity};
-                auto &acceleration{state.translation.acceleration};
-                auto &value{state.translation.value};
-                velocity += acceleration;
-                acceleration = glm::vec3{-0.002f};
-                for (int index{}; index < 3; ++index)
-                {
-                  if (velocity[index] < 0.0f) velocity[index] -= acceleration[index];
-                  if (velocity[index] > 0.0f) velocity[index] += acceleration[index];
-                  if (velocity[index] < 0.002f && velocity[index] > -0.002f) velocity[index] = 0.0f;
-                }
-                acceleration = glm::vec3{0.0f};
-                value += velocity;
-              });
+    hook.set("simulate",
+             [this]()
+             {
+               auto &velocity{state.translation.velocity};
+               auto &acceleration{state.translation.acceleration};
+               auto &value{state.translation.value};
+               velocity += acceleration;
+               acceleration = glm::vec3{-0.002f};
+               for (int index{}; index < 3; ++index)
+               {
+                 if (velocity[index] < 0.0f) velocity[index] -= acceleration[index];
+                 if (velocity[index] > 0.0f) velocity[index] += acceleration[index];
+                 if (velocity[index] < 0.002f && velocity[index] > -0.002f) velocity[index] = 0.0f;
+               }
+               acceleration = glm::vec3{0.0f};
+               value += velocity;
+             });
   }
 }
