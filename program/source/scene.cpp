@@ -29,12 +29,12 @@ namespace csg
                       if (auto game{parent.lock()})
                         game->set_current_scene(
                           "other",
-                          [](const std::shared_ptr<csg::custom_scene> scene)
+                          [](const std::shared_ptr<csg::custom_scene> other)
                           {
-                            scene->set_camera<csg::custom_camera>(
+                            other->set_camera<csg::custom_camera>(
                               {{0.0f, 0.0f, 80.0f}, {0.0f, 0.0f, -1.0f}, {0.0f, 1.0f, 0.0f}});
-                            scene->set_object<csg::player>("player", {{0, 0, 0}, {0, 0, 0}, {1, 1, 1}});
-                            scene->set_object<csg::environment>("floor", {{0, -61, 0}, {0, 0, 0}, {1, 1, 1}},
+                            other->set_object<csg::player>("player", {{0, 0, 0}, {0, 0, 0}, {1, 1, 1}});
+                            other->set_object<csg::environment>("floor", {{0, -61, 0}, {0, 0, 0}, {1, 1, 1}},
                                                                 csg::texture::floor.image, csg::texture::floor.main);
                           });
                     break;

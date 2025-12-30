@@ -95,7 +95,7 @@ namespace csg
                 if (previous.group == group && group == csg::texture::redhood.idle)
                   if (animation.frame == 0 && previous.frame == final)
                   {
-                    if (animation.speed == 2.0) animation.speed = 1.0;
+                    animation.speed = 1.0;
                     if (graphics.color.r == 128)
                       graphics.color.r = 32;
                     else
