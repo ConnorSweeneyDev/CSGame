@@ -22,11 +22,11 @@ namespace csg
                 switch (const auto &key{event.key}; key.scancode)
                 {
                   case SDL_SCANCODE_6:
-                    if (!key.repeat && key.type == SDL_EVENT_KEY_DOWN) lock(parent)->set_current_scene("main");
+                    if (!key.repeat && key.type == SDL_EVENT_KEY_DOWN) throw_lock(parent)->set_current_scene("main");
                     break;
                   case SDL_SCANCODE_7:
                     if (!key.repeat && key.type == SDL_EVENT_KEY_DOWN)
-                      lock(parent)->set_current_scene(
+                      throw_lock(parent)->set_current_scene(
                         "other",
                         [](const std::shared_ptr<csg::custom_scene> other)
                         {

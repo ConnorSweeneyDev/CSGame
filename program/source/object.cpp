@@ -25,7 +25,7 @@ namespace csg
                 switch (const auto &key{event.key}; key.scancode)
                 {
                   case SDL_SCANCODE_5:
-                    if (!key.repeat && key.type == SDL_EVENT_KEY_DOWN) lock(parent)->remove_object("player");
+                    if (!key.repeat && key.type == SDL_EVENT_KEY_DOWN) throw_lock(parent)->remove_object("player");
                     break;
                   case SDL_SCANCODE_0:
                     if (!key.repeat && key.type == SDL_EVENT_KEY_DOWN)
