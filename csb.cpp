@@ -113,17 +113,26 @@ int csb::build()
        std::string result{};
        if (file.extension() == ".spv")
        {
-         if (!vertex_defined && file.stem().extension() == ".vert")
+         std::string extension{};
+         if (file.stem().extension() == ".vert")
          {
-           result += "  namespace vertex\n  {\n";
-           vertex_defined = true;
+           extension = "vertex";
+           if (!vertex_defined)
+           {
+             result += "  namespace vertex\n  {\n";
+             vertex_defined = true;
+           }
          }
-         else if (!fragment_defined && file.stem().extension() == ".frag")
+         else if (file.stem().extension() == ".frag")
          {
-           result += "  }\n  namespace fragment\n  {\n";
-           fragment_defined = true;
+           extension = "fragment";
+           if (!fragment_defined)
+           {
+             result += "  }\n  namespace fragment\n  {\n";
+             fragment_defined = true;
+           }
          }
-         result += std::format("    extern const cse::shader {};\n", name);
+         result += std::format("    extern const cse::{} {};\n", extension, name);
        }
        else
        {
@@ -274,7 +283,7 @@ int csb::build()
              extension = "vertex";
            else
              extension = "fragment";
-           result += std::format("    const cse::shader {}{{{}_{}_data}};\n", name, name, extension);
+           result += std::format("    const cse::{} {}{{{}_{}_data}};\n", extension, name, name, extension);
          }
          else
          {

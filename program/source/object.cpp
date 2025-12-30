@@ -77,7 +77,7 @@ namespace csg
 
                 auto &animation{graphics.texture.animation};
                 auto &group{graphics.texture.group};
-                auto &previous{graphics.texture.previous};
+                auto &previous{graphics.previous};
                 auto final{group.frames.size() - 1};
 
                 if (group == csg::texture::redhood.jump)
@@ -93,7 +93,7 @@ namespace csg
                 }
 
                 if (previous.group == group && group == csg::texture::redhood.idle)
-                  if (animation.frame == 0 && previous.frame == final)
+                  if (animation.frame == 0 && previous.animation.frame == final)
                   {
                     animation.speed = 1.0;
                     if (graphics.color.r == 128)
