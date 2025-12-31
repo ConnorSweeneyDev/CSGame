@@ -33,6 +33,4 @@ namespace csg
                                             csg::texture::background3.image, csg::texture::background3.main);
       });
   }
-
-  std::shared_ptr<game> game::create() { return cse::game::create<game>(); }
 }
