@@ -9,8 +9,8 @@
 
 namespace csg
 {
-  custom_window::custom_window(const std::string &title_, const glm::uvec2 &dimensions_)
-    : window(title_, dimensions_, false, true)
+  window::window(const std::string &title_, const glm::uvec2 &dimensions_)
+    : cse::window(title_, dimensions_, false, true)
   {
     hook.set("event",
              [this](const SDL_Event &event)

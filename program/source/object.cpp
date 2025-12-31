@@ -15,8 +15,8 @@
 namespace csg
 {
   player::player(const std::tuple<glm::ivec3, glm::ivec3, glm::ivec3> &transform_)
-    : object(transform_, {128, 128, 128, 255}, {csg::vertex::main, csg::fragment::main},
-             {csg::texture::redhood.image, csg::texture::redhood.idle, 0, 1.0, true})
+    : cse::object(transform_, {128, 128, 128, 255}, {csg::vertex::main, csg::fragment::main},
+                  {csg::texture::redhood.image, csg::texture::redhood.idle, 0, 1.0, true})
   {
     hook.set("event",
              [this](const SDL_Event &event)
@@ -116,7 +116,8 @@ namespace csg
 
   environment::environment(const std::tuple<glm::ivec3, glm::ivec3, glm::ivec3> &transform_, const cse::image &image_,
                            const cse::group &group_)
-    : object(transform_, {128, 128, 128, 0}, {csg::vertex::main, csg::fragment::main}, {image_, group_, 0, 0.0, false})
+    : cse::object(transform_, {128, 128, 128, 0}, {csg::vertex::main, csg::fragment::main},
+                  {image_, group_, 0, 0.0, false})
   {
   }
 }

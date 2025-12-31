@@ -7,9 +7,9 @@
 
 namespace csg
 {
-  class custom_window : public cse::window
+  class window : public cse::window
   {
   public:
-    custom_window(const std::string &title_, const glm::uvec2 &dimensions_);
+    window(const std::string &title_, const glm::uvec2 &dimensions_);
   };
 }

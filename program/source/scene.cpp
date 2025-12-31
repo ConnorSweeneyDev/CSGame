@@ -14,7 +14,7 @@
 
 namespace csg
 {
-  custom_scene::custom_scene() : cse::scene()
+  scene::scene() : cse::scene()
   {
     hook.set("pre_event",
              [this](const SDL_Event &event)
@@ -29,12 +29,11 @@ namespace csg
                    if (!key.repeat && key.type == SDL_EVENT_KEY_DOWN)
                      throw_lock(parent)->set_current_scene(
                        "other",
-                       [](const std::shared_ptr<csg::custom_scene> other)
+                       [](const std::shared_ptr<csg::scene> scene)
                        {
-                         other->set_camera<csg::custom_camera>(
-                           {{0.0f, 0.0f, 80.0f}, {0.0f, 0.0f, -1.0f}, {0.0f, 1.0f, 0.0f}});
-                         other->set_object<csg::player>("player", {{0, 0, 0}, {0, 0, 0}, {1, 1, 1}});
-                         other->set_object<csg::environment>("floor", {{0, -61, 0}, {0, 0, 0}, {1, 1, 1}},
+                         scene->set_camera<csg::camera>({{0.0f, 0.0f, 80.0f}, {0.0f, 0.0f, -1.0f}, {0.0f, 1.0f, 0.0f}});
+                         scene->set_object<csg::player>("player", {{0, 0, 0}, {0, 0, 0}, {1, 1, 1}});
+                         scene->set_object<csg::environment>("floor", {{0, -61, 0}, {0, 0, 0}, {1, 1, 1}},
                                                              csg::texture::floor.image, csg::texture::floor.main);
                        });
                    break;

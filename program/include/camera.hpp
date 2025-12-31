@@ -7,9 +7,9 @@
 
 namespace csg
 {
-  class custom_camera : public cse::camera
+  class camera : public cse::camera
   {
   public:
-    custom_camera(const std::tuple<glm::vec3, glm::vec3, glm::vec3> &transform_);
+    camera(const std::tuple<glm::vec3, glm::vec3, glm::vec3> &transform_);
   };
 }

@@ -4,9 +4,9 @@
 
 namespace csg
 {
-  class custom_scene : public cse::scene
+  class scene : public cse::scene
   {
   public:
-    custom_scene();
+    scene();
   };
 }
