@@ -29,14 +29,14 @@ namespace csg
                auto &acceleration{state.translation.acceleration};
                auto &value{state.translation.value};
                velocity += acceleration;
-               acceleration = glm::vec3{-0.002f};
+               acceleration = {-0.002f, -0.002f, -0.002f};
                for (int index{}; index < 3; ++index)
                {
                  if (velocity[index] < 0.0f) velocity[index] -= acceleration[index];
                  if (velocity[index] > 0.0f) velocity[index] += acceleration[index];
                  if (velocity[index] < 0.002f && velocity[index] > -0.002f) velocity[index] = 0.0f;
                }
-               acceleration = glm::vec3{0.0f};
+               acceleration = {0.0f, 0.0f, 0.0f};
                value += velocity;
              });
   }

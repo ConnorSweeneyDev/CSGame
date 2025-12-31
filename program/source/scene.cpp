@@ -29,26 +29,26 @@ namespace csg
                    if (!key.repeat && key.type == SDL_EVENT_KEY_DOWN)
                      throw_lock(parent)->set_current_scene(
                        "other",
-                       [](const std::shared_ptr<csg::scene> scene)
+                       [](const std::shared_ptr<scene> scene)
                        {
                          scene->set_camera<csg::camera>({{0.0f, 0.0f, 80.0f}, {0.0f, 0.0f, -1.0f}, {0.0f, 1.0f, 0.0f}});
-                         scene->set_object<csg::player>("player", {{0, 0, 0}, {0, 0, 0}, {1, 1, 1}});
-                         scene->set_object<csg::environment>("floor", {{0, -61, 0}, {0, 0, 0}, {1, 1, 1}},
-                                                             csg::texture::floor.image, csg::texture::floor.main);
+                         scene->set_object<player>("player", {{0, 0, 0}, {0, 0, 0}, {1, 1, 1}});
+                         scene->set_object<environment>("floor", {{0, -61, 0}, {0, 0, 0}, {1, 1, 1}},
+                                                        texture::floor.image, texture::floor.main);
                        });
                    break;
                  case SDL_SCANCODE_8:
                    if (!key.repeat && key.type == SDL_EVENT_KEY_DOWN) camera->state.translation.value.x += 1.0f;
                    break;
                  case SDL_SCANCODE_9:
-                 {
-                   const auto &player{objects.at("player")};
-                   if (!key.repeat && key.type == SDL_EVENT_KEY_DOWN)
-                     player->graphics.color = {64, 0, 0, 128};
-                   else if (key.type == SDL_EVENT_KEY_UP)
-                     player->graphics.color = {128, 128, 128, 255};
+                   if (const auto &player{try_at(objects, "player")})
+                   {
+                     if (!key.repeat && key.type == SDL_EVENT_KEY_DOWN)
+                       player->graphics.color = {64, 0, 0, 128};
+                     else if (key.type == SDL_EVENT_KEY_UP)
+                       player->graphics.color = {128, 128, 128, 255};
+                   }
                    break;
-                 }
                  default: break;
                }
              });
