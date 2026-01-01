@@ -60,7 +60,9 @@ namespace csg
              {
                auto game{throw_lock(parent)};
                if (game->previous_scene.first == "main" && throw_id(game->current_scene, game->scenes) == "other")
-                 if (cse::debug) cse::print<COUT>("Scene changed from \"main\" to \"other\"\n");
+                 if (cse::debug)
+                   cse::print<COUT>("Scene changed from \"main\" to \"other\": {}\n",
+                                    game->previous_scene.second->objects.size());
              });
   }
 }
