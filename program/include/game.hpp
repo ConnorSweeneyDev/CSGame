@@ -1,7 +1,6 @@
 #pragma once
 
 #include "cse/game.hpp"
-#include <memory>
 
 namespace csg
 {
@@ -9,7 +8,5 @@ namespace csg
   {
   public:
     game();
-
-    static std::shared_ptr<game> create();
   };
 }
