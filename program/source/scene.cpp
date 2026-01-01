@@ -5,7 +5,9 @@
 #include "SDL3/SDL_events.h"
 #include "SDL3/SDL_scancode.h"
 #include "cse/game.hpp"
+#include "cse/print.hpp"
 #include "cse/scene.hpp"
+#include "cse/system.hpp"
 #include "cse/utility.hpp"
 
 #include "camera.hpp"
@@ -51,6 +53,14 @@ namespace csg
                    break;
                  default: break;
                }
+             });
+
+    hook.set("pre_simulate",
+             [this]()
+             {
+               auto game{throw_lock(parent)};
+               if (game->previous_scene.first == "main" && throw_id(game->current_scene, game->scenes) == "other")
+                 if (cse::debug) cse::print<COUT>("Scene changed from \"main\" to \"other\"\n");
              });
   }
 }
