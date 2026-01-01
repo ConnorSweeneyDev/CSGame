@@ -27,16 +27,16 @@ namespace csg
                  case SDL_SCANCODE_2:
                    if (!key.repeat && key.type == SDL_EVENT_KEY_DOWN)
                    {
-                     if (equal(graphics.texture->animation.speed, 1.0))
-                       graphics.texture->animation.speed = -1.0;
+                     if (equal(graphics.texture.animation.speed, 1.0))
+                       graphics.texture.animation.speed = -1.0;
                      else
-                       graphics.texture->animation.speed = 1.0;
+                       graphics.texture.animation.speed = 1.0;
                    }
                    break;
                  case SDL_SCANCODE_3:
                    if (!key.repeat && key.type == SDL_EVENT_KEY_DOWN)
                    {
-                     if (graphics.texture->image == csg::texture::redhood.image)
+                     if (graphics.texture.image == csg::texture::redhood.image)
                        graphics.texture = {texture::shop.image, texture::shop.main};
                      else
                        graphics.texture = {texture::redhood.image, texture::redhood.idle, {0, 1.0, true}};
@@ -58,8 +58,8 @@ namespace csg
                  case SDL_SCANCODE_0:
                    if (!key.repeat && key.type == SDL_EVENT_KEY_DOWN)
                    {
-                     auto &animation{graphics.texture->animation};
-                     auto &group{graphics.texture->group};
+                     auto &animation{graphics.texture.animation};
+                     auto &group{graphics.texture.group};
                      if (group == texture::redhood.idle)
                      {
                        group = texture::redhood.jump;
@@ -100,9 +100,8 @@ namespace csg
                acceleration = {0.0f, 0.0f, 0.0f};
                value += velocity;
 
-               auto &animation{graphics.texture->animation};
-               auto &group{graphics.texture->group};
-               auto &previous{graphics.previous};
+               auto &animation{graphics.texture.animation};
+               auto &group{graphics.texture.group};
                auto final{group.frames.size() - 1};
                if (group == texture::redhood.jump)
                {
@@ -112,8 +111,8 @@ namespace csg
                    animation = {0, 2.0, true};
                  }
                }
-               if (previous.texture.group == group && group == texture::redhood.idle)
-                 if (animation.frame == 0 && previous.texture.animation.frame == final)
+               if (previous.graphics.texture.group == group && group == texture::redhood.idle)
+                 if (animation.frame == 0 && previous.graphics.texture.animation.frame == final)
                  {
                    animation.speed = 1.0;
                    if (graphics.color.r == 128)
@@ -121,7 +120,8 @@ namespace csg
                    else
                      graphics.color.r = 128;
                  }
-               if (previous.texture.image == texture::shop.image && graphics.texture->image != texture::shop.image)
+               if (previous.graphics.texture.image == texture::shop.image &&
+                   graphics.texture.image != texture::shop.image)
                  graphics.color = {128, 128, 255, 255};
              });
   }
