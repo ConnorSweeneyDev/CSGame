@@ -27,7 +27,7 @@ namespace csg
                  case SDL_SCANCODE_2:
                    if (!key.repeat && key.type == SDL_EVENT_KEY_DOWN)
                    {
-                     if (graphics.texture->animation.speed == 1.0)
+                     if (equal(graphics.texture->animation.speed, 1.0))
                        graphics.texture->animation.speed = -1.0;
                      else
                        graphics.texture->animation.speed = 1.0;
