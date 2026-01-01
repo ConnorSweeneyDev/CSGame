@@ -1,5 +1,6 @@
 #include "object.hpp"
 
+#include <algorithm>
 #include <tuple>
 
 #include "SDL3/SDL_events.h"
@@ -75,30 +76,32 @@ namespace csg
              [this](const bool *keys)
              {
                auto &acceleration{state.translation.acceleration};
-               if (keys[SDL_SCANCODE_E]) acceleration.y += 0.01f;
-               if (keys[SDL_SCANCODE_D]) acceleration.y -= 0.01f;
-               if (keys[SDL_SCANCODE_F]) acceleration.x += 0.01f;
-               if (keys[SDL_SCANCODE_S]) acceleration.x -= 0.01f;
-               if (keys[SDL_SCANCODE_W]) acceleration.z += 0.01f;
-               if (keys[SDL_SCANCODE_R]) acceleration.z -= 0.01f;
+               auto value{36.0f};
+               if (keys[SDL_SCANCODE_E]) acceleration.y += value;
+               if (keys[SDL_SCANCODE_D]) acceleration.y -= value;
+               if (keys[SDL_SCANCODE_F]) acceleration.x += value;
+               if (keys[SDL_SCANCODE_S]) acceleration.x -= value;
+               if (keys[SDL_SCANCODE_W]) acceleration.z += value;
+               if (keys[SDL_SCANCODE_R]) acceleration.z -= value;
              });
 
     hook.set("simulate",
-             [this]()
+             [this](const float poll_rate)
              {
                auto &velocity{state.translation.velocity};
                auto &acceleration{state.translation.acceleration};
                auto &value{state.translation.value};
-               velocity += acceleration;
-               acceleration = {-0.002f, -0.002f, -0.002f};
-               for (int index{}; index < 3; ++index)
-               {
-                 if (velocity[index] < 0.0f) velocity[index] -= acceleration[index];
-                 if (velocity[index] > 0.0f) velocity[index] += acceleration[index];
-                 if (velocity[index] < 0.002f && velocity[index] > -0.002f) velocity[index] = 0.0f;
-               }
+               auto friction{7.2f};
+               velocity += acceleration * poll_rate;
                acceleration = {0.0f, 0.0f, 0.0f};
-               value += velocity;
+               for (int index{}; index < 3; ++index)
+                 if (velocity[index] > 0.0f)
+                   velocity[index] = std::max(0.0f, velocity[index] - friction * poll_rate);
+                 else if (velocity[index] < -0.0f)
+                   velocity[index] = std::min(0.0f, velocity[index] + friction * poll_rate);
+                 else
+                   velocity[index] = 0.0f;
+               value += velocity * poll_rate;
 
                auto &animation{graphics.texture.animation};
                auto &group{graphics.texture.group};
