@@ -16,7 +16,7 @@ namespace csg
 {
   player::player(const std::tuple<glm::ivec3, glm::ivec3, glm::ivec3> &transform_)
     : cse::object(transform_, {128, 128, 128, 255}, {vertex::main, fragment::main},
-                  {texture::redhood.image, texture::redhood.idle, 0, 1.0, true})
+                  {texture::redhood.image, texture::redhood.idle, {0, 1.0, true, 0.0}})
   {
     hook.set("event",
              [this](const SDL_Event &event)
@@ -24,6 +24,15 @@ namespace csg
                if (event.type != SDL_EVENT_KEY_DOWN && event.type != SDL_EVENT_KEY_UP) return;
                switch (const auto &key{event.key}; key.scancode)
                {
+                 case SDL_SCANCODE_2:
+                   if (!key.repeat && key.type == SDL_EVENT_KEY_DOWN)
+                   {
+                     if (graphics.texture->animation.speed == 1.0)
+                       graphics.texture->animation.speed = -1.0;
+                     else
+                       graphics.texture->animation.speed = 1.0;
+                   }
+                   break;
                  case SDL_SCANCODE_3:
                    if (!key.repeat && key.type == SDL_EVENT_KEY_DOWN)
                    {
@@ -119,7 +128,8 @@ namespace csg
 
   environment::environment(const std::tuple<glm::ivec3, glm::ivec3, glm::ivec3> &transform_, const cse::image &image_,
                            const cse::group &group_)
-    : cse::object(transform_, {128, 128, 128, 0}, {vertex::main, fragment::main}, {image_, group_, 0, 0.0, false})
+    : cse::object(transform_, {128, 128, 128, 255}, {vertex::main, fragment::main},
+                  {image_, group_, {0, 0.0, false, 0.0}})
   {
   }
 }
