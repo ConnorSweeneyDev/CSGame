@@ -28,7 +28,7 @@ namespace csg
              });
 
     hook.set("simulate",
-             [this]()
+             [this](const float)
              {
                if (previous.graphics.title != graphics.title)
                  cse::print<COUT>("Window title changed from \"{}\" to \"{}\"\n", previous.graphics.title,

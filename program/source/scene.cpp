@@ -56,13 +56,14 @@ namespace csg
              });
 
     hook.set("pre_simulate",
-             [this]()
+             [this](const float)
              {
                auto game{throw_lock(parent)};
-               if (game->previous_scene.first == "main" && throw_id(game->current_scene, game->scenes) == "other")
+               if (throw_id(game->scenes, game->previous.state.scene) == "main" &&
+                   throw_id(game->scenes, game->state.scene) == "other")
                  if (cse::debug)
                    cse::print<COUT>("Scene changed from \"main\" to \"other\": {}\n",
-                                    game->previous_scene.second->objects.size());
+                                    throw_lock(game->previous.state.scene)->objects.size());
              });
   }
 }

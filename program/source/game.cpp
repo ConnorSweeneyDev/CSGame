@@ -1,6 +1,7 @@
 #include "game.hpp"
 
 #include <memory>
+#include <utility>
 
 #include "SDL3/SDL_events.h"
 #include "SDL3/SDL_scancode.h"
@@ -15,7 +16,7 @@
 
 namespace csg
 {
-  game::game() : cse::game()
+  game::game(const std::pair<double, double> &rates_) : cse::game(rates_)
   {
     set_window<csg::window>("CSGame", {1280, 720});
     set_current_scene("main",
@@ -42,16 +43,16 @@ namespace csg
                switch (const auto &key{event.key}; key.scancode)
                {
                  case SDL_SCANCODE_F8:
-                   if (equal(frame_rate, 144.0))
-                     frame_rate = 30.0;
+                   if (equal(graphics.frame_rate, 144.0))
+                     graphics.frame_rate = 30.0;
                    else
-                     frame_rate = 144.0;
+                     graphics.frame_rate = 144.0;
                    break;
                  case SDL_SCANCODE_F9:
-                   if (equal(poll_rate, 60.0))
-                     poll_rate = 300.0;
+                   if (equal(state.poll_rate, 60.0))
+                     state.poll_rate = 300.0;
                    else
-                     poll_rate = 60.0;
+                     state.poll_rate = 60.0;
                    break;
                  default: break;
                }
