@@ -1,15 +1,12 @@
 #pragma once
 
-#include <string>
-
 #include "cse/window.hpp"
-#include "glm/ext/vector_uint2.hpp"
 
 namespace csg
 {
   class window : public cse::window
   {
   public:
-    window(const std::string &title_, const glm::uvec2 &dimensions_);
+    window();
   };
 }

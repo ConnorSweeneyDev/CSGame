@@ -15,8 +15,8 @@
 
 namespace csg
 {
-  player::player(const std::tuple<glm::ivec3, glm::ivec3, glm::ivec3> &transform_)
-    : cse::object(transform_, {128, 128, 128, 255}, {vertex::main, fragment::main},
+  player::player(const glm::ivec3 &translation_)
+    : cse::object({translation_, {0, 0, 0}, {1, 1, 1}}, {128, 128, 128, 255}, {vertex::main, fragment::main},
                   {texture::redhood.image, texture::redhood.idle, {0, 1.0, true, 0.0}})
   {
     hook.set("event",
@@ -49,8 +49,8 @@ namespace csg
                      if (auto scene{throw_lock(parent)}; scene->objects.contains("temp"))
                        scene->remove_object("temp");
                      else
-                       scene->set_object<environment>("temp", {{-80, 24, -1}, {0, 0, 0}, {1, 1, 1}},
-                                                      texture::shop.image, texture::shop.main);
+                       scene->set_object<environment>("temp", glm::ivec3{-80, 24, -1}, texture::shop.image,
+                                                      texture::shop.main);
                    }
                    break;
                  case SDL_SCANCODE_5:
@@ -129,9 +129,8 @@ namespace csg
              });
   }
 
-  environment::environment(const std::tuple<glm::ivec3, glm::ivec3, glm::ivec3> &transform_, const cse::image &image_,
-                           const cse::group &group_)
-    : cse::object(transform_, {128, 128, 128, 255}, {vertex::main, fragment::main},
+  environment::environment(const glm::ivec3 &translation_, const cse::image &image_, const cse::group &group_)
+    : cse::object({translation_, {0, 0, 0}, {1, 1, 1}}, {128, 128, 128, 255}, {vertex::main, fragment::main},
                   {image_, group_, {0, 0.0, false, 0.0}})
   {
   }

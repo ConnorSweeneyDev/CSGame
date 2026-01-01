@@ -9,6 +9,7 @@
 #include "cse/scene.hpp"
 #include "cse/system.hpp"
 #include "cse/utility.hpp"
+#include "glm/ext/vector_int3.hpp"
 
 #include "camera.hpp"
 #include "object.hpp"
@@ -33,10 +34,10 @@ namespace csg
                        "other",
                        [](const std::shared_ptr<scene> other)
                        {
-                         other->set_camera<csg::camera>({{0.0f, 0.0f, 80.0f}, {0.0f, 0.0f, -1.0f}, {0.0f, 1.0f, 0.0f}});
-                         other->set_object<player>("player", {{0, 0, 0}, {0, 0, 0}, {1, 1, 1}});
-                         other->set_object<environment>("floor", {{0, -61, 0}, {0, 0, 0}, {1, 1, 1}},
-                                                        texture::floor.image, texture::floor.main);
+                         other->set_camera<csg::camera>(glm::ivec3{0.0f, 0.0f, 80.0f});
+                         other->set_object<player>("player", glm::ivec3{0, 0, 0});
+                         other->set_object<environment>("floor", glm::ivec3{0, -61, 0}, texture::floor.image,
+                                                        texture::floor.main);
                        });
                    break;
                  case SDL_SCANCODE_8:

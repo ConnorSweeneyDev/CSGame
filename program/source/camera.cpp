@@ -9,7 +9,8 @@
 
 namespace csg
 {
-  camera::camera(const std::tuple<glm::vec3, glm::vec3, glm::vec3> &transform_) : cse::camera(transform_, 45.0f)
+  camera::camera(const glm::vec3 &translation_)
+    : cse::camera({translation_, {0.0f, 0.0f, -1.0f}, {0.0f, 1.0f, 0.0f}}, 45.0f)
   {
     hook.set("input",
              [this](const bool *keys)
