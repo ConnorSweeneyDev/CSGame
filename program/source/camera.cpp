@@ -16,13 +16,13 @@ namespace csg
              [this](const bool *keys)
              {
                auto &acceleration{state.translation.acceleration};
-               auto value{36.0f};
-               if (keys[SDL_SCANCODE_I]) acceleration.y += value;
-               if (keys[SDL_SCANCODE_K]) acceleration.y -= value;
-               if (keys[SDL_SCANCODE_L]) acceleration.x += value;
-               if (keys[SDL_SCANCODE_J]) acceleration.x -= value;
-               if (keys[SDL_SCANCODE_U]) acceleration.z -= value;
-               if (keys[SDL_SCANCODE_O]) acceleration.z += value;
+               auto difference{50.0f};
+               if (keys[SDL_SCANCODE_I]) acceleration.y += difference;
+               if (keys[SDL_SCANCODE_K]) acceleration.y -= difference;
+               if (keys[SDL_SCANCODE_L]) acceleration.x += difference;
+               if (keys[SDL_SCANCODE_J]) acceleration.x -= difference;
+               if (keys[SDL_SCANCODE_U]) acceleration.z -= difference;
+               if (keys[SDL_SCANCODE_O]) acceleration.z += difference;
              });
 
     hook.set("simulate",
@@ -31,7 +31,7 @@ namespace csg
                auto &velocity{state.translation.velocity};
                auto &acceleration{state.translation.acceleration};
                auto &value{state.translation.value};
-               auto friction{7.2f};
+               auto friction{10.0f};
                velocity += acceleration * poll_rate;
                acceleration = {0.0f, 0.0f, 0.0f};
                for (int index{}; index < 3; ++index)
