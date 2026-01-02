@@ -7,12 +7,7 @@
 #include "SDL3/SDL_scancode.h"
 #include "cse/game.hpp"
 #include "cse/utility.hpp"
-#include "glm/ext/vector_float3.hpp"
-#include "glm/ext/vector_int3.hpp"
 
-#include "camera.hpp"
-#include "object.hpp"
-#include "resource.hpp"
 #include "scene.hpp"
 #include "window.hpp"
 
@@ -20,23 +15,6 @@ namespace csg
 {
   game::game() : cse::game({60.0, 144.0})
   {
-    set_window<csg::window>();
-    set_current_scene(
-      "main",
-      [](const std::shared_ptr<scene> main)
-      {
-        main->set_camera<camera>(glm::vec3{0.0f, 0.0f, 80.0f});
-        main->set_object<player>("player", glm::ivec3{0, 0, 0});
-        main->set_object<environment>("floor", glm::ivec3{0, -61, 0}, texture::floor.image, texture::floor.main);
-        main->set_object<environment>("shop", glm::ivec3{80, 24, -1}, texture::shop.image, texture::shop.main);
-        main->set_object<environment>("background1", glm::ivec3{0, 80, -3}, texture::background1.image,
-                                      texture::background1.main);
-        main->set_object<environment>("background2", glm::ivec3{0, 80, -6}, texture::background2.image,
-                                      texture::background2.main);
-        main->set_object<environment>("background3", glm::ivec3{0, 80, -9}, texture::background3.image,
-                                      texture::background3.main);
-      });
-
     hook.set("pre_event",
              [this](const SDL_Event &event)
              {
@@ -58,5 +36,10 @@ namespace csg
                  default: break;
                }
              });
+  }
+
+  void game::setup(const std::shared_ptr<game> game)
+  {
+    game->set_window<csg::window>()->set_scene("other", csg::scene::other)->set_current_scene("main", csg::scene::main);
   }
 }

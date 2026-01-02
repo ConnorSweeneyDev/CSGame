@@ -9,6 +9,7 @@
 #include "cse/scene.hpp"
 #include "cse/system.hpp"
 #include "cse/utility.hpp"
+#include "glm/ext/vector_float3.hpp"
 #include "glm/ext/vector_int3.hpp"
 
 #include "camera.hpp"
@@ -30,15 +31,7 @@ namespace csg
                    break;
                  case SDL_SCANCODE_7:
                    if (!key.repeat && key.type == SDL_EVENT_KEY_DOWN)
-                     throw_lock(parent)->set_current_scene(
-                       "other",
-                       [](const std::shared_ptr<scene> other)
-                       {
-                         other->set_camera<csg::camera>(glm::ivec3{0.0f, 0.0f, 80.0f});
-                         other->set_object<player>("player", glm::ivec3{0, 0, 0});
-                         other->set_object<environment>("floor", glm::ivec3{0, -61, 0}, texture::floor.image,
-                                                        texture::floor.main);
-                       });
+                     throw_lock(parent)->set_current_scene("other", other);
                    break;
                  case SDL_SCANCODE_8:
                    if (!key.repeat && key.type == SDL_EVENT_KEY_DOWN) camera->state.translation.value.x += 1.0f;
@@ -66,5 +59,26 @@ namespace csg
                    cse::print<COUT>("Scene changed from \"main\" to \"other\": {}\n",
                                     throw_lock(game->previous.state.scene)->objects.size());
              });
+  }
+
+  void scene::main(const std::shared_ptr<scene> main)
+  {
+    main->set_camera<csg::camera>(glm::vec3{0.0f, 0.0f, 80.0f})
+      ->set_object<player>("player", glm::ivec3{0, 0, 0})
+      ->set_object<environment>("floor", glm::ivec3{0, -61, 0}, texture::floor.image, texture::floor.main)
+      ->set_object<environment>("shop", glm::ivec3{80, 24, -1}, texture::shop.image, texture::shop.main)
+      ->set_object<environment>("background1", glm::ivec3{0, 80, -3}, texture::background1.image,
+                                texture::background1.main)
+      ->set_object<environment>("background2", glm::ivec3{0, 80, -6}, texture::background2.image,
+                                texture::background2.main)
+      ->set_object<environment>("background3", glm::ivec3{0, 80, -9}, texture::background3.image,
+                                texture::background3.main);
+  }
+
+  void scene::other(const std::shared_ptr<scene> other)
+  {
+    other->set_camera<csg::camera>(glm::vec3{0.0f, 0.0f, 80.0f})
+      ->set_object<player>("player", glm::ivec3{0, 0, 0})
+      ->set_object<environment>("floor", glm::ivec3{0, -61, 0}, texture::floor.image, texture::floor.main);
   }
 }
