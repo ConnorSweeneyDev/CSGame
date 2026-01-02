@@ -61,9 +61,9 @@ namespace csg
              });
   }
 
-  void scene::main(const std::shared_ptr<scene> main)
+  void scene::main(const std::shared_ptr<scene> scene)
   {
-    main->set_camera<csg::camera>(glm::vec3{0.0f, 0.0f, 80.0f})
+    scene->set_camera<csg::camera>(glm::vec3{0.0f, 0.0f, 80.0f})
       ->set_object<player>("player", glm::ivec3{0, 0, 0})
       ->set_object<environment>("floor", glm::ivec3{0, -61, 0}, texture::floor.image, texture::floor.main)
       ->set_object<environment>("shop", glm::ivec3{80, 24, -1}, texture::shop.image, texture::shop.main)
@@ -75,9 +75,9 @@ namespace csg
                                 texture::background3.main);
   }
 
-  void scene::other(const std::shared_ptr<scene> other)
+  void scene::other(const std::shared_ptr<scene> scene)
   {
-    other->set_camera<csg::camera>(glm::vec3{0.0f, 0.0f, 80.0f})
+    scene->set_camera<csg::camera>(glm::vec3{0.0f, 0.0f, 80.0f})
       ->set_object<player>("player", glm::ivec3{0, 0, 0})
       ->set_object<environment>("floor", glm::ivec3{0, -61, 0}, texture::floor.image, texture::floor.main);
   }
