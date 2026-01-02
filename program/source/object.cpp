@@ -37,7 +37,7 @@ namespace csg
                  case SDL_SCANCODE_3:
                    if (!key.repeat && key.type == SDL_EVENT_KEY_DOWN)
                    {
-                     if (graphics.texture.image == csg::texture::redhood.image)
+                     if (graphics.texture.image == texture::redhood.image)
                        graphics.texture = {texture::shop.image, texture::shop.main};
                      else
                        graphics.texture = {texture::redhood.image, texture::redhood.idle, {0, 1.0, true}};

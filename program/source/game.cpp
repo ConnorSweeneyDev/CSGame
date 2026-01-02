@@ -40,6 +40,6 @@ namespace csg
 
   void game::setup(const std::shared_ptr<game> game)
   {
-    game->set_window<csg::window>()->set_current_scene("main", csg::scene::main);
+    game->set_window<csg::window>()->set_current_scene("main", scene::main);
   }
 }
