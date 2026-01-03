@@ -15,7 +15,7 @@
 namespace csg
 {
   player::player(const glm::ivec3 &translation_)
-    : cse::object(translation_, {0, 0, 0}, {1, 1, 1}, {vertex::main, fragment::main},
+    : cse::object({translation_, {0, 0, 0}, {1, 1, 1}}, {vertex::main, fragment::main},
                   {texture::redhood.image, texture::redhood.idle, {0, 1.0, true, 0.0}, {128, 128, 128, 255}, 1.0f}, {1})
   {
     hook.set("event",
@@ -146,7 +146,7 @@ namespace csg
   }
 
   environment::environment(const glm::ivec3 &translation_, const cse::image &image_, const cse::group &group_)
-    : cse::object(translation_, {0, 0, 0}, {1, 1, 1}, {vertex::main, fragment::main},
+    : cse::object({translation_, {0, 0, 0}, {1, 1, 1}}, {vertex::main, fragment::main},
                   {image_, group_, {0, 0.0, false, 0.0}, {128, 128, 128, 255}, 1.0f}, {0})
   {
   }

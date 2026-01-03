@@ -9,7 +9,7 @@
 namespace csg
 {
   camera::camera(const glm::vec3 &translation_)
-    : cse::camera(translation_, {0.0f, 0.0f, -1.0f}, {0.0f, 1.0f, 0.0f}, 45.0f)
+    : cse::camera({translation_, {0.0f, 0.0f, -1.0f}, {0.0f, 1.0f, 0.0f}}, 45.0f)
   {
     hook.set("input",
              [this](const bool *keys)
