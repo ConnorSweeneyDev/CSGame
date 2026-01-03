@@ -33,9 +33,6 @@ namespace csg
                    if (!key.repeat && key.type == SDL_EVENT_KEY_DOWN)
                      throw_lock(parent)->set_current_scene("other", other);
                    break;
-                 case SDL_SCANCODE_8:
-                   if (!key.repeat && key.type == SDL_EVENT_KEY_DOWN) camera->state.translation.value.x += 1.0f;
-                   break;
                  case SDL_SCANCODE_9:
                    if (const auto &player{try_at(objects, "player")})
                    {

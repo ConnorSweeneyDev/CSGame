@@ -15,8 +15,10 @@
 namespace csg
 {
   player::player(const glm::ivec3 &translation_)
-    : cse::object({translation_, {0, 0, 0}, {1, 1, 1}}, {vertex::main, fragment::main},
-                  {texture::redhood.image, texture::redhood.idle, {0, 1.0, true, 0.0}, {128, 128, 128, 255}, 1.0f}, {1})
+    : cse::object(
+        {translation_, {0, 0, 0}, {1, 1, 1}}, {vertex::main, fragment::main},
+        {texture::redhood.image, texture::redhood.idle, {0, 1.0, true, 0.0}, {false, false}, {128, 128, 128, 255}, 1.0},
+        {1})
   {
     hook.set("event",
              [this](const SDL_Event &event)
@@ -27,10 +29,10 @@ namespace csg
                  case SDL_SCANCODE_1:
                    if (!key.repeat && key.type == SDL_EVENT_KEY_DOWN)
                    {
-                     if (equal(graphics.texture.transparency, 1.0f))
-                       graphics.texture.transparency = 0.5f;
+                     if (equal(graphics.texture.transparency, 1.0))
+                       graphics.texture.transparency = 0.5;
                      else
-                       graphics.texture.transparency = 1.0f;
+                       graphics.texture.transparency = 1.0;
                    }
                    break;
                  case SDL_SCANCODE_2:
@@ -71,6 +73,15 @@ namespace csg
                    break;
                  case SDL_SCANCODE_5:
                    if (!key.repeat && key.type == SDL_EVENT_KEY_DOWN) throw_lock(parent)->remove_object("player");
+                   break;
+                 case SDL_SCANCODE_8:
+                   if (!key.repeat && key.type == SDL_EVENT_KEY_DOWN)
+                   {
+                     if (!graphics.texture.flip.horizontal)
+                       graphics.texture.flip.horizontal = true;
+                     else
+                       graphics.texture.flip.horizontal = false;
+                   }
                    break;
                  case SDL_SCANCODE_0:
                    if (!key.repeat && key.type == SDL_EVENT_KEY_DOWN)
@@ -147,7 +158,7 @@ namespace csg
 
   environment::environment(const glm::ivec3 &translation_, const cse::image &image_, const cse::group &group_)
     : cse::object({translation_, {0, 0, 0}, {1, 1, 1}}, {vertex::main, fragment::main},
-                  {image_, group_, {0, 0.0, false, 0.0}, {128, 128, 128, 255}, 1.0f}, {0})
+                  {image_, group_, {0, 0.0, false, 0.0}, {false, false}, {128, 128, 128, 255}, 1.0}, {0})
   {
   }
 }
