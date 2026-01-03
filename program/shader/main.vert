@@ -4,7 +4,6 @@ struct Input
   float4 color : TEXCOORD1;
   float2 texcoord : TEXCOORD2;
 };
-
 struct Output
 {
   float4 position : SV_Position;

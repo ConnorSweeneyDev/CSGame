@@ -1,7 +1,6 @@
 #include "object.hpp"
 
 #include <algorithm>
-#include <tuple>
 
 #include "SDL3/SDL_events.h"
 #include "SDL3/SDL_scancode.h"
@@ -16,8 +15,8 @@
 namespace csg
 {
   player::player(const glm::ivec3 &translation_)
-    : cse::object({translation_, {0, 0, 0}, {1, 1, 1}}, {128, 128, 128, 255}, {vertex::main, fragment::main},
-                  {texture::redhood.image, texture::redhood.idle, {0, 1.0, true, 0.0}})
+    : cse::object({translation_, {0, 0, 0}, {1, 1, 1}}, {vertex::main, fragment::main},
+                  {texture::redhood.image, texture::redhood.idle, {0, 1.0, true, 0.0}, {128, 128, 128, 255}, 1.0f}, 1)
   {
     hook.set("event",
              [this](const SDL_Event &event)
@@ -25,6 +24,15 @@ namespace csg
                if (event.type != SDL_EVENT_KEY_DOWN && event.type != SDL_EVENT_KEY_UP) return;
                switch (const auto &key{event.key}; key.scancode)
                {
+                 case SDL_SCANCODE_1:
+                   if (!key.repeat && key.type == SDL_EVENT_KEY_DOWN)
+                   {
+                     if (equal(graphics.texture.transparency, 1.0f))
+                       graphics.texture.transparency = 0.5f;
+                     else
+                       graphics.texture.transparency = 1.0f;
+                   }
+                   break;
                  case SDL_SCANCODE_2:
                    if (!key.repeat && key.type == SDL_EVENT_KEY_DOWN)
                    {
@@ -118,20 +126,20 @@ namespace csg
                  if (animation.frame == 0 && previous.graphics.texture.animation.frame == final)
                  {
                    animation.speed = 1.0;
-                   if (graphics.color.r == 128)
-                     graphics.color.r = 32;
+                   if (graphics.texture.color.r == 128)
+                     graphics.texture.color.r = 32;
                    else
-                     graphics.color.r = 128;
+                     graphics.texture.color.r = 128;
                  }
                if (previous.graphics.texture.image == texture::shop.image &&
                    graphics.texture.image != texture::shop.image)
-                 graphics.color = {128, 128, 255, 255};
+                 graphics.texture.color = {128, 128, 255, 255};
              });
   }
 
   environment::environment(const glm::ivec3 &translation_, const cse::image &image_, const cse::group &group_)
-    : cse::object({translation_, {0, 0, 0}, {1, 1, 1}}, {128, 128, 128, 255}, {vertex::main, fragment::main},
-                  {image_, group_, {0, 0.0, false, 0.0}})
+    : cse::object({translation_, {0, 0, 0}, {1, 1, 1}}, {vertex::main, fragment::main},
+                  {image_, group_, {0, 0.0, false, 0.0}, {128, 128, 128, 255}, 0.0f}, 0)
   {
   }
 }

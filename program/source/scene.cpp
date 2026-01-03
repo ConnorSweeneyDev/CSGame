@@ -40,9 +40,9 @@ namespace csg
                    if (const auto &player{try_at(objects, "player")})
                    {
                      if (!key.repeat && key.type == SDL_EVENT_KEY_DOWN)
-                       player->graphics.color = {64, 0, 0, 128};
+                       player->graphics.texture.color = {64, 0, 0, 128};
                      else if (key.type == SDL_EVENT_KEY_UP)
-                       player->graphics.color = {128, 128, 128, 255};
+                       player->graphics.texture.color = {128, 128, 128, 255};
                    }
                    break;
                  default: break;
