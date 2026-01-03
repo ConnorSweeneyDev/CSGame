@@ -46,9 +46,17 @@ namespace csg
                    if (!key.repeat && key.type == SDL_EVENT_KEY_DOWN)
                    {
                      if (graphics.texture.image == texture::redhood.image)
-                       graphics.texture = {texture::shop.image, texture::shop.main};
+                     {
+                       graphics.texture.image = texture::shop.image;
+                       graphics.texture.group = texture::shop.main;
+                       graphics.texture.animation = {};
+                     }
                      else
-                       graphics.texture = {texture::redhood.image, texture::redhood.idle, {0, 1.0, true}};
+                     {
+                       graphics.texture.image = texture::redhood.image;
+                       graphics.texture.group = texture::redhood.idle;
+                       graphics.texture.animation = {0, 1.0, true};
+                     }
                    }
                    break;
                  case SDL_SCANCODE_4:
