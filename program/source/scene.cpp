@@ -50,11 +50,10 @@ namespace csg
              [this](const float)
              {
                auto game{throw_lock(parent)};
-               if (throw_id(game->scenes, game->previous.state.scene) == "main" &&
-                   throw_id(game->scenes, game->state.scene) == "other")
+               if (game->previous.state.current.name == "main" && game->state.current.name == "other")
                  if (cse::debug)
                    cse::print<COUT>("Scene changed from \"main\" to \"other\": {}\n",
-                                    throw_lock(game->previous.state.scene)->objects.size());
+                                    game->previous.state.current.scene->objects.size());
              });
   }
 
