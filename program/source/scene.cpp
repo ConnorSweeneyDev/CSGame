@@ -84,6 +84,8 @@ namespace csg
   {
     scene->set_camera<csg::camera>(glm::vec3{0.0f, 0.0f, 80.0f})
       ->set_object<player>("player", glm::ivec3{0, 0, 0})
-      ->set_object<environment>("floor", glm::ivec3{0, -61, 0}, texture::floor.image, texture::floor.main);
+      ->set_object<environment>("floor", glm::ivec3{0, -61, 0}, texture::floor.image, texture::floor.main)
+      ->set_object<environment>("background3", glm::ivec3{0, 80, -9}, texture::background3.image,
+                                texture::background3.main);
   }
 }
