@@ -57,7 +57,6 @@ namespace csg
                if (game->state.previous.scene.name == "main" && game->state.active.scene.name == "other")
                  cse::print<COUT>("Scene changed from \"main\" to \"other\": {}\n",
                                   game->state.previous.scene.pointer->state.active.objects.size());
-
                if (!equal(state.previous.camera->state.active.translation.value.x,
                           state.active.camera->state.active.translation.value.x))
                  cse::print<COUT>("Camera moved from {} to {}\n",
