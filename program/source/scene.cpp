@@ -7,7 +7,6 @@
 #include "cse/game.hpp"
 #include "cse/print.hpp"
 #include "cse/scene.hpp"
-#include "cse/system.hpp"
 #include "cse/utility.hpp"
 #include "glm/ext/vector_float3.hpp"
 #include "glm/ext/vector_int3.hpp"
@@ -56,9 +55,8 @@ namespace csg
              {
                auto game{throw_lock(state.active.parent)};
                if (game->state.previous.scene.name == "main" && game->state.active.scene.name == "other")
-                 if (cse::debug)
-                   cse::print<COUT>("Scene changed from \"main\" to \"other\": {}\n",
-                                    game->state.previous.scene.pointer->state.active.objects.size());
+                 cse::print<COUT>("Scene changed from \"main\" to \"other\": {}\n",
+                                  game->state.previous.scene.pointer->state.active.objects.size());
 
                if (!equal(state.previous.camera->state.active.translation.value.x,
                           state.active.camera->state.active.translation.value.x))

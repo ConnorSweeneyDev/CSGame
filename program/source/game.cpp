@@ -22,6 +22,7 @@ namespace csg
                if (event.type != SDL_EVENT_KEY_DOWN || event.key.repeat) return;
                switch (const auto &key{event.key}; key.scancode)
                {
+                 case SDL_SCANCODE_F7: set_window<csg::window>(); break;
                  case SDL_SCANCODE_F8:
                    if (equal(graphics.active.frame_rate, 144.0))
                      graphics.active.frame_rate = 30.0;
@@ -41,6 +42,7 @@ namespace csg
     hook.set("pre_simulate",
              [this](const float)
              {
+               if (state.previous.window != state.active.window) cse::print<COUT>("Window changed\n");
                if (!equal(state.previous.poll_rate, state.active.poll_rate))
                  cse::print<COUT>("Poll rate changed from {} to {}\n", state.previous.poll_rate,
                                   state.active.poll_rate);
