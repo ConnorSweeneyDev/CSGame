@@ -27,19 +27,20 @@ namespace csg
                switch (const auto &key{event.key}; key.scancode)
                {
                  case SDL_SCANCODE_6:
-                   if (!key.repeat && key.type == SDL_EVENT_KEY_DOWN) throw_lock(parent)->set_current_scene("main");
+                   if (!key.repeat && key.type == SDL_EVENT_KEY_DOWN)
+                     throw_lock(state.active.parent)->set_current_scene("main");
                    break;
                  case SDL_SCANCODE_7:
                    if (!key.repeat && key.type == SDL_EVENT_KEY_DOWN)
-                     throw_lock(parent)->set_current_scene("other", other);
+                     throw_lock(state.active.parent)->set_current_scene("other", other);
                    break;
                  case SDL_SCANCODE_9:
-                   if (const auto &player{try_at(objects, "player")})
+                   if (const auto &player{try_at(state.active.objects, "player")})
                    {
                      if (!key.repeat && key.type == SDL_EVENT_KEY_DOWN)
-                       player->graphics.texture.color = {64, 0, 0, 128};
+                       player->graphics.active.texture.color = {64, 0, 0, 128};
                      else if (key.type == SDL_EVENT_KEY_UP)
-                       player->graphics.texture.color = {128, 128, 128, 255};
+                       player->graphics.active.texture.color = {128, 128, 128, 255};
                    }
                    break;
                  default: break;
@@ -49,11 +50,11 @@ namespace csg
     hook.set("pre_simulate",
              [this](const float)
              {
-               auto game{throw_lock(parent)};
-               if (game->previous.state.current.name == "main" && game->state.current.name == "other")
+               auto game{throw_lock(state.active.parent)};
+               if (game->state.previous.scene.name == "main" && game->state.active.scene.name == "other")
                  if (cse::debug)
                    cse::print<COUT>("Scene changed from \"main\" to \"other\": {}\n",
-                                    game->previous.state.current.scene->objects.size());
+                                    game->state.previous.scene.pointer->state.active.objects.size());
              });
   }
 

@@ -14,7 +14,7 @@ namespace csg
     hook.set("input",
              [this](const bool *keys)
              {
-               auto &acceleration{state.translation.acceleration};
+               auto &acceleration{state.active.translation.acceleration};
                auto difference{50.0f};
                if (keys[SDL_SCANCODE_I]) acceleration.y += difference;
                if (keys[SDL_SCANCODE_K]) acceleration.y -= difference;
@@ -27,9 +27,9 @@ namespace csg
     hook.set("simulate",
              [this](const float poll_rate)
              {
-               auto &velocity{state.translation.velocity};
-               auto &acceleration{state.translation.acceleration};
-               auto &value{state.translation.value};
+               auto &velocity{state.active.translation.velocity};
+               auto &acceleration{state.active.translation.acceleration};
+               auto &value{state.active.translation.value};
                auto friction{10.0f};
                velocity += acceleration * poll_rate;
                acceleration = {0.0f, 0.0f, 0.0f};

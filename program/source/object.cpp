@@ -29,42 +29,42 @@ namespace csg
                  case SDL_SCANCODE_1:
                    if (!key.repeat && key.type == SDL_EVENT_KEY_DOWN)
                    {
-                     if (equal(graphics.texture.transparency, 1.0))
-                       graphics.texture.transparency = 0.5;
+                     if (equal(graphics.active.texture.transparency, 1.0))
+                       graphics.active.texture.transparency = 0.5;
                      else
-                       graphics.texture.transparency = 1.0;
+                       graphics.active.texture.transparency = 1.0;
                    }
                    break;
                  case SDL_SCANCODE_2:
                    if (!key.repeat && key.type == SDL_EVENT_KEY_DOWN)
                    {
-                     if (equal(graphics.texture.animation.speed, 1.0))
-                       graphics.texture.animation.speed = -1.0;
+                     if (equal(graphics.active.texture.animation.speed, 1.0))
+                       graphics.active.texture.animation.speed = -1.0;
                      else
-                       graphics.texture.animation.speed = 1.0;
+                       graphics.active.texture.animation.speed = 1.0;
                    }
                    break;
                  case SDL_SCANCODE_3:
                    if (!key.repeat && key.type == SDL_EVENT_KEY_DOWN)
                    {
-                     if (graphics.texture.image == texture::redhood.image)
+                     if (graphics.active.texture.image == texture::redhood.image)
                      {
-                       graphics.texture.image = texture::shop.image;
-                       graphics.texture.group = texture::shop.main;
-                       graphics.texture.animation = {};
+                       graphics.active.texture.image = texture::shop.image;
+                       graphics.active.texture.group = texture::shop.main;
+                       graphics.active.texture.animation = {};
                      }
                      else
                      {
-                       graphics.texture.image = texture::redhood.image;
-                       graphics.texture.group = texture::redhood.idle;
-                       graphics.texture.animation = {0, 1.0, true};
+                       graphics.active.texture.image = texture::redhood.image;
+                       graphics.active.texture.group = texture::redhood.idle;
+                       graphics.active.texture.animation = {0, 1.0, true};
                      }
                    }
                    break;
                  case SDL_SCANCODE_4:
                    if (!key.repeat && key.type == SDL_EVENT_KEY_DOWN)
                    {
-                     if (auto scene{throw_lock(parent)}; scene->objects.contains("temp"))
+                     if (auto scene{throw_lock(state.active.parent)}; scene->state.active.objects.contains("temp"))
                        scene->remove_object("temp");
                      else
                        scene->set_object<environment>("temp", glm::ivec3{-80, 24, -1}, texture::shop.image,
@@ -72,22 +72,23 @@ namespace csg
                    }
                    break;
                  case SDL_SCANCODE_5:
-                   if (!key.repeat && key.type == SDL_EVENT_KEY_DOWN) throw_lock(parent)->remove_object("player");
+                   if (!key.repeat && key.type == SDL_EVENT_KEY_DOWN)
+                     throw_lock(state.active.parent)->remove_object("player");
                    break;
                  case SDL_SCANCODE_8:
                    if (!key.repeat && key.type == SDL_EVENT_KEY_DOWN)
                    {
-                     if (!graphics.texture.flip.horizontal)
-                       graphics.texture.flip.horizontal = true;
+                     if (!graphics.active.texture.flip.horizontal)
+                       graphics.active.texture.flip.horizontal = true;
                      else
-                       graphics.texture.flip.horizontal = false;
+                       graphics.active.texture.flip.horizontal = false;
                    }
                    break;
                  case SDL_SCANCODE_0:
                    if (!key.repeat && key.type == SDL_EVENT_KEY_DOWN)
                    {
-                     auto &animation{graphics.texture.animation};
-                     auto &group{graphics.texture.group};
+                     auto &animation{graphics.active.texture.animation};
+                     auto &group{graphics.active.texture.group};
                      if (group == texture::redhood.idle)
                      {
                        group = texture::redhood.jump;
@@ -102,7 +103,7 @@ namespace csg
     hook.set("input",
              [this](const bool *keys)
              {
-               auto &acceleration{state.translation.acceleration};
+               auto &acceleration{state.active.translation.acceleration};
                auto difference{50.0f};
                if (keys[SDL_SCANCODE_E]) acceleration.y += difference;
                if (keys[SDL_SCANCODE_D]) acceleration.y -= difference;
@@ -115,9 +116,9 @@ namespace csg
     hook.set("simulate",
              [this](const float poll_rate)
              {
-               auto &velocity{state.translation.velocity};
-               auto &acceleration{state.translation.acceleration};
-               auto &value{state.translation.value};
+               auto &velocity{state.active.translation.velocity};
+               auto &acceleration{state.active.translation.acceleration};
+               auto &value{state.active.translation.value};
                auto friction{10.0f};
                velocity += acceleration * poll_rate;
                acceleration = {0.0f, 0.0f, 0.0f};
@@ -130,29 +131,27 @@ namespace csg
                    velocity[index] = 0.0f;
                value += velocity * poll_rate;
 
-               auto &animation{graphics.texture.animation};
-               auto &group{graphics.texture.group};
+               auto &animation{graphics.active.texture.animation};
+               auto &group{graphics.active.texture.group};
                auto final{group.frames.size() - 1};
                if (group == texture::redhood.jump)
-               {
                  if (animation.frame == final && animation.elapsed >= group.frames[final].duration)
                  {
                    group = texture::redhood.idle;
                    animation = {0, 2.0, true};
                  }
-               }
-               if (previous.graphics.texture.group == group && group == texture::redhood.idle)
-                 if (animation.frame == 0 && previous.graphics.texture.animation.frame == final)
+               if (graphics.previous.texture.group == group && group == texture::redhood.idle)
+                 if (animation.frame == 0 && graphics.previous.texture.animation.frame == final)
                  {
                    animation.speed = 1.0;
-                   if (graphics.texture.color.r == 128)
-                     graphics.texture.color.r = 32;
+                   if (graphics.active.texture.color.r == 128)
+                     graphics.active.texture.color.r = 32;
                    else
-                     graphics.texture.color.r = 128;
+                     graphics.active.texture.color.r = 128;
                  }
-               if (previous.graphics.texture.image == texture::shop.image &&
-                   graphics.texture.image != texture::shop.image)
-                 graphics.texture.color = {128, 128, 255, 255};
+               if (graphics.previous.texture.image == texture::shop.image &&
+                   graphics.active.texture.image != texture::shop.image)
+                 graphics.active.texture.color = {128, 128, 255, 255};
              });
   }
 
