@@ -34,6 +34,10 @@ namespace csg
                    if (!key.repeat && key.type == SDL_EVENT_KEY_DOWN)
                      throw_lock(state.active.parent)->set_current_scene("other", other);
                    break;
+                 case SDL_SCANCODE_8:
+                   if (!key.repeat && key.type == SDL_EVENT_KEY_DOWN)
+                     set_camera<csg::camera>(glm::vec3{0.0f, 0.0f, 80.0f});
+                   break;
                  case SDL_SCANCODE_9:
                    if (const auto &player{try_at(state.active.objects, "player")})
                    {
@@ -55,6 +59,12 @@ namespace csg
                  if (cse::debug)
                    cse::print<COUT>("Scene changed from \"main\" to \"other\": {}\n",
                                     game->state.previous.scene.pointer->state.active.objects.size());
+
+               if (!equal(state.previous.camera->state.active.translation.value.x,
+                          state.active.camera->state.active.translation.value.x))
+                 cse::print<COUT>("Camera moved from {} to {}\n",
+                                  state.previous.camera->state.active.translation.value.x,
+                                  state.active.camera->state.active.translation.value.x);
              });
   }
 

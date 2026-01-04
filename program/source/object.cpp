@@ -75,15 +75,6 @@ namespace csg
                    if (!key.repeat && key.type == SDL_EVENT_KEY_DOWN)
                      throw_lock(state.active.parent)->remove_object("player");
                    break;
-                 case SDL_SCANCODE_8:
-                   if (!key.repeat && key.type == SDL_EVENT_KEY_DOWN)
-                   {
-                     if (!graphics.active.texture.flip.horizontal)
-                       graphics.active.texture.flip.horizontal = true;
-                     else
-                       graphics.active.texture.flip.horizontal = false;
-                   }
-                   break;
                  case SDL_SCANCODE_0:
                    if (!key.repeat && key.type == SDL_EVENT_KEY_DOWN)
                    {
