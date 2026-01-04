@@ -13,7 +13,7 @@
 
 namespace csg
 {
-  game::game() : cse::game(60.0, 144.0, 16.0 / 9.0)
+  game::game() : cse::game(300.0, 144.0, 16.0 / 9.0)
   {
     hook.set("pre_event",
              [this](const SDL_Event &event)
@@ -35,10 +35,10 @@ namespace csg
                      graphics.active.frame_rate = 144.0;
                    break;
                  case SDL_SCANCODE_F10:
-                   if (equal(state.active.poll_rate, 60.0))
-                     state.active.poll_rate = 300.0;
-                   else
+                   if (equal(state.active.poll_rate, 300.0))
                      state.active.poll_rate = 60.0;
+                   else
+                     state.active.poll_rate = 300.0;
                    break;
                  default: break;
                }
