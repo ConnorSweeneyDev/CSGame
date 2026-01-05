@@ -9,7 +9,7 @@
 namespace csg
 {
   camera::camera(const glm::vec3 &translation_)
-    : cse::camera({translation_, {0.0f, 0.0f, -1.0f}, {0.0f, 1.0f, 0.0f}}, 45.0f)
+    : cse::camera({translation_, {0.0f, 0.0f, -1.0f}, {0.0f, 1.0f, 0.0f}}, 45.0)
   {
     hook.set("input",
              [this](const bool *keys)
@@ -22,6 +22,8 @@ namespace csg
                if (keys[SDL_SCANCODE_J]) acceleration.x -= difference;
                if (keys[SDL_SCANCODE_U]) acceleration.z -= difference;
                if (keys[SDL_SCANCODE_O]) acceleration.z += difference;
+               if (keys[SDL_SCANCODE_H]) graphics.active.fov -= 0.05;
+               if (keys[SDL_SCANCODE_SEMICOLON]) graphics.active.fov += 0.05;
              });
 
     hook.set("simulate",
@@ -41,6 +43,8 @@ namespace csg
                  else
                    velocity[index] = 0.0f;
                value += velocity * poll_rate;
+               if (graphics.active.fov < 30.0) graphics.active.fov = 30.0;
+               if (graphics.active.fov > 60.0) graphics.active.fov = 60.0;
              });
   }
 }

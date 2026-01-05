@@ -4,6 +4,7 @@
 
 #include "SDL3/SDL_events.h"
 #include "SDL3/SDL_scancode.h"
+#include "cse/print.hpp"
 #include "cse/window.hpp"
 #include "glm/ext/vector_uint2.hpp"
 
@@ -22,6 +23,15 @@ namespace csg
                  case SDL_SCANCODE_F12: state.active.vsync = !state.active.vsync; break;
                  default: break;
                }
+             });
+
+    hook.set("simulate",
+             [this](const float)
+             {
+               if (!state.previous.vsync && state.active.vsync)
+                 cse::print<COUT>("VSync toggled on\n");
+               else if (state.previous.vsync && !state.active.vsync)
+                 cse::print<COUT>("VSync toggled off\n");
              });
   }
 }

@@ -26,15 +26,6 @@ namespace csg
                if (event.type != SDL_EVENT_KEY_DOWN && event.type != SDL_EVENT_KEY_UP) return;
                switch (const auto &key{event.key}; key.scancode)
                {
-                 case SDL_SCANCODE_1:
-                   if (!key.repeat && key.type == SDL_EVENT_KEY_DOWN)
-                   {
-                     if (equal(graphics.active.texture.transparency, 1.0))
-                       graphics.active.texture.transparency = 0.5;
-                     else
-                       graphics.active.texture.transparency = 1.0;
-                   }
-                   break;
                  case SDL_SCANCODE_2:
                    if (!key.repeat && key.type == SDL_EVENT_KEY_DOWN)
                    {
@@ -102,6 +93,8 @@ namespace csg
                if (keys[SDL_SCANCODE_S]) acceleration.x -= difference;
                if (keys[SDL_SCANCODE_W]) acceleration.z += difference;
                if (keys[SDL_SCANCODE_R]) acceleration.z -= difference;
+               if (keys[SDL_SCANCODE_A]) graphics.active.texture.transparency -= 0.005;
+               if (keys[SDL_SCANCODE_G]) graphics.active.texture.transparency += 0.005;
              });
 
     hook.set("simulate",
@@ -121,6 +114,8 @@ namespace csg
                  else
                    velocity[index] = 0.0f;
                value += velocity * poll_rate;
+               if (graphics.active.texture.transparency < 0.0) graphics.active.texture.transparency = 0.0;
+               if (graphics.active.texture.transparency > 1.0) graphics.active.texture.transparency = 1.0;
 
                auto &animation{graphics.active.texture.animation};
                auto &group{graphics.active.texture.group};
