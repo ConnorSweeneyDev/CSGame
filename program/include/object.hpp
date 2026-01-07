@@ -10,6 +10,10 @@ namespace csg
   {
   public:
     player(const glm::ivec3 &translation_);
+
+  private:
+    float max_velocity{200.0f};
+    float friction{50.0f};
   };
 
   class environment : public cse::object

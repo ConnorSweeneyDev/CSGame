@@ -9,5 +9,9 @@ namespace csg
   {
   public:
     camera(const glm::vec3 &translation_);
+
+  private:
+    float max_velocity{200.0f};
+    float friction{50.0f};
   };
 }
