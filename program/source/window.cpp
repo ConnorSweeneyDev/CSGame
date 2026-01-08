@@ -12,7 +12,7 @@ namespace csg
 {
   window::window() : cse::window("CSGame", {1280, 720}, false, true)
   {
-    hook.set("event",
+    hook.set(hooks::EVENT(),
              [this](const SDL_Event &event)
              {
                if (event.type != SDL_EVENT_KEY_DOWN || event.key.repeat) return;
@@ -25,7 +25,7 @@ namespace csg
                }
              });
 
-    hook.set("simulate",
+    hook.set(hooks::SIMULATE(),
              [this](const float)
              {
                if (!state.previous.vsync && state.active.vsync)

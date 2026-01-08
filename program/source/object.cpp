@@ -21,7 +21,7 @@ namespace csg
         {texture::redhood.image, texture::redhood.idle, {0, 1.0, true, 0.0}, {false, false}, {128, 128, 128, 255}, 1.0},
         {1})
   {
-    hook.set("event",
+    hook.set(hooks::EVENT(),
              [this](const SDL_Event &event)
              {
                if (event.type != SDL_EVENT_KEY_DOWN && event.type != SDL_EVENT_KEY_UP) return;
@@ -83,7 +83,7 @@ namespace csg
                }
              });
 
-    hook.set("input",
+    hook.set(hooks::INPUT(),
              [this](const bool *keys)
              {
                auto &acceleration{state.active.translation.acceleration};
@@ -97,7 +97,7 @@ namespace csg
                if (keys[SDL_SCANCODE_G]) graphics.active.texture.transparency += 0.005;
              });
 
-    hook.set("simulate",
+    hook.set(hooks::SIMULATE(),
              [this](const float poll_rate)
              {
                auto &velocity{state.active.translation.velocity};

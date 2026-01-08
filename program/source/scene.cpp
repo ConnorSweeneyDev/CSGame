@@ -19,7 +19,7 @@ namespace csg
 {
   scene::scene() : cse::scene()
   {
-    hook.set("pre_event",
+    hook.set(hooks::PRE_EVENT(),
              [this](const SDL_Event &event)
              {
                if (event.type != SDL_EVENT_KEY_DOWN && event.type != SDL_EVENT_KEY_UP) return;
@@ -50,7 +50,7 @@ namespace csg
                }
              });
 
-    hook.set("pre_simulate",
+    hook.set(hooks::PRE_SIMULATE(),
              [this](const float)
              {
                auto game{throw_lock(state.active.parent)};

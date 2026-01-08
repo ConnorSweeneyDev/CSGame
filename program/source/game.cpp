@@ -15,7 +15,7 @@ namespace csg
 {
   game::game() : cse::game(300.0, 144.0, 16.0 / 9.0)
   {
-    hook.set("pre_event",
+    hook.set(hooks::PRE_EVENT(),
              [this](const SDL_Event &event)
              {
                if (event.type != SDL_EVENT_KEY_DOWN || event.key.repeat) return;
@@ -45,7 +45,7 @@ namespace csg
              });
 
     hook.set(
-      "pre_simulate",
+      hooks::PRE_SIMULATE(),
       [this](const float)
       {
         if (state.previous.window != state.active.window) cse::print<COUT>("Window changed\n");
