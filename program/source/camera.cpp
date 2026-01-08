@@ -12,7 +12,7 @@ namespace csg
   camera::camera(const glm::vec3 &translation_)
     : cse::camera({translation_, {0.0f, 0.0f, -1.0f}, {0.0f, 1.0f, 0.0f}}, 45.0)
   {
-    hook.set(hooks::INPUT(),
+    hook.set(hooks::INPUT,
              [this](const bool *keys)
              {
                auto &acceleration{state.active.translation.acceleration};
@@ -26,7 +26,7 @@ namespace csg
                if (keys[SDL_SCANCODE_SEMICOLON]) graphics.active.fov += 0.05;
              });
 
-    hook.set(hooks::SIMULATE(),
+    hook.set(hooks::SIMULATE,
              [this](const float poll_rate)
              {
                auto &velocity{state.active.translation.velocity};
