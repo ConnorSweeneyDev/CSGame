@@ -19,50 +19,50 @@ namespace csg
 {
   scene::scene() : cse::scene()
   {
-    hook.set(hooks::PRE_EVENT,
-             [this](const SDL_Event &event)
-             {
-               if (event.type != SDL_EVENT_KEY_DOWN && event.type != SDL_EVENT_KEY_UP) return;
-               switch (const auto &key{event.key}; key.scancode)
-               {
-                 case SDL_SCANCODE_6:
-                   if (!key.repeat && key.type == SDL_EVENT_KEY_DOWN)
-                     throw_lock(state.active.parent)->set_current_scene("main");
-                   break;
-                 case SDL_SCANCODE_7:
-                   if (!key.repeat && key.type == SDL_EVENT_KEY_DOWN)
-                     throw_lock(state.active.parent)->set_current_scene("other", other);
-                   break;
-                 case SDL_SCANCODE_8:
-                   if (!key.repeat && key.type == SDL_EVENT_KEY_DOWN)
-                     set_camera<csg::camera>(glm::vec3{0.0f, 0.0f, 80.0f});
-                   break;
-                 case SDL_SCANCODE_9:
-                   if (const auto &player{try_at(state.active.objects, "player")})
-                   {
-                     if (!key.repeat && key.type == SDL_EVENT_KEY_DOWN)
-                       player->graphics.active.texture.color = {64, 0, 0, 128};
-                     else if (key.type == SDL_EVENT_KEY_UP)
-                       player->graphics.active.texture.color = {128, 128, 128, 255};
-                   }
-                   break;
-                 default: break;
-               }
-             });
+    hooks.set(hook::PRE_EVENT,
+              [this](const SDL_Event &event)
+              {
+                if (event.type != SDL_EVENT_KEY_DOWN && event.type != SDL_EVENT_KEY_UP) return;
+                switch (const auto &key{event.key}; key.scancode)
+                {
+                  case SDL_SCANCODE_6:
+                    if (!key.repeat && key.type == SDL_EVENT_KEY_DOWN)
+                      throw_lock(state.active.parent)->set_current_scene("main");
+                    break;
+                  case SDL_SCANCODE_7:
+                    if (!key.repeat && key.type == SDL_EVENT_KEY_DOWN)
+                      throw_lock(state.active.parent)->set_current_scene("other", other);
+                    break;
+                  case SDL_SCANCODE_8:
+                    if (!key.repeat && key.type == SDL_EVENT_KEY_DOWN)
+                      set_camera<csg::camera>(glm::vec3{0.0f, 0.0f, 80.0f});
+                    break;
+                  case SDL_SCANCODE_9:
+                    if (const auto &player{try_at(state.active.objects, "player")})
+                    {
+                      if (!key.repeat && key.type == SDL_EVENT_KEY_DOWN)
+                        player->graphics.active.texture.color = {64, 0, 0, 128};
+                      else if (key.type == SDL_EVENT_KEY_UP)
+                        player->graphics.active.texture.color = {128, 128, 128, 255};
+                    }
+                    break;
+                  default: break;
+                }
+              });
 
-    hook.set(hooks::PRE_SIMULATE,
-             [this](const float)
-             {
-               auto game{throw_lock(state.active.parent)};
-               if (game->state.previous.scene.name == "main" && game->state.active.scene.name == "other")
-                 cse::print<COUT>("Scene changed from \"main\" to \"other\": {}\n",
-                                  game->state.previous.scene.pointer->state.active.objects.size());
-               if (!equal(state.previous.camera->state.active.translation.value.x,
-                          state.active.camera->state.active.translation.value.x))
-                 cse::print<COUT>("Camera moved from {} to {}\n",
-                                  state.previous.camera->state.active.translation.value.x,
-                                  state.active.camera->state.active.translation.value.x);
-             });
+    hooks.set(hook::PRE_SIMULATE,
+              [this](const float)
+              {
+                auto game{throw_lock(state.active.parent)};
+                if (game->state.previous.scene.name == "main" && game->state.active.scene.name == "other")
+                  cse::print<COUT>("Scene changed from \"main\" to \"other\": {}\n",
+                                   game->state.previous.scene.pointer->state.active.objects.size());
+                if (!equal(state.previous.camera->state.active.translation.value.x,
+                           state.active.camera->state.active.translation.value.x))
+                  cse::print<COUT>("Camera moved from {} to {}\n",
+                                   state.previous.camera->state.active.translation.value.x,
+                                   state.active.camera->state.active.translation.value.x);
+              });
   }
 
   void scene::main(const std::shared_ptr<scene> scene)
