@@ -21,7 +21,7 @@ namespace csg
                 if (event.type != SDL_EVENT_KEY_DOWN || event.key.repeat) return;
                 switch (const auto &key{event.key}; key.scancode)
                 {
-                  case SDL_SCANCODE_F7: set_window<csg::window>(); break;
+                  case SDL_SCANCODE_F7: set<csg::window>(); break;
                   case SDL_SCANCODE_F8:
                     if (equal(graphics.active.aspect_ratio, 16.0 / 9.0))
                       graphics.active.aspect_ratio = 4.0 / 3.0;
@@ -61,8 +61,5 @@ namespace csg
       });
   }
 
-  void game::setup(const std::shared_ptr<game> game)
-  {
-    game->set_window<csg::window>()->set_current_scene("main", scene::main);
-  }
+  void game::setup(const std::shared_ptr<game> game) { game->set<csg::window>().current("main", scene::main); }
 }

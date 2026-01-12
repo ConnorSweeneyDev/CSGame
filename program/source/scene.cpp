@@ -26,16 +26,14 @@ namespace csg
                 switch (const auto &key{event.key}; key.scancode)
                 {
                   case SDL_SCANCODE_6:
-                    if (!key.repeat && key.type == SDL_EVENT_KEY_DOWN)
-                      throw_lock(state.active.parent)->set_current_scene("main");
+                    if (!key.repeat && key.type == SDL_EVENT_KEY_DOWN) throw_lock(state.active.parent)->current("main");
                     break;
                   case SDL_SCANCODE_7:
                     if (!key.repeat && key.type == SDL_EVENT_KEY_DOWN)
-                      throw_lock(state.active.parent)->set_current_scene("other", other);
+                      throw_lock(state.active.parent)->current("other", other);
                     break;
                   case SDL_SCANCODE_8:
-                    if (!key.repeat && key.type == SDL_EVENT_KEY_DOWN)
-                      set_camera<csg::camera>(glm::vec3{0.0f, 0.0f, 80.0f});
+                    if (!key.repeat && key.type == SDL_EVENT_KEY_DOWN) set<csg::camera>(glm::vec3{0.0f, 0.0f, 80.0f});
                     break;
                   case SDL_SCANCODE_9:
                     if (const auto &player{try_at(state.active.objects, "player")})
@@ -67,24 +65,20 @@ namespace csg
 
   void scene::main(const std::shared_ptr<scene> scene)
   {
-    scene->set_camera<csg::camera>(glm::vec3{0.0f, 0.0f, 80.0f})
-      ->set_object<player>("player", glm::ivec3{0, 0, 0})
-      ->set_object<environment>("floor", glm::ivec3{0, -61, 0}, texture::floor.image, texture::floor.main)
-      ->set_object<environment>("shop", glm::ivec3{80, 24, -1}, texture::shop.image, texture::shop.main)
-      ->set_object<environment>("background1", glm::ivec3{0, 80, -3}, texture::background1.image,
-                                texture::background1.main)
-      ->set_object<environment>("background2", glm::ivec3{0, 80, -6}, texture::background2.image,
-                                texture::background2.main)
-      ->set_object<environment>("background3", glm::ivec3{0, 80, -9}, texture::background3.image,
-                                texture::background3.main);
+    scene->set<csg::camera>(glm::vec3{0.0f, 0.0f, 80.0f})
+      .set<player>("player", glm::ivec3{0, 0, 0})
+      .set<environment>("floor", glm::ivec3{0, -61, 0}, texture::floor.image, texture::floor.main)
+      .set<environment>("shop", glm::ivec3{80, 24, -1}, texture::shop.image, texture::shop.main)
+      .set<environment>("background1", glm::ivec3{0, 80, -3}, texture::background1.image, texture::background1.main)
+      .set<environment>("background2", glm::ivec3{0, 80, -6}, texture::background2.image, texture::background2.main)
+      .set<environment>("background3", glm::ivec3{0, 80, -9}, texture::background3.image, texture::background3.main);
   }
 
   void scene::other(const std::shared_ptr<scene> scene)
   {
-    scene->set_camera<csg::camera>(glm::vec3{0.0f, 0.0f, 80.0f})
-      ->set_object<player>("player", glm::ivec3{0, 0, 0})
-      ->set_object<environment>("floor", glm::ivec3{0, -61, 0}, texture::floor.image, texture::floor.main)
-      ->set_object<environment>("background3", glm::ivec3{0, 80, -9}, texture::background3.image,
-                                texture::background3.main);
+    scene->set<csg::camera>(glm::vec3{0.0f, 0.0f, 80.0f})
+      .set<player>("player", glm::ivec3{0, 0, 0})
+      .set<environment>("floor", glm::ivec3{0, -61, 0}, texture::floor.image, texture::floor.main)
+      .set<environment>("background3", glm::ivec3{0, 80, -9}, texture::background3.image, texture::background3.main);
   }
 }

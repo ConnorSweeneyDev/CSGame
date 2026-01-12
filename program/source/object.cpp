@@ -57,15 +57,15 @@ namespace csg
                     if (!key.repeat && key.type == SDL_EVENT_KEY_DOWN)
                     {
                       if (auto scene{throw_lock(state.active.parent)}; scene->state.active.objects.contains("temp"))
-                        scene->remove_object("temp");
+                        scene->remove("temp");
                       else
-                        scene->set_object<environment>("temp", glm::ivec3{-80, 24, -1}, texture::shop.image,
-                                                       texture::shop.main);
+                        scene->set<environment>("temp", glm::ivec3{-80, 24, -1}, texture::shop.image,
+                                                texture::shop.main);
                     }
                     break;
                   case SDL_SCANCODE_5:
                     if (!key.repeat && key.type == SDL_EVENT_KEY_DOWN)
-                      throw_lock(state.active.parent)->remove_object("player");
+                      throw_lock(state.active.parent)->remove("player");
                     break;
                   case SDL_SCANCODE_0:
                     if (!key.repeat && key.type == SDL_EVENT_KEY_DOWN)
