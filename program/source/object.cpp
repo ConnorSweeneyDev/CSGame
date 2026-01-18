@@ -40,17 +40,23 @@ namespace csg
                     if (!key.repeat && key.type == SDL_EVENT_KEY_DOWN)
                     {
                       if (graphics.active.texture.image == texture::redhood.image)
-                      {
-                        graphics.active.texture.image = texture::shop.image;
-                        graphics.active.texture.group = texture::shop.main;
-                        graphics.active.texture.animation = {};
-                      }
+                        timers.set("texture_change", 1.0,
+                                   [this](const bool should)
+                                   {
+                                     if (!should) return;
+                                     graphics.active.texture.image = texture::shop.image;
+                                     graphics.active.texture.group = texture::shop.main;
+                                     graphics.active.texture.animation = {};
+                                   });
                       else
-                      {
-                        graphics.active.texture.image = texture::redhood.image;
-                        graphics.active.texture.group = texture::redhood.idle;
-                        graphics.active.texture.animation = {0, 1.0, true};
-                      }
+                        timers.set("texture_change", 1.0,
+                                   [this](const bool should)
+                                   {
+                                     if (!should) return;
+                                     graphics.active.texture.image = texture::redhood.image;
+                                     graphics.active.texture.group = texture::redhood.idle;
+                                     graphics.active.texture.animation = {0, 1.0, true};
+                                   });
                     }
                     break;
                   case SDL_SCANCODE_4:
@@ -118,6 +124,8 @@ namespace csg
                 value += velocity * poll_rate;
                 if (graphics.active.texture.transparency < 0.0) graphics.active.texture.transparency = 0.0;
                 if (graphics.active.texture.transparency > 1.0) graphics.active.texture.transparency = 1.0;
+
+                timers.call<void(const bool)>("texture_change", true);
 
                 auto &animation{graphics.active.texture.animation};
                 auto &group{graphics.active.texture.group};
