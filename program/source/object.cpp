@@ -27,16 +27,7 @@ namespace csg
                 if (event.type != SDL_EVENT_KEY_DOWN && event.type != SDL_EVENT_KEY_UP) return;
                 switch (const auto &key{event.key}; key.scancode)
                 {
-                  case SDL_SCANCODE_2:
-                    if (!key.repeat && key.type == SDL_EVENT_KEY_DOWN)
-                    {
-                      if (equal(graphics.active.texture.animation.speed, 1.0))
-                        graphics.active.texture.animation.speed = -1.0;
-                      else
-                        graphics.active.texture.animation.speed = 1.0;
-                    }
-                    break;
-                  case SDL_SCANCODE_3:
+                  case SDL_SCANCODE_1:
                     if (!key.repeat && key.type == SDL_EVENT_KEY_DOWN)
                     {
                       if (graphics.active.texture.image == texture::redhood.image)
@@ -57,6 +48,18 @@ namespace csg
                                      graphics.active.texture.group = texture::redhood.idle;
                                      graphics.active.texture.animation = {0, 1.0, true};
                                    });
+                    }
+                    break;
+                  case SDL_SCANCODE_2:
+                    if (!key.repeat && key.type == SDL_EVENT_KEY_DOWN) timers.remove("texture_change");
+                    break;
+                  case SDL_SCANCODE_3:
+                    if (!key.repeat && key.type == SDL_EVENT_KEY_DOWN)
+                    {
+                      if (equal(graphics.active.texture.animation.speed, 1.0))
+                        graphics.active.texture.animation.speed = -1.0;
+                      else
+                        graphics.active.texture.animation.speed = 1.0;
                     }
                     break;
                   case SDL_SCANCODE_4:
