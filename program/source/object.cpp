@@ -130,8 +130,8 @@ namespace csg
 
                 timers.call<void(const bool)>("texture_change", true);
 
-                auto &animation{graphics.active.texture.animation};
                 auto &group{graphics.active.texture.group};
+                auto &animation{graphics.active.texture.animation};
                 auto final{group.frames.size() - 1};
                 if (group == texture::redhood.jump)
                   if (animation.frame == final && animation.elapsed >= group.frames[final].duration)
