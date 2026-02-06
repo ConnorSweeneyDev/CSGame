@@ -95,7 +95,7 @@ namespace csg
     hooks.set(hook::INPUT,
               [this](const bool *keys)
               {
-                auto &acceleration{state.active.translation.acceleration};
+                auto &acceleration{state.active.translation.curve};
                 if (keys[SDL_SCANCODE_E]) acceleration.y += max_velocity;
                 if (keys[SDL_SCANCODE_D]) acceleration.y -= max_velocity;
                 if (keys[SDL_SCANCODE_F]) acceleration.x += max_velocity;
@@ -109,9 +109,9 @@ namespace csg
     hooks.set(hook::SIMULATE,
               [this](const float poll_rate)
               {
-                auto &velocity{state.active.translation.velocity};
-                auto &acceleration{state.active.translation.acceleration};
-                auto &value{state.active.translation.value};
+                auto &position{state.active.translation.value};
+                auto &velocity{state.active.translation.rate};
+                auto &acceleration{state.active.translation.curve};
                 velocity += acceleration * poll_rate;
                 acceleration = {0.0f, 0.0f, 0.0f};
                 for (int index{}; index < 3; ++index)
@@ -124,7 +124,7 @@ namespace csg
                   else
                     velocity[index] = 0.0f;
                 }
-                value += velocity * poll_rate;
+                position += velocity * poll_rate;
                 if (graphics.active.texture.transparency < 0.0) graphics.active.texture.transparency = 0.0;
                 if (graphics.active.texture.transparency > 1.0) graphics.active.texture.transparency = 1.0;
 
