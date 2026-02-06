@@ -13,5 +13,6 @@ namespace csg
   private:
     float max_velocity{200.0f};
     float friction{50.0f};
+    double fov_change{10.0};
   };
 }

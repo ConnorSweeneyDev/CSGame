@@ -22,8 +22,10 @@ namespace csg
                 if (keys[SDL_SCANCODE_J]) acceleration.x -= max_velocity;
                 if (keys[SDL_SCANCODE_U]) acceleration.z -= max_velocity;
                 if (keys[SDL_SCANCODE_O]) acceleration.z += max_velocity;
-                if (keys[SDL_SCANCODE_H]) graphics.active.fov -= 0.05;
-                if (keys[SDL_SCANCODE_SEMICOLON]) graphics.active.fov += 0.05;
+
+                auto &fov_rate{graphics.active.fov.rate};
+                if (keys[SDL_SCANCODE_H]) fov_rate -= fov_change;
+                if (keys[SDL_SCANCODE_SEMICOLON]) fov_rate += fov_change;
               });
 
     hooks.set(hook::SIMULATE,
@@ -45,8 +47,13 @@ namespace csg
                     velocity[index] = 0.0f;
                 }
                 position += velocity * poll_rate;
-                if (graphics.active.fov < 30.0) graphics.active.fov = 30.0;
-                if (graphics.active.fov > 60.0) graphics.active.fov = 60.0;
+
+                auto &fov_value{graphics.active.fov.value};
+                auto &fov_rate{graphics.active.fov.rate};
+                fov_value += fov_rate * poll_rate;
+                fov_rate = 0.0;
+                if (graphics.active.fov.value < 30.0) graphics.active.fov = 30.0;
+                if (graphics.active.fov.value > 60.0) graphics.active.fov = 60.0;
               });
   }
 }

@@ -14,6 +14,7 @@ namespace csg
   private:
     float max_velocity{200.0f};
     float friction{50.0f};
+    double transparency_change{0.5};
   };
 
   class environment : public cse::object

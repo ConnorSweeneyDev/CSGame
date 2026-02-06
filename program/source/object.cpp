@@ -16,10 +16,14 @@
 namespace csg
 {
   player::player(const glm::ivec3 &translation_)
-    : cse::object(
-        {translation_, {0, 0, 0}, {1, 1, 1}}, {vertex::main, fragment::main},
-        {texture::redhood.image, texture::redhood.idle, {0, 1.0, true, 0.0}, {false, false}, {128, 128, 128, 255}, 1.0},
-        {1})
+    : cse::object({translation_, {0, 0, 0}, {1, 1, 1}}, {vertex::main, fragment::main},
+                  {texture::redhood.image,
+                   texture::redhood.idle,
+                   {0, 1.0, true, 0.0},
+                   {false, false},
+                   {0.5f, 0.5f, 0.5f, 1.0f},
+                   1.0},
+                  {1})
   {
     hooks.set(hook::EVENT,
               [this](const SDL_Event &event)
@@ -56,10 +60,10 @@ namespace csg
                   case SDL_SCANCODE_3:
                     if (!key.repeat && key.type == SDL_EVENT_KEY_DOWN)
                     {
-                      if (equal(graphics.active.texture.animation.speed, 1.0))
-                        graphics.active.texture.animation.speed = -1.0;
+                      if (equal(graphics.active.texture.animation.speed.value, 1.0))
+                        graphics.active.texture.animation.speed.value = -1.0;
                       else
-                        graphics.active.texture.animation.speed = 1.0;
+                        graphics.active.texture.animation.speed.value = 1.0;
                     }
                     break;
                   case SDL_SCANCODE_4:
@@ -102,8 +106,10 @@ namespace csg
                 if (keys[SDL_SCANCODE_S]) acceleration.x -= max_velocity;
                 if (keys[SDL_SCANCODE_W]) acceleration.z += max_velocity;
                 if (keys[SDL_SCANCODE_R]) acceleration.z -= max_velocity;
-                if (keys[SDL_SCANCODE_A]) graphics.active.texture.transparency -= 0.005;
-                if (keys[SDL_SCANCODE_G]) graphics.active.texture.transparency += 0.005;
+
+                auto &transparency_rate{graphics.active.texture.transparency.rate};
+                if (keys[SDL_SCANCODE_A]) transparency_rate -= transparency_change;
+                if (keys[SDL_SCANCODE_G]) transparency_rate += transparency_change;
               });
 
     hooks.set(hook::SIMULATE,
@@ -125,8 +131,13 @@ namespace csg
                     velocity[index] = 0.0f;
                 }
                 position += velocity * poll_rate;
-                if (graphics.active.texture.transparency < 0.0) graphics.active.texture.transparency = 0.0;
-                if (graphics.active.texture.transparency > 1.0) graphics.active.texture.transparency = 1.0;
+
+                auto &transparency_value{graphics.active.texture.transparency.value};
+                auto &transparency_rate{graphics.active.texture.transparency.rate};
+                transparency_value += transparency_rate * poll_rate;
+                transparency_rate = 0.0;
+                if (transparency_value < 0.0) transparency_value = 0.0;
+                if (transparency_value > 1.0) transparency_value = 1.0;
 
                 timers.call<void(const bool)>("texture_change", true);
 
@@ -143,20 +154,20 @@ namespace csg
                   if (animation.frame == 0 && graphics.previous.texture.animation.frame == final)
                   {
                     animation.speed = 1.0;
-                    if (graphics.active.texture.color.r == 128)
-                      graphics.active.texture.color.r = 32;
+                    if (equal(graphics.active.texture.color.value.r, 0.5f))
+                      graphics.active.texture.color.value.r = 0.125f;
                     else
-                      graphics.active.texture.color.r = 128;
+                      graphics.active.texture.color.value.r = 0.5f;
                   }
                 if (graphics.previous.texture.image == texture::shop.image &&
                     graphics.active.texture.image != texture::shop.image)
-                  graphics.active.texture.color = {128, 128, 255, 255};
+                  graphics.active.texture.color.value = {0.5f, 0.5f, 1.0f, 1.0f};
               });
   }
 
   environment::environment(const glm::ivec3 &translation_, const cse::image &image_, const cse::group &group_)
     : cse::object({translation_, {0, 0, 0}, {1, 1, 1}}, {vertex::main, fragment::main},
-                  {image_, group_, {0, 0.0, false, 0.0}, {false, false}, {128, 128, 128, 255}, 1.0}, {0})
+                  {image_, group_, {0, 0.0, false, 0.0}, {false, false}, {0.5f, 0.5f, 0.5f, 1.0f}, 1.0}, {0})
   {
   }
 }
