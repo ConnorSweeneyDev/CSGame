@@ -12,8 +12,8 @@ namespace csg
     player(const glm::ivec3 &translation_);
 
   private:
-    float max_velocity{200.0f};
-    float friction{50.0f};
+    double max_velocity{200.0};
+    double friction{50.0};
     double transparency_change{0.5};
   };
 

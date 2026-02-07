@@ -13,7 +13,7 @@
 
 namespace csg
 {
-  game::game() : cse::game(300.0, 144.0, 16.0 / 9.0, {0.0f, 0.0f, 0.0f, 1.0f})
+  game::game() : cse::game(300.0, 144.0, 16.0 / 9.0, {0.0, 0.0, 0.0, 1.0})
   {
     hooks.set(hook::PRE_EVENT,
               [this](const SDL_Event &event)
@@ -46,7 +46,7 @@ namespace csg
 
     hooks.set(
       hook::PRE_SIMULATE,
-      [this](const float)
+      [this](const double)
       {
         if (state.previous.window != state.active.window) cse::print<COUT>("Window changed\n");
         if (equal(graphics.previous.aspect_ratio, 16.0 / 9.0) && equal(graphics.active.aspect_ratio, 4.0 / 3.0))

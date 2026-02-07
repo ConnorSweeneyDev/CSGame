@@ -26,7 +26,7 @@ namespace csg
               });
 
     hooks.set(hook::SIMULATE,
-              [this](const float)
+              [this](const double)
               {
                 if (!state.previous.vsync && state.active.vsync)
                   cse::print<COUT>("VSync toggled on\n");

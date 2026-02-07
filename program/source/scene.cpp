@@ -8,7 +8,7 @@
 #include "cse/print.hpp"
 #include "cse/scene.hpp"
 #include "cse/utility.hpp"
-#include "glm/ext/vector_float3.hpp"
+#include "glm/ext/vector_double3.hpp"
 #include "glm/ext/vector_int3.hpp"
 
 #include "camera.hpp"
@@ -33,15 +33,15 @@ namespace csg
                       throw_lock(state.active.parent)->current("other", other);
                     break;
                   case SDL_SCANCODE_8:
-                    if (!key.repeat && key.type == SDL_EVENT_KEY_DOWN) set<csg::camera>(glm::vec3{0.0f, 0.0f, 80.0f});
+                    if (!key.repeat && key.type == SDL_EVENT_KEY_DOWN) set<csg::camera>(glm::dvec3{0.0, 0.0, 80.0});
                     break;
                   case SDL_SCANCODE_9:
                     if (const auto &player{try_at(state.active.objects, "player")})
                     {
                       if (!key.repeat && key.type == SDL_EVENT_KEY_DOWN)
-                        player->graphics.active.texture.color.value = {0.25f, 0.0f, 0.0f, 0.5f};
+                        player->graphics.active.texture.color.value = {0.25, 0.0, 0.0, 0.5};
                       else if (key.type == SDL_EVENT_KEY_UP)
-                        player->graphics.active.texture.color.value = {0.5f, 0.5f, 0.5f, 1.0f};
+                        player->graphics.active.texture.color.value = {0.5, 0.5, 0.5, 1.0};
                     }
                     break;
                   default: break;
@@ -49,7 +49,7 @@ namespace csg
               });
 
     hooks.set(hook::PRE_SIMULATE,
-              [this](const float)
+              [this](const double)
               {
                 auto game{throw_lock(state.active.parent)};
                 if (game->state.previous.scene.name == "main" && game->state.active.scene.name == "other")
@@ -65,7 +65,7 @@ namespace csg
 
   void scene::main(const std::shared_ptr<scene> scene)
   {
-    scene->set<csg::camera>(glm::vec3{0.0f, 0.0f, 80.0f})
+    scene->set<csg::camera>(glm::dvec3{0.0, 0.0, 80.0})
       .set<player>("player", glm::ivec3{0, 0, 0})
       .set<environment>("floor", glm::ivec3{0, -61, 0}, texture::floor.image, texture::floor.main)
       .set<environment>("shop", glm::ivec3{80, 24, -1}, texture::shop.image, texture::shop.main)
@@ -76,7 +76,7 @@ namespace csg
 
   void scene::other(const std::shared_ptr<scene> scene)
   {
-    scene->set<csg::camera>(glm::vec3{0.0f, 0.0f, 80.0f})
+    scene->set<csg::camera>(glm::dvec3{0.0, 0.0, 80.0})
       .set<player>("player", glm::ivec3{0, 0, 0})
       .set<environment>("floor", glm::ivec3{0, -61, 0}, texture::floor.image, texture::floor.main)
       .set<environment>("background3", glm::ivec3{0, 80, -9}, texture::background3.image, texture::background3.main);

@@ -16,14 +16,10 @@
 namespace csg
 {
   player::player(const glm::ivec3 &translation_)
-    : cse::object({translation_, {0, 0, 0}, {1, 1, 1}}, {vertex::main, fragment::main},
-                  {texture::redhood.image,
-                   texture::redhood.idle,
-                   {0, 1.0, true, 0.0},
-                   {false, false},
-                   {0.5f, 0.5f, 0.5f, 1.0f},
-                   1.0},
-                  {1})
+    : cse::object(
+        {translation_, {0, 0, 0}, {1, 1, 1}}, {vertex::main, fragment::main},
+        {texture::redhood.image, texture::redhood.idle, {0, 1.0, true, 0.0}, {false, false}, {0.5, 0.5, 0.5, 1.0}, 1.0},
+        {1})
   {
     hooks.set(hook::EVENT,
               [this](const SDL_Event &event)
@@ -113,22 +109,22 @@ namespace csg
               });
 
     hooks.set(hook::SIMULATE,
-              [this](const float poll_rate)
+              [this](const double poll_rate)
               {
                 auto &position{state.active.translation.value};
                 auto &velocity{state.active.translation.rate};
                 auto &acceleration{state.active.translation.curve};
                 velocity += acceleration * poll_rate;
-                acceleration = {0.0f, 0.0f, 0.0f};
+                acceleration = {0.0, 0.0, 0.0};
                 for (int index{}; index < 3; ++index)
                 {
-                  auto drag = std::abs(velocity[index]) * (1 - (friction / max_velocity)) + friction;
-                  if (velocity[index] > 0.0f)
-                    velocity[index] = std::max(0.0f, velocity[index] - drag * poll_rate);
-                  else if (velocity[index] < -0.0f)
-                    velocity[index] = std::min(0.0f, velocity[index] + drag * poll_rate);
+                  auto drag = std::abs(velocity[index]) * (1.0 - (friction / max_velocity)) + friction;
+                  if (velocity[index] > 0.0)
+                    velocity[index] = std::max(0.0, velocity[index] - drag * poll_rate);
+                  else if (velocity[index] < -0.0)
+                    velocity[index] = std::min(0.0, velocity[index] + drag * poll_rate);
                   else
-                    velocity[index] = 0.0f;
+                    velocity[index] = 0.0;
                 }
                 position += velocity * poll_rate;
 
@@ -154,20 +150,20 @@ namespace csg
                   if (animation.frame == 0 && graphics.previous.texture.animation.frame == final)
                   {
                     animation.speed = 1.0;
-                    if (equal(graphics.active.texture.color.value.r, 0.5f))
-                      graphics.active.texture.color.value.r = 0.125f;
+                    if (equal(graphics.active.texture.color.value.r, 0.5))
+                      graphics.active.texture.color.value.r = 0.125;
                     else
-                      graphics.active.texture.color.value.r = 0.5f;
+                      graphics.active.texture.color.value.r = 0.5;
                   }
                 if (graphics.previous.texture.image == texture::shop.image &&
                     graphics.active.texture.image != texture::shop.image)
-                  graphics.active.texture.color.value = {0.5f, 0.5f, 1.0f, 1.0f};
+                  graphics.active.texture.color.value = {0.5, 0.5, 1.0, 1.0};
               });
   }
 
   environment::environment(const glm::ivec3 &translation_, const cse::image &image_, const cse::group &group_)
     : cse::object({translation_, {0, 0, 0}, {1, 1, 1}}, {vertex::main, fragment::main},
-                  {image_, group_, {0, 0.0, false, 0.0}, {false, false}, {0.5f, 0.5f, 0.5f, 1.0f}, 1.0}, {0})
+                  {image_, group_, {0, 0.0, false, 0.0}, {false, false}, {0.5, 0.5, 0.5, 1.0}, 1.0}, {0})
   {
   }
 }
