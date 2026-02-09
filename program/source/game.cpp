@@ -5,8 +5,8 @@
 #include "SDL3/SDL_events.h"
 #include "SDL3/SDL_scancode.h"
 #include "cse/game.hpp"
+#include "cse/numeric.hpp"
 #include "cse/print.hpp"
-#include "cse/utility.hpp"
 
 #include "scene.hpp"
 #include "window.hpp"

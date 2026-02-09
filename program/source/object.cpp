@@ -5,10 +5,11 @@
 
 #include "SDL3/SDL_events.h"
 #include "SDL3/SDL_scancode.h"
+#include "cse/numeric.hpp"
 #include "cse/object.hpp"
+#include "cse/pointer.hpp"
 #include "cse/resource.hpp"
 #include "cse/scene.hpp"
-#include "cse/utility.hpp"
 #include "glm/ext/vector_int3.hpp"
 
 #include "resource.hpp"

@@ -5,9 +5,11 @@
 #include "SDL3/SDL_events.h"
 #include "SDL3/SDL_scancode.h"
 #include "cse/game.hpp"
+#include "cse/map.hpp"
+#include "cse/numeric.hpp"
+#include "cse/pointer.hpp"
 #include "cse/print.hpp"
 #include "cse/scene.hpp"
-#include "cse/utility.hpp"
 #include "glm/ext/vector_double3.hpp"
 #include "glm/ext/vector_int3.hpp"
 
@@ -36,7 +38,7 @@ namespace csg
                     if (!key.repeat && key.type == SDL_EVENT_KEY_DOWN) set<csg::camera>(glm::dvec3{0.0, 0.0, 80.0});
                     break;
                   case SDL_SCANCODE_9:
-                    if (const auto &player{try_at(state.active.objects, "player")})
+                    if (const auto &player{try_find(state.active.objects, "player")})
                     {
                       if (!key.repeat && key.type == SDL_EVENT_KEY_DOWN)
                         player->graphics.active.texture.color.value = {0.25, 0.0, 0.0, 0.5};
