@@ -181,12 +181,12 @@ namespace csg
                       velocity.x -= into * contact.normal.x;
                       velocity.y -= into * contact.normal.y;
                     }
-                    if (contact.minimum_axis == cse::contact::axis::y)
+                    if (contact.minimum_axis == cse::axis::Y)
                     {
                       if (contact.normal.y < 0.0) { /* Hit floor */ }
                       else if (contact.normal.y >= 0.0) { /* Hit ceiling */ }
                     }
-                    else if (contact.minimum_axis == cse::contact::axis::x) { /* Hit wall */ }
+                    else if (contact.minimum_axis == cse::axis::X) { /* Hit wall */ }
                   });
               });
   }
