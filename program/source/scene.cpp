@@ -69,18 +69,18 @@ namespace csg
   {
     scene->set<csg::camera>(glm::dvec3{0.0, 0.0, 80.0})
       .set<player>("player", glm::ivec3{0, 0, 0})
-      .set<environment>("floor", glm::ivec3{0, -61, 0}, texture::floor.image, texture::floor.main)
-      .set<environment>("shop", glm::ivec3{80, 24, -1}, texture::shop.image, texture::shop.main)
-      .set<environment>("background1", glm::ivec3{0, 80, -3}, texture::background1.image, texture::background1.main)
-      .set<environment>("background2", glm::ivec3{0, 80, -6}, texture::background2.image, texture::background2.main)
-      .set<environment>("background3", glm::ivec3{0, 80, -9}, texture::background3.image, texture::background3.main);
+      .set<environment>("floor", glm::ivec3{0, -61, 0}, image::floor, animation::floor.main)
+      .set<environment>("shop", glm::ivec3{80, 24, -1}, image::shop, animation::shop.main)
+      .set<environment>("background1", glm::ivec3{0, 80, -3}, image::background1, animation::background1.main)
+      .set<environment>("background2", glm::ivec3{0, 80, -6}, image::background2, animation::background2.main)
+      .set<environment>("background3", glm::ivec3{0, 80, -9}, image::background3, animation::background3.main);
   }
 
   void scene::other(const std::shared_ptr<scene> scene)
   {
     scene->set<csg::camera>(glm::dvec3{0.0, 0.0, 80.0})
       .set<player>("player", glm::ivec3{0, 0, 0})
-      .set<environment>("floor", glm::ivec3{0, -61, 0}, texture::floor.image, texture::floor.main)
-      .set<environment>("background3", glm::ivec3{0, 80, -9}, texture::background3.image, texture::background3.main);
+      .set<environment>("floor", glm::ivec3{0, -61, 0}, image::floor, animation::floor.main)
+      .set<environment>("background3", glm::ivec3{0, 80, -9}, image::background3, animation::background3.main);
   }
 }

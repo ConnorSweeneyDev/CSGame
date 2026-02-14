@@ -20,6 +20,6 @@ namespace csg
   class environment : public cse::object
   {
   public:
-    environment(const glm::ivec3 &translation_, const cse::image &image_, const cse::group &group_);
+    environment(const glm::ivec3 &translation_, const cse::image &image_, const cse::animation &animation_);
   };
 }
