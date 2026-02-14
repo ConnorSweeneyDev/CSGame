@@ -184,7 +184,7 @@ namespace csg
                     if (contact.minimum_axis == cse::axis::Y)
                     {
                       if (contact.normal.y < 0.0) { /* Hit floor */ }
-                      else if (contact.normal.y >= 0.0) { /* Hit ceiling */ }
+                      else if (contact.normal.y > 0.0) { /* Hit ceiling */ }
                     }
                     else if (contact.minimum_axis == cse::axis::X) { /* Hit wall */ }
                   });
