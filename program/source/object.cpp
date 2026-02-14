@@ -169,9 +169,8 @@ namespace csg
                 collisions.handle(
                   [&](const cse::contact &contact)
                   {
-                    if (contact.target != "floor" ||
-                        (contact.own != hitbox::redhood.body && contact.own != hitbox::redhood.head) ||
-                        contact.theirs != hitbox::floor.main)
+                    if ((contact.self.hitbox != hitbox::redhood.body && contact.self.hitbox != hitbox::redhood.head) ||
+                        contact.target.name != "floor" || contact.target.hitbox != hitbox::floor.main)
                       return;
 
                     position.x -= contact.penetration.x;
@@ -182,12 +181,12 @@ namespace csg
                       velocity.x -= into * contact.normal.x;
                       velocity.y -= into * contact.normal.y;
                     }
-                    if (contact.minimum_axis == cse::contact::axis::Y)
+                    if (contact.minimum_axis == cse::contact::axis::y)
                     {
                       if (contact.normal.y < 0.0) { /* Hit floor */ }
                       else if (contact.normal.y >= 0.0) { /* Hit ceiling */ }
                     }
-                    else if (contact.minimum_axis == cse::contact::axis::X) { /* Hit wall */ }
+                    else if (contact.minimum_axis == cse::contact::axis::x) { /* Hit wall */ }
                   });
               });
   }
