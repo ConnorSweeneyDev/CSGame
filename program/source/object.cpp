@@ -175,7 +175,7 @@ namespace csg
 
                     position.x -= contact.penetration.x;
                     position.y -= contact.penetration.y;
-                    const auto into = velocity.x * contact.normal.x + velocity.y * contact.normal.y;
+                    const auto into = (velocity.x * contact.normal.x) + (velocity.y * contact.normal.y);
                     if (into > 0.0)
                     {
                       velocity.x -= into * contact.normal.x;
