@@ -113,8 +113,8 @@ int csb::build()
      "#include <utility>\n\n"
      "#include \"cse/hitbox.hpp\"\n"
      "#include \"cse/resource.hpp\"\n\n"
-     "namespace csg\n"
-     "{\n"},
+     "namespace\n"
+     "{"},
     {[&vertex_defined, &fragment_defined](const std::filesystem::path &file, const std::string &name,
                                           const resource &data) -> std::string
      {
@@ -202,12 +202,12 @@ int csb::build()
            extension = "vertex";
          else
            extension = "fragment";
-         return std::format("  static constexpr std::array<const unsigned char, (1)> {}_{}_data{{\n    (0)}};\n\n",
+         return std::format("\n  static constexpr std::array<const unsigned char, (1)> {}_{}_data{{\n    (0)}};\n",
                             name, extension);
        }
        else
          return std::format(
-           "  static constexpr std::array<const unsigned char, (1)> {}_texture_image{{\n    (0)}};\n(2)\n\n", name);
+           "\n  static constexpr std::array<const unsigned char, (1)> {}_texture_image{{\n    (0)}};\n(2)\n", name);
      },
      [](const std::filesystem::path &file) -> std::string
      {
@@ -256,8 +256,8 @@ int csb::build()
          return results;
        const unsigned int frames_per_row{width / frame_width};
        const unsigned int frames_per_column{height / frame_height};
-       std::string animations_result{};
 
+       std::string animations_result{};
        for (const auto &animation : animations)
        {
          const auto &[animation_name, animation_range, animation_times, animation_hitboxes]{animation};
@@ -319,7 +319,7 @@ int csb::build()
      [&vertex_defined, &fragment_defined](
        const std::vector<std::tuple<std::filesystem::path, std::string, resource>> &files) -> std::string
      {
-       std::string result{};
+       std::string result{"}\n\nnamespace csg\n{\n"};
        vertex_defined = false;
        fragment_defined = false;
        for (const auto &[file, name, data] : files)
