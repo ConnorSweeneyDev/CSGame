@@ -5,10 +5,14 @@
 
 namespace csg
 {
-  class camera : public cse::camera
+  class camera final : public cse::camera
   {
   public:
     camera(const glm::dvec3 &translation_);
+
+  protected:
+    void on_input(const bool *keys) override final;
+    void on_simulate(const double delta) override final;
 
   private:
     double max_velocity{200.0};
