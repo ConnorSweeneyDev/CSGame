@@ -5,7 +5,7 @@
 
 #include "SDL3/SDL_events.h"
 #include "SDL3/SDL_scancode.h"
-#include "cse/collisions.hpp"
+#include "cse/collision.hpp"
 #include "cse/name.hpp"
 #include "cse/numeric.hpp"
 #include "cse/object.hpp"
@@ -33,23 +33,23 @@ namespace csg
                     if (!key.repeat && key.type == SDL_EVENT_KEY_DOWN)
                     {
                       if (graphics.active.texture.image == image::redhood)
-                        timers.set("texture_change", 1.0,
-                                   [this](const bool should)
-                                   {
-                                     if (!should) return;
-                                     graphics.active.texture.image = image::shop;
-                                     graphics.active.texture.animation = animation::shop.main;
-                                     graphics.active.texture.playback = {};
-                                   });
+                        state.active.timer.set("texture_change", 1.0,
+                                               [this](const bool should)
+                                               {
+                                                 if (!should) return;
+                                                 graphics.active.texture.image = image::shop;
+                                                 graphics.active.texture.animation = animation::shop.main;
+                                                 graphics.active.texture.playback = {};
+                                               });
                       else
-                        timers.set("texture_change", 1.0,
-                                   [this](const bool should)
-                                   {
-                                     if (!should) return;
-                                     graphics.active.texture.image = image::redhood;
-                                     graphics.active.texture.animation = animation::redhood.idle;
-                                     graphics.active.texture.playback = {0, 1.0, true};
-                                   });
+                        state.active.timer.set("texture_change", 1.0,
+                                               [this](const bool should)
+                                               {
+                                                 if (!should) return;
+                                                 graphics.active.texture.image = image::redhood;
+                                                 graphics.active.texture.animation = animation::redhood.idle;
+                                                 graphics.active.texture.playback = {0, 1.0, true};
+                                               });
                     }
                     break;
                   case SDL_SCANCODE_2:
@@ -137,7 +137,7 @@ namespace csg
                 if (transparency_value < 0.0) transparency_value = 0.0;
                 if (transparency_value > 1.0) transparency_value = 1.0;
 
-                timers.call<void(const bool)>("texture_change", true);
+                state.active.timer.call<void(const bool)>("texture_change", true);
 
                 auto &animation{graphics.active.texture.animation};
                 auto &playback{graphics.active.texture.playback};
@@ -166,7 +166,7 @@ namespace csg
               {
                 auto &position = state.active.translation.value;
                 auto &velocity = state.active.translation.rate;
-                collisions.handle(
+                state.active.collision.handle(
                   [&](const cse::contact &contact)
                   {
                     if ((contact.self.hitbox != hitbox::redhood.body && contact.self.hitbox != hitbox::redhood.head) ||
