@@ -20,7 +20,7 @@ namespace csg
 {
   player::player(const glm::ivec3 &translation_)
     : cse::object(
-        {translation_, 0, {1, 1}}, true, {vertex::main, fragment::main},
+        {translation_, 0.0, {1.0, 1.0}}, true, {vertex::main, fragment::main},
         {image::redhood, animation::redhood.idle, {0, 1.0, true, 0.0}, {false, false}, {0.5, 0.5, 0.5, 1.0}, 1.0}, 1)
   {
   }
@@ -188,7 +188,7 @@ namespace csg
   }
 
   environment::environment(const glm::ivec3 &translation_, const cse::image &image_, const cse::animation &animation_)
-    : cse::object({translation_, 0, {1, 1}}, true, {vertex::main, fragment::main},
+    : cse::object({translation_, 0.0, {1.0, 1.0}}, true, {vertex::main, fragment::main},
                   {image_, animation_, {0, 0.0, false, 0.0}, {false, false}, {0.5, 0.5, 0.5, 1.0}, 1.0}, 0)
   {
   }
