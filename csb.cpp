@@ -112,6 +112,7 @@ int csb::build()
      "#include <array>\n"
      "#include <utility>\n\n"
      "#include \"cse/hitbox.hpp\"\n"
+     "#include \"cse/numeric.hpp\"\n"
      "#include \"cse/resource.hpp\"\n\n"
      "namespace\n"
      "{"},
