@@ -2,6 +2,7 @@
 
 #include <algorithm>
 #include <cstdlib>
+#include <vector>
 
 #include "SDL3/SDL_events.h"
 #include "SDL3/SDL_scancode.h"
@@ -159,32 +160,32 @@ namespace csg
       graphics.active.texture.color.value = {0.5, 0.5, 1.0, 1.0};
   }
 
-  void player::on_collide(const double)
+  void player::on_collide(const double, const std::vector<cse::contact> &contacts)
   {
     auto &position = state.active.translation.value;
     auto &velocity = state.active.translation.rate;
-    state.active.collision.handle(
-      [&](const cse::contact &contact)
-      {
-        if ((contact.self.hitbox != hitbox::redhood.body && contact.self.hitbox != hitbox::redhood.head) ||
-            contact.target.name != "floor" || contact.target.hitbox != hitbox::floor.main)
-          return;
 
-        position.x -= contact.penetration.x;
-        position.y -= contact.penetration.y;
-        const auto into = (velocity.x * contact.normal.x) + (velocity.y * contact.normal.y);
-        if (into > 0.0)
-        {
-          velocity.x -= into * contact.normal.x;
-          velocity.y -= into * contact.normal.y;
-        }
-        if (contact.minimum_axis == cse::axis::Y)
-        {
-          if (contact.normal.y < 0.0) { /* Hit floor */ }
-          else if (contact.normal.y > 0.0) { /* Hit ceiling */ }
-        }
-        else if (contact.minimum_axis == cse::axis::X) { /* Hit wall */ }
-      });
+    for (const auto &contact : contacts)
+    {
+      if ((contact.self.hitbox != hitbox::redhood.body && contact.self.hitbox != hitbox::redhood.head) ||
+          contact.target.hitbox != hitbox::floor.main)
+        return;
+
+      position.x -= contact.penetration.x;
+      position.y -= contact.penetration.y;
+      const auto into = (velocity.x * contact.normal.x) + (velocity.y * contact.normal.y);
+      if (into > 0.0)
+      {
+        velocity.x -= into * contact.normal.x;
+        velocity.y -= into * contact.normal.y;
+      }
+      if (contact.minimum_axis == cse::axis::Y)
+      {
+        if (contact.normal.y < 0.0) { /* Hit floor */ }
+        else if (contact.normal.y > 0.0) { /* Hit ceiling */ }
+      }
+      else if (contact.minimum_axis == cse::axis::X) { /* Hit wall */ }
+    }
   }
 
   environment::environment(const glm::ivec3 &translation_, const cse::image &image_, const cse::animation &animation_)

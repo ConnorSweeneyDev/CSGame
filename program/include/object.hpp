@@ -1,9 +1,12 @@
 #pragma once
 
 #include "SDL3/SDL_events.h"
+#include "cse/collision.hpp"
 #include "cse/object.hpp"
 #include "cse/resource.hpp"
 #include "glm/ext/vector_int3.hpp"
+
+#include <vector>
 
 namespace csg
 {
@@ -16,7 +19,7 @@ namespace csg
     void on_event(const SDL_Event &event) override final;
     void on_input(const bool *keys) override final;
     void on_simulate(const double tick) override final;
-    void on_collide(const double tick) override final;
+    void on_collide(const double tick, const std::vector<cse::contact> &) override final;
 
   private:
     double max_velocity{200.0};
