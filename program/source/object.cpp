@@ -109,28 +109,28 @@ namespace csg
     if (keys[SDL_SCANCODE_G]) transparency_rate += transparency_change;
   }
 
-  void player::on_simulate(const double delta)
+  void player::on_simulate(const double tick)
   {
     auto &position{state.active.translation.value};
     auto &velocity{state.active.translation.rate};
     auto &acceleration{state.active.translation.curve};
-    velocity += acceleration * delta;
+    velocity += acceleration * tick;
     acceleration = {0.0, 0.0, 0.0};
     for (int index{}; index < 3; ++index)
     {
       auto drag = std::abs(velocity[index]) * (1.0 - (friction / max_velocity)) + friction;
       if (velocity[index] > 0.0)
-        velocity[index] = std::max(0.0, velocity[index] - drag * delta);
+        velocity[index] = std::max(0.0, velocity[index] - drag * tick);
       else if (velocity[index] < -0.0)
-        velocity[index] = std::min(0.0, velocity[index] + drag * delta);
+        velocity[index] = std::min(0.0, velocity[index] + drag * tick);
       else
         velocity[index] = 0.0;
     }
-    position += velocity * delta;
+    position += velocity * tick;
 
     auto &transparency_value{graphics.active.texture.transparency.value};
     auto &transparency_rate{graphics.active.texture.transparency.rate};
-    transparency_value += transparency_rate * delta;
+    transparency_value += transparency_rate * tick;
     transparency_rate = 0.0;
     if (transparency_value < 0.0) transparency_value = 0.0;
     if (transparency_value > 1.0) transparency_value = 1.0;

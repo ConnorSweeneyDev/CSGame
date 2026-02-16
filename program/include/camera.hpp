@@ -12,7 +12,7 @@ namespace csg
 
   protected:
     void on_input(const bool *keys) override final;
-    void on_simulate(const double delta) override final;
+    void on_simulate(const double tick) override final;
 
   private:
     double max_velocity{200.0};

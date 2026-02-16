@@ -12,14 +12,6 @@ namespace csg
 {
   window::window() : cse::window("CSGame", {1280, 720}, false, true) {}
 
-  void window::on_simulate(const double)
-  {
-    if (!state.previous.vsync && state.active.vsync)
-      cse::print<COUT>("VSync toggled on\n");
-    else if (state.previous.vsync && !state.active.vsync)
-      cse::print<COUT>("VSync toggled off\n");
-  }
-
   void window::on_event(const SDL_Event &event)
   {
     if (event.type != SDL_EVENT_KEY_DOWN || event.key.repeat) return;
@@ -30,5 +22,13 @@ namespace csg
       case SDL_SCANCODE_F12: state.active.vsync = !state.active.vsync; break;
       default: break;
     }
+  }
+
+  void window::on_simulate(const double)
+  {
+    if (!state.previous.vsync && state.active.vsync)
+      cse::print<COUT>("VSync toggled on\n");
+    else if (state.previous.vsync && !state.active.vsync)
+      cse::print<COUT>("VSync toggled off\n");
   }
 }

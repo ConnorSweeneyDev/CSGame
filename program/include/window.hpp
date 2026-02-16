@@ -12,7 +12,7 @@ namespace csg
     window();
 
   protected:
-    void on_simulate(const double delta) override final;
     void on_event(const SDL_Event &event) override final;
+    void on_simulate(const double tick) override final;
   };
 }

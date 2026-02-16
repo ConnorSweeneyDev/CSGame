@@ -28,28 +28,28 @@ namespace csg
     if (keys[SDL_SCANCODE_SEMICOLON]) fov_rate += fov_change;
   }
 
-  void camera::on_simulate(const double poll_rate)
+  void camera::on_simulate(const double tick)
   {
     auto &position{state.active.translation.value};
     auto &velocity{state.active.translation.rate};
     auto &acceleration{state.active.translation.curve};
-    velocity += acceleration * poll_rate;
+    velocity += acceleration * tick;
     acceleration = {0.0, 0.0, 0.0};
     for (int index{}; index < 3; ++index)
     {
       auto drag = std::abs(velocity[index]) * (1.0 - (friction / max_velocity)) + friction;
       if (velocity[index] > 0.0)
-        velocity[index] = std::max(0.0, velocity[index] - drag * poll_rate);
+        velocity[index] = std::max(0.0, velocity[index] - drag * tick);
       else if (velocity[index] < -0.0)
-        velocity[index] = std::min(0.0, velocity[index] + drag * poll_rate);
+        velocity[index] = std::min(0.0, velocity[index] + drag * tick);
       else
         velocity[index] = 0.0;
     }
-    position += velocity * poll_rate;
+    position += velocity * tick;
 
     auto &fov_value{graphics.active.fov.value};
     auto &fov_rate{graphics.active.fov.rate};
-    fov_value += fov_rate * poll_rate;
+    fov_value += fov_rate * tick;
     fov_rate = 0.0;
     if (graphics.active.fov.value < 30.0) graphics.active.fov = 30.0;
     if (graphics.active.fov.value > 60.0) graphics.active.fov = 60.0;
