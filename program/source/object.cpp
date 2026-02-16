@@ -169,7 +169,7 @@ namespace csg
     {
       if ((contact.self.hitbox != hitbox::redhood.body && contact.self.hitbox != hitbox::redhood.head) ||
           contact.target.hitbox != hitbox::floor.main)
-        return;
+        continue;
 
       position.x -= contact.penetration.x;
       position.y -= contact.penetration.y;
