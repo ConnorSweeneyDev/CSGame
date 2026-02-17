@@ -7,6 +7,7 @@
 #include "SDL3/SDL_events.h"
 #include "SDL3/SDL_scancode.h"
 #include "cse/collision.hpp"
+#include "cse/container.hpp"
 #include "cse/name.hpp"
 #include "cse/numeric.hpp"
 #include "cse/object.hpp"
@@ -70,7 +71,7 @@ namespace csg
       case SDL_SCANCODE_4:
         if (!key.repeat && key.type == SDL_EVENT_KEY_DOWN)
         {
-          if (auto scene{throw_lock(state.active.parent)}; scene->state.active.objects.contains("temp"))
+          if (auto scene{throw_lock(state.active.parent)}; try_contains(scene->state.active.objects, "temp"))
             scene->remove("temp");
           else
             scene->set<environment>("temp", glm::ivec3{-80, 24, -1}, image::shop, animation::shop.main);

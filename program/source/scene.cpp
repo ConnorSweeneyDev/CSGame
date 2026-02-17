@@ -4,12 +4,13 @@
 
 #include "SDL3/SDL_events.h"
 #include "SDL3/SDL_scancode.h"
+#include "cse/container.hpp"
 #include "cse/game.hpp"
-#include "cse/map.hpp"
 #include "cse/numeric.hpp"
 #include "cse/pointer.hpp"
 #include "cse/print.hpp"
 #include "cse/scene.hpp"
+#include "cse/system.hpp"
 #include "glm/ext/vector_double3.hpp"
 
 #include "camera.hpp"
@@ -47,13 +48,17 @@ namespace csg
 
   void scene::pre_simulate(const double)
   {
+    if (!cse::debug) return;
     auto game{throw_lock(state.active.parent)};
-    if (game->state.previous.scene.name == "main" && game->state.active.scene.name == "other")
-      cse::print<COUT>("Scene changed from \"main\" to \"other\": {}\n",
-                       game->state.previous.scene.pointer->state.active.objects.size());
-    if (!equal(state.previous.camera->state.active.translation.value.x,
-               state.active.camera->state.active.translation.value.x))
-      cse::print<COUT>("Camera moved from {} to {}\n", state.previous.camera->state.active.translation.value.x,
-                       state.active.camera->state.active.translation.value.x);
+    auto &current_scene{game->state.active.scene};
+    auto &previous_scene{game->state.previous.scene};
+    if (current_scene->state.name == "main" && previous_scene->state.name == "other")
+      cse::print<COUT>("Scene changed from '{}' to '{}': {}\n", previous_scene->state.name.string(),
+                       current_scene->state.name.string(), previous_scene->state.active.objects.size());
+    auto &current_camera{state.active.camera};
+    auto &previous_camera{state.previous.camera};
+    if (!equal(previous_camera->state.active.translation.value.x, current_camera->state.active.translation.value.x))
+      cse::print<COUT>("Camera moved from {} to {}\n", previous_camera->state.active.translation.value.x,
+                       current_camera->state.active.translation.value.x);
   }
 }
