@@ -168,9 +168,8 @@ namespace csg
 
     for (const auto &contact : contacts)
     {
-      if ((contact.self.hitbox != hitbox::redhood.body && contact.self.hitbox != hitbox::redhood.head) ||
-          contact.target.hitbox != hitbox::floor.main)
-        continue;
+      if (contact.self.hitbox != hitbox::redhood.body && contact.self.hitbox != hitbox::redhood.head) continue;
+      if (contact.target.hitbox != hitbox::floor.main) continue;
 
       position.x -= contact.penetration.x;
       position.y -= contact.penetration.y;
