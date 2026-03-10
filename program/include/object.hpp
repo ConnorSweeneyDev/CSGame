@@ -19,7 +19,7 @@ namespace csg
     void on_event(const SDL_Event &event) override final;
     void on_input(const bool *keys) override final;
     void on_simulate(const double tick) override final;
-    void on_collide(const double tick, const std::vector<cse::contact> &) override final;
+    void on_collide(const double tick, const std::vector<cse::contact> &contacts) override final;
 
   private:
     double max_velocity{200.0};
