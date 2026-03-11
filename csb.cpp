@@ -40,7 +40,7 @@ int csb::clean()
 int csb::build()
 {
   if (!csb::is_subproject)
-    csb::clang_format("21.1.8", csb::choose_files({"program/shader"}),
+    csb::clang_format("22.1.0", csb::choose_files({"program/shader"}),
                       {"program/include/resource.hpp", "program/source/resource.cpp"});
 
   csb::archive_install(
