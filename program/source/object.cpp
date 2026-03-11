@@ -120,7 +120,7 @@ namespace csg
     acceleration = {0.0, 0.0, 0.0};
     for (int index{}; index < 3; ++index)
     {
-      auto drag = std::abs(velocity[index]) * (1.0 - (friction / max_velocity)) + friction;
+      auto drag{std::abs(velocity[index]) * (1.0 - (friction / max_velocity)) + friction};
       if (velocity[index] > 0.0)
         velocity[index] = std::max(0.0, velocity[index] - drag * tick);
       else if (velocity[index] < -0.0)
@@ -161,36 +161,36 @@ namespace csg
       graphics.active.texture.color.value = {0.5, 0.5, 1.0, 1.0};
   }
 
-  void player::on_collide(const double, const std::vector<cse::contact> &contacts)
-  {
-    auto &position = state.active.translation.value;
-    auto &velocity = state.active.translation.rate;
-
-    for (const auto &contact : contacts)
-    {
-      if (contact.self.hitbox != hitbox::redhood.body && contact.self.hitbox != hitbox::redhood.head) continue;
-      if (contact.target.hitbox != hitbox::floor.main) continue;
-
-      position.x -= contact.penetration.x;
-      position.y -= contact.penetration.y;
-      const auto into = (velocity.x * contact.normal.x) + (velocity.y * contact.normal.y);
-      if (into > 0.0)
-      {
-        velocity.x -= into * contact.normal.x;
-        velocity.y -= into * contact.normal.y;
-      }
-      if (contact.minimum_axis == cse::axis::Y)
-      {
-        if (contact.normal.y < 0.0) { /* Hit floor */ }
-        else if (contact.normal.y > 0.0) { /* Hit ceiling */ }
-      }
-      else if (contact.minimum_axis == cse::axis::X) { /* Hit wall */ }
-    }
-  }
-
   environment::environment(const glm::ivec3 &translation_, const cse::image &image_, const cse::animation &animation_)
     : cse::object({translation_, 0.0, {1.0, 1.0}}, true, 1, {vertex::main, fragment::main},
                   {image_, animation_, {0, 0.0, false, 0.0}, {false, false}, {0.5, 0.5, 0.5, 1.0}, 1.0}, 0)
   {
+  }
+
+  void environment::on_collide(const double, const std::vector<cse::contact> &contacts)
+  {
+    for (const auto &contact : contacts)
+    {
+      if (state.name != contact.self.name) continue;
+      if (contact.self.hitbox != hitbox::floor.main) continue;
+      if (contact.target.hitbox != hitbox::redhood.body && contact.target.hitbox != hitbox::redhood.head) continue;
+
+      auto &position{contact.target.pointer->state.active.translation.value};
+      auto &velocity{contact.target.pointer->state.active.translation.rate};
+      position.x += contact.penetration.x;
+      position.y += contact.penetration.y;
+      const auto into{(velocity.x * contact.normal.x) + (velocity.y * contact.normal.y)};
+      if (into < 0.0)
+      {
+        velocity.x -= into * contact.normal.x;
+        velocity.y -= into * contact.normal.y;
+      }
+      if (contact.axis == cse::axis::Y)
+      {
+        if (contact.normal.y > 0.0) { /* Hit from above */ }
+        else if (contact.normal.y < 0.0) { /* Hit from below */ }
+      }
+      else if (contact.axis == cse::axis::X) { /* Hit from side */ }
+    }
   }
 }
