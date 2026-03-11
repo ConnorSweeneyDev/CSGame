@@ -2,7 +2,6 @@
 
 #include <algorithm>
 #include <cstdlib>
-#include <vector>
 
 #include "SDL3/SDL_events.h"
 #include "SDL3/SDL_scancode.h"
@@ -11,7 +10,6 @@
 #include "cse/name.hpp"
 #include "cse/numeric.hpp"
 #include "cse/object.hpp"
-#include "cse/pointer.hpp"
 #include "cse/resource.hpp"
 #include "cse/scene.hpp"
 #include "glm/ext/vector_int3.hpp"
@@ -71,14 +69,14 @@ namespace csg
       case SDL_SCANCODE_4:
         if (!key.repeat && key.type == SDL_EVENT_KEY_DOWN)
         {
-          if (auto scene{throw_lock(state.active.parent)}; try_contains(scene->state.active.objects, "temp"))
+          if (try_contains(scene->state.active.objects, "temp"))
             scene->remove("temp");
           else
             scene->set<environment>("temp", glm::ivec3{-80, 24, -1}, image::shop, animation::shop.main);
         }
         break;
       case SDL_SCANCODE_5:
-        if (!key.repeat && key.type == SDL_EVENT_KEY_DOWN) throw_lock(state.active.parent)->remove("player");
+        if (!key.repeat && key.type == SDL_EVENT_KEY_DOWN) scene->remove("player");
         break;
       case SDL_SCANCODE_0:
         if (!key.repeat && key.type == SDL_EVENT_KEY_DOWN)
@@ -167,11 +165,12 @@ namespace csg
   {
   }
 
-  void environment::on_collide(const double, const std::vector<cse::contact> &contacts)
+  void environment::on_collide(const double)
   {
+    auto &contacts{scene->state.active.contacts};
     for (const auto &contact : contacts)
     {
-      if (state.name != contact.self.name) continue;
+      if (name != contact.self.name) continue;
       if (contact.self.hitbox != hitbox::floor.main) continue;
       if (contact.target.hitbox != hitbox::redhood.body && contact.target.hitbox != hitbox::redhood.head) continue;
 

@@ -1,12 +1,9 @@
 #pragma once
 
 #include "SDL3/SDL_events.h"
-#include "cse/collision.hpp"
 #include "cse/object.hpp"
 #include "cse/resource.hpp"
 #include "glm/ext/vector_int3.hpp"
-
-#include <vector>
 
 namespace csg
 {
@@ -32,6 +29,6 @@ namespace csg
     environment(const glm::ivec3 &translation_, const cse::image &image_, const cse::animation &animation_);
 
   protected:
-    void on_collide(const double tick, const std::vector<cse::contact> &contacts) override final;
+    void on_collide(const double tick) override final;
   };
 }
