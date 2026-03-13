@@ -12,7 +12,7 @@ namespace csg
   {
   public:
     game();
-    static void setup(const std::shared_ptr<game> game);
+    static void setup(const std::shared_ptr<game> &game);
 
   protected:
     void pre_event(const SDL_Event &event) override final;

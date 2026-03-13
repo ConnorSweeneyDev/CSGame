@@ -12,9 +12,9 @@
 
 namespace csg
 {
-  void game::setup(const std::shared_ptr<game> game) { game->set<csg::window>().current("main", scene::main); }
+  void game::setup(const std::shared_ptr<game> &game) { game->set<csg::window>().current("main", scene::main); }
 
-  void scene::main(const std::shared_ptr<scene> scene)
+  void scene::main(const std::shared_ptr<scene> &scene)
   {
     scene->set<csg::camera>(glm::dvec3{0.0, 0.0, 80.0})
       .set<player>("player", glm::ivec3{0.0, 0.0, 0.0})
@@ -25,7 +25,7 @@ namespace csg
       .set<environment>("background3", glm::ivec3{0.0, 80.0, -9.0}, image::background3, animation::background3.main);
   }
 
-  void scene::other(const std::shared_ptr<scene> scene)
+  void scene::other(const std::shared_ptr<scene> &scene)
   {
     scene->set<csg::camera>(glm::dvec3{0.0, 0.0, 80.0})
       .set<player>("player", glm::ivec3{0.0, 0.0, 0.0})
