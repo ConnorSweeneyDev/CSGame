@@ -10,6 +10,7 @@
 #include "cse/name.hpp"
 #include "cse/numeric.hpp"
 #include "cse/object.hpp"
+#include "cse/pointer.hpp"
 #include "cse/resource.hpp"
 #include "cse/scene.hpp"
 #include "glm/ext/vector_int3.hpp"
@@ -172,7 +173,7 @@ namespace csg
     {
       if (name != contact.self.name) continue;
       if (contact.self.hitbox != hitbox::floor.main) continue;
-      if (contact.target.hitbox != hitbox::redhood.body && contact.target.hitbox != hitbox::redhood.head) continue;
+      if (!is<player>(contact.target.pointer)) continue;
 
       auto &position{contact.target.pointer->state.active.translation.value};
       auto &velocity{contact.target.pointer->state.active.translation.rate};
