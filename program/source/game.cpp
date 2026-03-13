@@ -5,6 +5,7 @@
 #include "cse/game.hpp"
 #include "cse/numeric.hpp"
 #include "cse/print.hpp"
+#include "cse/system.hpp"
 
 #include "window.hpp"
 
@@ -26,7 +27,7 @@ namespace csg
         break;
       case SDL_SCANCODE_F9:
         if (equal(graphics.active.frame, 144.0))
-          graphics.active.frame = 30.0;
+          graphics.active.frame = 60.0;
         else
           graphics.active.frame = 144.0;
         break;
@@ -42,6 +43,7 @@ namespace csg
 
   void game::pre_simulate(const double)
   {
+    if (!cse::debug) return;
     if (state.previous.window != state.active.window) cse::print<COUT>("Window changed\n");
     if (equal(graphics.previous.aspect.value, 16.0 / 9.0) && equal(graphics.active.aspect.value, 4.0 / 3.0))
       cse::print<COUT>("Aspect ratio changed from 16:9 to 4:3\n");
