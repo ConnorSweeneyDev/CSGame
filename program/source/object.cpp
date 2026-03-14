@@ -13,13 +13,13 @@
 #include "cse/pointer.hpp"
 #include "cse/resource.hpp"
 #include "cse/scene.hpp"
-#include "glm/ext/vector_int3.hpp"
+#include "glm/ext/vector_double3.hpp"
 
 #include "resource.hpp"
 
 namespace csg
 {
-  player::player(const glm::ivec3 &translation_)
+  player::player(const glm::dvec3 &translation_)
     : cse::object(
         {translation_, 0.0, {1.0, 1.0}}, true, 0, {vertex::main, fragment::main},
         {image::redhood, animation::redhood.idle, {0, 1.0, true, 0.0}, {false, false}, {0.5, 0.5, 0.5, 1.0}, 1.0}, 1)
@@ -73,7 +73,7 @@ namespace csg
           if (try_contains(scene->state.active.objects, "temp"))
             scene->remove("temp");
           else
-            scene->set<environment>("temp", glm::ivec3{-80, 24, -1}, image::shop, animation::shop.main);
+            scene->set<environment>("temp", glm::dvec3{-80.0, 24.0, -1.0}, image::shop, animation::shop.main);
         }
         break;
       case SDL_SCANCODE_5:
@@ -160,7 +160,7 @@ namespace csg
       graphics.active.texture.color.value = {0.5, 0.5, 1.0, 1.0};
   }
 
-  environment::environment(const glm::ivec3 &translation_, const cse::image &image_, const cse::animation &animation_)
+  environment::environment(const glm::dvec3 &translation_, const cse::image &image_, const cse::animation &animation_)
     : cse::object({translation_, 0.0, {1.0, 1.0}}, true, 1, {vertex::main, fragment::main},
                   {image_, animation_, {0, 0.0, false, 0.0}, {false, false}, {0.5, 0.5, 0.5, 1.0}, 1.0}, 0)
   {

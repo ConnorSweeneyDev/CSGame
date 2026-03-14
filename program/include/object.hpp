@@ -3,14 +3,14 @@
 #include "SDL3/SDL_events.h"
 #include "cse/object.hpp"
 #include "cse/resource.hpp"
-#include "glm/ext/vector_int3.hpp"
+#include "glm/ext/vector_double3.hpp"
 
 namespace csg
 {
   class player final : public cse::object
   {
   public:
-    player(const glm::ivec3 &translation_);
+    player(const glm::dvec3 &translation_);
 
   protected:
     void on_event(const SDL_Event &event) override final;
@@ -26,7 +26,7 @@ namespace csg
   class environment final : public cse::object
   {
   public:
-    environment(const glm::ivec3 &translation_, const cse::image &image_, const cse::animation &animation_);
+    environment(const glm::dvec3 &translation_, const cse::image &image_, const cse::animation &animation_);
 
   protected:
     void on_collide(const double tick) override final;
