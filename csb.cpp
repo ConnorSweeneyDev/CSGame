@@ -426,8 +426,7 @@ int csb::build()
 
   csb::subproject_install({"ConnorSweeneyDev/CSEngine", "0.0.0", COMPILED_LIBRARY});
 
-  csb::generate_clangd({{"CompileFlags", {{"CompilationDatabase", "build/"}}},
-                        {"Diagnostics", {{"UnusedIncludes", "Strict"}, {"MissingIncludes", "Strict"}}}});
+  csb::generate_clangd({{"Diagnostics", {{"UnusedIncludes", "Strict"}, {"MissingIncludes", "Strict"}}}});
   csb::generate_compile_commands();
   csb::compile();
   csb::link();
