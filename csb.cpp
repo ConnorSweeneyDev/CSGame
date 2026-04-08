@@ -63,7 +63,6 @@ int csb::build()
                        {"FixNamespaceComments", "false"}},
                       csb::choose_files({"program/shader"}),
                       {"program/include/resource.hpp", "program/source/resource.cpp"});
-  csb::write_file<std::string>(".clangd", "Diagnostics:\n  UnusedIncludes: Strict\n  MissingIncludes: Strict\n");
 
   csb::archive_install(
     {csb::host_platform == WINDOWS
@@ -427,6 +426,8 @@ int csb::build()
 
   csb::subproject_install({"ConnorSweeneyDev/CSEngine", "0.0.0", COMPILED_LIBRARY});
 
+  csb::generate_clangd({{"CompileFlags", {{"CompilationDatabase", "build/"}}},
+                        {"Diagnostics", {{"UnusedIncludes", "Strict"}, {"MissingIncludes", "Strict"}}}});
   csb::generate_compile_commands();
   csb::compile();
   csb::link();
