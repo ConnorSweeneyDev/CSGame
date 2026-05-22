@@ -40,7 +40,7 @@ int csb::clean()
 int csb::build()
 {
   if (!csb::is_subproject)
-    csb::clang_format("22.1.0",
+    csb::clang_format("22.1.5",
                       {{"BasedOnStyle", "LLVM"},
                        {"ColumnLimit", "120"},
                        {"IndentWidth", "2"},
