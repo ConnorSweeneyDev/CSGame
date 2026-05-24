@@ -33303,7 +33303,7 @@ inline void swap(nlohmann::NLOHMANN_BASIC_JSON_TPL& j1, nlohmann::NLOHMANN_BASIC
 // NOLINTEND
 // clang-format on
 
-// CSB 1.12.0
+// CSB 1.12.1
 
 #include <algorithm>
 #include <cctype>
@@ -33611,7 +33611,7 @@ namespace csb
    * | `generate_compile_commands`: Generates a compile_commands.json file for LSP support.
    * | `generate_clangd`: Generates a .clangd file for clangd configuration.
    * | `generate_clang_format`: Generates a .clang-format file based on a configuration passed to it.
-   * | `format`: Formats all source/header files using clang, with an optional version anchor, overrides and excludes.
+   * | `format`: Formats all source/header files using clang with an optional version anchor, overrides and excludes.
    * | `subproject_install`: Installs all specified csb subprojects.
    * | `vcpkg_install`: Installs all specified vcpkg packages with an optional version anchor.
    * | `archive_install`: Installs all specified archives to a specified directory.
@@ -34169,7 +34169,6 @@ enum subproject
 namespace csb::utility
 {
   inline task current_task{};
-  inline std::optional<configuration> forced_configuration{};
 
   inline void handle_arguments(int argc, char *argv[])
   {
@@ -34186,18 +34185,6 @@ namespace csb::utility
         current_task = BUILD;
       else if (arg == "run")
         current_task = RUN;
-      else if (arg == "release")
-      {
-        if (current_task != BUILD) throw std::runtime_error("Release argument can only be used with the build task.");
-        forced_configuration = RELEASE;
-        is_subproject = true;
-      }
-      else if (arg == "debug")
-      {
-        if (current_task != BUILD) throw std::runtime_error("Debug argument can only be used with the build task.");
-        forced_configuration = DEBUG;
-        is_subproject = true;
-      }
       else
         arguments.push_back(arg);
     }
@@ -34205,8 +34192,8 @@ namespace csb::utility
 
   inline void setup_environment_variables()
   {
-    std::vector<std::string> env_content{};
-    if (std::filesystem::exists(".env")) env_content = read_file<std::vector<std::string>>(".env");
+    if (!std::filesystem::exists(".env")) return;
+    std::vector<std::string> env_content{read_file<std::vector<std::string>>(".env")};
     for (const auto &line : env_content)
     {
       if (line.empty() || line[0] == '#') continue;
@@ -35645,8 +35632,6 @@ namespace csb
    */
   inline void vcpkg_install(const std::string &vcpkg_version, const nlohmann::json &manifest)
   {
-    if (utility::forced_configuration.has_value()) target_configuration = utility::forced_configuration.value();
-
     auto vcpkg_path{utility::bootstrap_vcpkg(vcpkg_version)};
     std::string vcpkg_triplet{};
     if (host_platform == WINDOWS)
@@ -35716,7 +35701,6 @@ namespace csb
   {
     auto [name, version, subproject_type]{subproject};
     if (name.empty()) throw std::runtime_error("Subproject name not set.");
-    if (utility::forced_configuration.has_value()) target_configuration = utility::forced_configuration.value();
 
     auto subproject_directory{std::filesystem::path{"build"} / "subproject"};
     mkdir(subproject_directory);
@@ -35738,9 +35722,8 @@ namespace csb
       print<COUT>("\n{}\n", utility::big_section_divider());
       if (!std::filesystem::exists(build_path)) std::filesystem::create_directories(build_path);
       utility::live_execute(
-        std::format("cd {} && {}{}{} {}", subproject_path.string(), host_platform == LINUX ? "./" : "",
-                    (std::filesystem::path{"script"} / "build").string(), host_platform == WINDOWS ? ".bat" : ".sh",
-                    target_configuration == RELEASE ? "release" : "debug"),
+        std::format("cd {} && {}{}{}", subproject_path.string(), host_platform == LINUX ? "./" : "",
+                    (std::filesystem::path{"script"} / "build").string(), host_platform == WINDOWS ? ".bat" : ".sh"),
         [&repo_name, &version](const std::string &)
         { print<COUT>("Building subproject {} ({})...\n", repo_name, version); },
         [&subproject_path](const std::string &)
@@ -36004,7 +35987,6 @@ namespace csb
     target_files.insert(target_files.end(), source_files.begin(), source_files.end());
     target_files.insert(target_files.end(), include_files.begin(), include_files.end());
     if (utility::find_modified_files(target_files, {"compile_commands.json"}).empty()) return;
-    if (utility::forced_configuration.has_value()) target_configuration = utility::forced_configuration.value();
 
     auto escape_backslashes{[](const std::string &string) -> std::string
                             {
@@ -36192,7 +36174,6 @@ namespace csb
 
     if (target_name.empty()) throw std::runtime_error("Executable name not set.");
     if (source_files.empty()) throw std::runtime_error("No source files to compile.");
-    if (utility::forced_configuration.has_value()) target_configuration = utility::forced_configuration.value();
 
     utility::build_directory = std::filesystem::path{"build"} / (target_configuration == RELEASE ? "release" : "debug");
     if (!std::filesystem::exists(utility::build_directory))
@@ -36650,9 +36631,12 @@ namespace csb
       if (csb::host_platform == WINDOWS)                                                                               \
       {                                                                                                                \
         const auto error_message{"Ensure you are running from an environment with access to MSVC tools."};             \
-        const auto vs_path{csb::utility::strict_get_env("VSINSTALLDIR", error_message)};                               \
-        const auto toolset_version{csb::utility::strict_get_env("VCToolsVersion", error_message)};                     \
-        const auto sdk_version{csb::utility::strict_get_env("WindowsSDKVersion", error_message)};                      \
+        auto vs_path{csb::utility::strict_get_env("VSINSTALLDIR", error_message)};                                     \
+        if (vs_path.back() == '\\') vs_path.pop_back();                                                                \
+        auto toolset_version{csb::utility::strict_get_env("VCToolsVersion", error_message)};                           \
+        if (toolset_version.back() == '\\') toolset_version.pop_back();                                                \
+        auto sdk_version{csb::utility::strict_get_env("WindowsSDKVersion", error_message)};                            \
+        if (sdk_version.back() == '\\') sdk_version.pop_back();                                                        \
         csb::print<COUT>("Architecture: {}\nVisual Studio: {}\nToolset: {}\nWindows SDK: {}\n",                        \
                          csb::host_architecture, vs_path, toolset_version, sdk_version);                               \
       }                                                                                                                \
@@ -36663,7 +36647,17 @@ namespace csb
                                                                                                                        \
       csb::utility::handle_arguments(argc, argv);                                                                      \
       csb::utility::setup_environment_variables();                                                                     \
+      if (!csb::get_environment_variable("CSB_TARGET_CONFIGURATION").empty()) csb::is_subproject = true;               \
       csb::configure();                                                                                                \
+      if (csb::is_subproject)                                                                                          \
+        csb::target_configuration =                                                                                    \
+          csb::utility::strict_get_env("CSB_TARGET_CONFIGURATION",                                                     \
+                                       "Subproject detected with no CSB_TARGET_CONFIGURATION") == "RELEASE"            \
+            ? RELEASE                                                                                                  \
+            : DEBUG;                                                                                                   \
+      else                                                                                                             \
+        csb::set_environment_variable("CSB_TARGET_CONFIGURATION",                                                      \
+                                      csb::target_configuration == RELEASE ? "RELEASE" : "DEBUG");                     \
       if (csb::utility::current_task == CLEAN)                                                                         \
         return csb::clean();                                                                                           \
       else if (csb::utility::current_task == BUILD)                                                                    \
