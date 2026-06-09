@@ -11,7 +11,18 @@
 
 namespace csg
 {
-  game::game() : cse::game(300.0, 144.0, 16.0 / 9.0, {0.0, 0.0, 0.0, 1.0}) {}
+  game::game()
+    : cse::game(
+        initial_state{
+          .tick = 300.0,
+        },
+        initial_graphics{
+          .frame = 144.0,
+          .aspect = 16.0 / 9.0,
+          .clear = {0.0, 0.0, 0.0, 1.0},
+        })
+  {
+  }
 
   void game::pre_event(const SDL_Event &event)
   {

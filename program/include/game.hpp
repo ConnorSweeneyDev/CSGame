@@ -12,6 +12,7 @@ namespace csg
   {
   public:
     game();
+
     static void setup(const std::shared_ptr<game> &game);
 
   protected:

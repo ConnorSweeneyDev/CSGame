@@ -1,16 +1,25 @@
 #include "window.hpp"
 
-#include <string>
-
 #include "SDL3/SDL_events.h"
 #include "SDL3/SDL_scancode.h"
 #include "cse/print.hpp"
 #include "cse/window.hpp"
-#include "glm/ext/vector_uint2.hpp"
 
 namespace csg
 {
-  window::window() : cse::window("CSGame", {1280, 720}, false, true) {}
+  window::window()
+    : cse::window(
+        initial_state{
+          .width = 1280,
+          .height = 720,
+          .fullscreen = false,
+          .vsync = true,
+        },
+        initial_graphics{
+          .title = "CSGame",
+        })
+  {
+  }
 
   void window::on_event(const SDL_Event &event)
   {

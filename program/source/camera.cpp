@@ -9,7 +9,17 @@
 
 namespace csg
 {
-  camera::camera(const glm::dvec3 &translation_) : cse::camera({translation_, {0.0, 0.0, -1.0}, {0.0, 1.0, 0.0}}, 45.0)
+  camera::camera(const glm::dvec3 &translation_)
+    : cse::camera(
+        initial_state{
+          .translation = translation_,
+          .forward = {0.0, 0.0, -1.0},
+          .up = {0.0, 1.0, 0.0},
+        },
+        initial_graphics{
+          .fov = 45.0,
+          .clip = {.near = 0.0, .far = 100.0},
+        })
   {
   }
 
