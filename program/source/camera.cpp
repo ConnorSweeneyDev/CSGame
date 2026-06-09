@@ -18,7 +18,7 @@ namespace csg
         },
         initial_graphics{
           .fov = 45.0,
-          .clip = {.near = 0.0, .far = 100.0},
+          .clip = {.near = 0.01, .far = 100.0},
         })
   {
   }
