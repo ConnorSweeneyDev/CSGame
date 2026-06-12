@@ -23,11 +23,46 @@ void csb::configure()
   csb::include_files = csb::choose_files({"program/include"}, {}, {"program/include/resource.hpp"});
   csb::source_files = csb::choose_files({"program/source"}, {}, {"program/source/resource.cpp"});
   if (csb::host_platform == WINDOWS)
-    csb::libraries = {"kernel32", "user32",   "shell32",  "gdi32",   "imm32",       "comdlg32",
-                      "ole32",    "oleaut32", "advapi32", "dinput8", "winmm",       "winspool",
-                      "setupapi", "uuid",     "version",  "cse",     "SDL3-static", "glm"};
+    csb::libraries = {"kernel32",
+                      "user32",
+                      "shell32",
+                      "gdi32",
+                      "imm32",
+                      "comdlg32",
+                      "ole32",
+                      "oleaut32",
+                      "advapi32",
+                      "dinput8",
+                      "winmm",
+                      "winspool",
+                      "setupapi",
+                      "uuid",
+                      "version",
+                      "cse",
+                      "SDL3-static",
+                      "SDL3_ttf-static",
+                      target_configuration == RELEASE ? "freetype" : "freetyped",
+                      target_configuration == RELEASE ? "libpng16" : "libpng16d",
+                      target_configuration == RELEASE ? "zs" : "zsd",
+                      target_configuration == RELEASE ? "bz2" : "bz2d",
+                      "brotlidec",
+                      "brotlicommon",
+                      "glm"};
   else if (csb::host_platform == LINUX)
-    csb::libraries = {"c", "m", "pthread", "dl", "cse", "SDL3", "glm"};
+    csb::libraries = {"c",
+                      "m",
+                      "pthread",
+                      "dl",
+                      "cse",
+                      "SDL3",
+                      "SDL3_ttf",
+                      target_configuration == RELEASE ? "freetype" : "freetyped",
+                      target_configuration == RELEASE ? "libpng16" : "libpng16d",
+                      target_configuration == RELEASE ? "zs" : "zsd",
+                      target_configuration == RELEASE ? "bz2" : "bz2d",
+                      "brotlidec",
+                      "brotlicommon",
+                      "glm"};
 }
 
 int csb::clean()
@@ -115,6 +150,7 @@ int csb::build()
 
   bool vertex_defined{};
   bool fragment_defined{};
+  bool font_defined{};
   using binary_data = std::vector<std::byte>;
   using width = unsigned int;
   using height = unsigned int;
@@ -138,8 +174,8 @@ int csb::build()
      "#include \"cse/resource.hpp\"\n\n"
      "namespace\n"
      "{"},
-    {[&vertex_defined, &fragment_defined](const std::filesystem::path &file, const std::string &name,
-                                          const resource &data) -> std::string
+    {[&vertex_defined, &fragment_defined, &font_defined](const std::filesystem::path &file, const std::string &name,
+                                                         const resource &data) -> std::string
      {
        std::string result{};
        if (file.extension() == ".spv")
@@ -164,6 +200,15 @@ int csb::build()
            }
          }
          result += std::format("    extern const cse::{} {};\n", extension, name);
+       }
+       else if (file.extension() == ".ttf")
+       {
+         if (!font_defined)
+         {
+           result += "  }\n  namespace font\n  {\n";
+           font_defined = true;
+         }
+         result += std::format("    extern const cse::font {};\n", name);
        }
        else
        {
@@ -228,6 +273,9 @@ int csb::build()
          return std::format("\n  static constexpr std::array<const unsigned char, (1)> {}_{}_data{{\n    (0)}};\n",
                             name, extension);
        }
+       else if (file.extension() == ".ttf")
+         return std::format("\n  static constexpr std::array<const unsigned char, (1)> {}_font_data{{\n    (0)}};\n",
+                            name);
        else
          return std::format(
            "\n  static constexpr std::array<const unsigned char, (1)> {}_texture_image{{\n    (0)}};\n(2)\n", name);
@@ -241,7 +289,7 @@ int csb::build()
      },
      [&frame_map](const std::filesystem::path &file) -> resource
      {
-       if (file.extension() == ".spv")
+       if (file.extension() == ".spv" || file.extension() == ".ttf")
          return {csb::read_file<binary_data>(file), {}};
        else
        {
@@ -340,12 +388,13 @@ int csb::build()
        return results;
      }},
     {[](const std::vector<std::tuple<std::filesystem::path, std::string, resource>> &) -> std::string { return "}"; },
-     [&vertex_defined, &fragment_defined](
-       const std::vector<std::tuple<std::filesystem::path, std::string, resource>> &files) -> std::string
+     [&vertex_defined, &fragment_defined,
+      &font_defined](const std::vector<std::tuple<std::filesystem::path, std::string, resource>> &files) -> std::string
      {
        std::string result{"}\n\nnamespace csg\n{\n"};
        vertex_defined = false;
        fragment_defined = false;
+       font_defined = false;
        for (const auto &[file, name, data] : files)
        {
          if (!vertex_defined && file.stem().extension() == ".vert")
@@ -358,6 +407,11 @@ int csb::build()
            result += "  }\n  namespace fragment\n  {\n";
            fragment_defined = true;
          }
+         else if (!font_defined && file.extension() == ".ttf")
+         {
+           result += "  }\n  namespace font\n  {\n";
+           font_defined = true;
+         }
          if (file.extension() == ".spv")
          {
            std::string extension{};
@@ -367,6 +421,8 @@ int csb::build()
              extension = "fragment";
            result += std::format("    const cse::{} {}{{{}_{}_data}};\n", extension, name, name, extension);
          }
+         else if (file.extension() == ".ttf")
+           result += std::format("    const cse::font {}{{{}_font_data}};\n", name, name);
          else
          {
            if (fragment_defined)
@@ -418,11 +474,12 @@ int csb::build()
        }
        return result + "}";
      }},
-    [](const std::filesystem::path &file) -> bool { return file.extension() == ".spv" || file.extension() == ".png"; },
+    [](const std::filesystem::path &file) -> bool
+    { return file.extension() == ".spv" || file.extension() == ".ttf" || file.extension() == ".png"; },
     csb::combine(
       {csb::choose_files({"build/shader"}, [](const auto &file) { return file.stem().extension() == ".vert"; }),
        csb::choose_files({"build/shader"}, [](const auto &file) { return file.stem().extension() == ".frag"; }),
-       csb::choose_files({"program/texture"})}),
+       csb::choose_files({"program/font"}), csb::choose_files({"program/texture"})}),
     {"program/include/resource.hpp", "program/source/resource.cpp"});
 
   csb::subproject_install({"ConnorSweeneyDev/CSEngine", "0.0.0", COMPILED_LIBRARY});

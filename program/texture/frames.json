@@ -71,5 +71,17 @@
     "file": "shop.png",
     "frame_dimensions": [150, 100],
     "animations": [{ "name": "main", "range": [1, 1], "times": [0] }]
+  },
+  {
+    "file": "box.png",
+    "frame_dimensions": [50, 30],
+    "animations": [
+      {
+        "name": "main",
+        "range": [1, 1],
+        "times": [0],
+        "hitboxes": [{ "main": [6, 7, 45, 24] }]
+      }
+    ]
   }
 ]
