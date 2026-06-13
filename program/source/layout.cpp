@@ -24,7 +24,8 @@ namespace csg
       .set<environment>("background1", glm::dvec3{0.0, 80.0, -3.0}, image::background1, animation::background1.main)
       .set<environment>("background2", glm::dvec3{0.0, 80.0, -6.0}, image::background2, animation::background2.main)
       .set<environment>("background3", glm::dvec3{0.0, 80.0, -9.0}, image::background3, animation::background3.main)
-      .set<icon>("icon", glm::dvec2{-67.0, -39.0});
+      .set<icon>("icon1", glm::dvec2{-67.0, -39.0})
+      .set<icon>("icon2", glm::dvec2{67.0, -39.0});
   }
 
   void scene::other(const std::shared_ptr<scene> &scene)

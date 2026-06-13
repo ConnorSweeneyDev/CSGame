@@ -16,6 +16,7 @@ namespace csg
     static void other(const std::shared_ptr<scene> &scene);
 
   protected:
+    void pre_prepare() override final;
     void pre_event(const SDL_Event &event) override final;
     void pre_simulate(const double tick) override final;
   };

@@ -21,6 +21,11 @@ namespace csg
           .aspect = 16.0 / 9.0,
           .resolution = 100,
           .clear = {0.0, 0.0, 0.0, 1.0},
+        },
+        initial_audio{
+          .master = 0.5,
+          .sound = 0.5,
+          .music = 0.5,
         })
   {
   }

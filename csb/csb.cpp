@@ -47,6 +47,10 @@ void csb::configure()
                       target_configuration == RELEASE ? "bz2" : "bz2d",
                       "brotlidec",
                       "brotlicommon",
+                      "SDL3_mixer-static",
+                      "opusfile",
+                      "opus",
+                      "ogg",
                       "glm"};
   else if (csb::host_platform == LINUX)
     csb::libraries = {"c",
@@ -62,6 +66,10 @@ void csb::configure()
                       target_configuration == RELEASE ? "bz2" : "bz2d",
                       "brotlidec",
                       "brotlicommon",
+                      "SDL3_mixer",
+                      "opusfile",
+                      "opus",
+                      "ogg",
                       "glm"};
 }
 
@@ -151,6 +159,8 @@ int csb::build()
   bool vertex_defined{};
   bool fragment_defined{};
   bool font_defined{};
+  bool sound_defined{};
+  bool music_defined{};
   using binary_data = std::vector<std::byte>;
   using width = unsigned int;
   using height = unsigned int;
@@ -174,8 +184,8 @@ int csb::build()
      "#include \"cse/resource.hpp\"\n\n"
      "namespace\n"
      "{"},
-    {[&vertex_defined, &fragment_defined, &font_defined](const std::filesystem::path &file, const std::string &name,
-                                                         const resource &data) -> std::string
+    {[&vertex_defined, &fragment_defined, &font_defined, &sound_defined,
+      &music_defined](const std::filesystem::path &file, const std::string &name, const resource &data) -> std::string
      {
        std::string result{};
        if (file.extension() == ".spv")
@@ -209,6 +219,24 @@ int csb::build()
            font_defined = true;
          }
          result += std::format("    extern const cse::font {};\n", name);
+       }
+       else if (file.extension() == ".wav")
+       {
+         if (!sound_defined)
+         {
+           result += "  }\n  namespace sound\n  {\n";
+           sound_defined = true;
+         }
+         result += std::format("    extern const cse::sound {};\n", name);
+       }
+       else if (file.extension() == ".opus")
+       {
+         if (!music_defined)
+         {
+           result += "  }\n  namespace music\n  {\n";
+           music_defined = true;
+         }
+         result += std::format("    extern const cse::music {};\n", name);
        }
        else
        {
@@ -276,6 +304,12 @@ int csb::build()
        else if (file.extension() == ".ttf")
          return std::format("\n  static constexpr std::array<const unsigned char, (1)> {}_font_data{{\n    (0)}};\n",
                             name);
+       else if (file.extension() == ".wav")
+         return std::format("\n  static constexpr std::array<const unsigned char, (1)> {}_sound_data{{\n    (0)}};\n",
+                            name);
+       else if (file.extension() == ".opus")
+         return std::format("\n  static constexpr std::array<const unsigned char, (1)> {}_music_data{{\n    (0)}};\n",
+                            name);
        else
          return std::format(
            "\n  static constexpr std::array<const unsigned char, (1)> {}_texture_image{{\n    (0)}};\n(2)\n", name);
@@ -289,7 +323,8 @@ int csb::build()
      },
      [&frame_map](const std::filesystem::path &file) -> resource
      {
-       if (file.extension() == ".spv" || file.extension() == ".ttf")
+       if (file.extension() == ".spv" || file.extension() == ".ttf" || file.extension() == ".wav" ||
+           file.extension() == ".opus")
          return {csb::read_file<binary_data>(file), {}};
        else
        {
@@ -388,13 +423,15 @@ int csb::build()
        return results;
      }},
     {[](const std::vector<std::tuple<std::filesystem::path, std::string, resource>> &) -> std::string { return "}"; },
-     [&vertex_defined, &fragment_defined,
-      &font_defined](const std::vector<std::tuple<std::filesystem::path, std::string, resource>> &files) -> std::string
+     [&vertex_defined, &fragment_defined, &font_defined, &sound_defined,
+      &music_defined](const std::vector<std::tuple<std::filesystem::path, std::string, resource>> &files) -> std::string
      {
        std::string result{"}\n\nnamespace csg\n{\n"};
        vertex_defined = false;
        fragment_defined = false;
        font_defined = false;
+       sound_defined = false;
+       music_defined = false;
        for (const auto &[file, name, data] : files)
        {
          if (!vertex_defined && file.stem().extension() == ".vert")
@@ -412,6 +449,16 @@ int csb::build()
            result += "  }\n  namespace font\n  {\n";
            font_defined = true;
          }
+         else if (!sound_defined && file.extension() == ".wav")
+         {
+           result += "  }\n  namespace sound\n  {\n";
+           sound_defined = true;
+         }
+         else if (!music_defined && file.extension() == ".opus")
+         {
+           result += "  }\n  namespace music\n  {\n";
+           music_defined = true;
+         }
          if (file.extension() == ".spv")
          {
            std::string extension{};
@@ -423,6 +470,10 @@ int csb::build()
          }
          else if (file.extension() == ".ttf")
            result += std::format("    const cse::font {}{{{}_font_data}};\n", name, name);
+         else if (file.extension() == ".wav")
+           result += std::format("    const cse::sound {}{{{}_sound_data}};\n", name, name);
+         else if (file.extension() == ".opus")
+           result += std::format("    const cse::music {}{{{}_music_data}};\n", name, name);
          else
          {
            if (fragment_defined)
@@ -475,11 +526,15 @@ int csb::build()
        return result + "}";
      }},
     [](const std::filesystem::path &file) -> bool
-    { return file.extension() == ".spv" || file.extension() == ".ttf" || file.extension() == ".png"; },
+    {
+      return file.extension() == ".spv" || file.extension() == ".ttf" || file.extension() == ".png" ||
+             file.extension() == ".wav" || file.extension() == ".opus";
+    },
     csb::combine(
       {csb::choose_files({"build/shader"}, [](const auto &file) { return file.stem().extension() == ".vert"; }),
        csb::choose_files({"build/shader"}, [](const auto &file) { return file.stem().extension() == ".frag"; }),
-       csb::choose_files({"program/font"}), csb::choose_files({"program/texture"})}),
+       csb::choose_files({"program/font"}), csb::choose_files({"program/sound"}), csb::choose_files({"program/music"}),
+       csb::choose_files({"program/texture"})}),
     {"program/include/resource.hpp", "program/source/resource.cpp"});
 
   csb::subproject_install({"ConnorSweeneyDev/CSEngine", "0.0.0", COMPILED_LIBRARY});

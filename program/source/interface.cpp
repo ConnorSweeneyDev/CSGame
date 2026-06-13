@@ -3,6 +3,8 @@
 #include "cse/collision.hpp"
 #include "cse/interface.hpp"
 #include "cse/print.hpp"
+#include "cse/resource.hpp"
+#include "cse/scene.hpp"
 #include "cse/system.hpp"
 #include "glm/ext/vector_double2.hpp"
 
@@ -32,6 +34,9 @@ namespace csg
   {
   }
 
+  void icon::on_prepare()
+  { state.active.mixer.load({{"sample1", sound::sample1}, {"sample2", sound::sample2}, {"sample3", sound::sample3}}); }
+
   void icon::on_simulate(const double) { state.active.timer.call<void()>("hide_text"); }
 
   void icon::on_hover(const cse::hitbox)
@@ -52,6 +57,23 @@ namespace csg
 
   void icon::on_click(const cse::hitbox)
   {
+    if (name == "icon1")
+    {
+      if (!scene) return;
+      auto &song = scene->state.active.mixer.get<cse::music>("main");
+      song.playing = !song.playing;
+      auto &sfx = state.active.mixer.get<cse::sound>("sample3");
+      sfx.position = 0;
+      sfx.playing = true;
+    }
+    else if (name == "icon2")
+    {
+      if (!scene) return;
+      auto &song = scene->state.active.mixer.get<cse::music>("main");
+      song.position = 0.0;
+      song.speed = song.speed.value + 0.1;
+    }
+
     if (!cse::debug) return;
     cse::print<COUT>("{}: CLICKED\n", name.string());
   }

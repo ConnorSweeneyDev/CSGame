@@ -12,6 +12,7 @@ namespace csg
     icon(const glm::dvec2 &translation_);
 
   protected:
+    void on_prepare() override final;
     void on_simulate(const double tick) override final;
     void on_hover(const cse::hitbox hitbox) override final;
     void on_unhover(const cse::hitbox hitbox) override final;

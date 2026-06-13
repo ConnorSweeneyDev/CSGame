@@ -6,17 +6,24 @@
 #include "SDL3/SDL_scancode.h"
 #include "cse/container.hpp"
 #include "cse/game.hpp"
-#include "cse/numeric.hpp"
 #include "cse/print.hpp"
+#include "cse/resource.hpp"
 #include "cse/scene.hpp"
 #include "cse/system.hpp"
-#include "glm/ext/vector_double3.hpp"
 
-#include "camera.hpp"
+#include "resource.hpp"
 
 namespace csg
 {
   scene::scene() : cse::scene() {}
+
+  void scene::pre_prepare()
+  {
+    auto &song = state.active.mixer.load("main", music::main);
+    song.playing = true;
+    song.loop = true;
+    song.speed = 0.80;
+  }
 
   void scene::pre_event(const SDL_Event &event)
   {
@@ -30,7 +37,7 @@ namespace csg
         if (!key.repeat && key.type == SDL_EVENT_KEY_DOWN) game->current("other", other);
         break;
       case SDL_SCANCODE_8:
-        if (!key.repeat && key.type == SDL_EVENT_KEY_DOWN) set<csg::camera>(glm::dvec3{0.0, 0.0, 80.0});
+        if (!key.repeat && key.type == SDL_EVENT_KEY_DOWN) state.active.mixer.unload<cse::music>("main");
         break;
       case SDL_SCANCODE_9:
         if (const auto &player{try_find(state.active.objects, "player")})
@@ -53,10 +60,5 @@ namespace csg
     if (current_scene->name == "main" && previous_scene->name == "other")
       cse::print<COUT>("Scene changed from '{}' to '{}': {}\n", previous_scene->name.string(),
                        current_scene->name.string(), previous_scene->state.active.objects.size());
-    auto &current_camera{state.active.camera};
-    auto &previous_camera{state.previous.camera};
-    if (!equal(previous_camera->state.active.translation.value.x, current_camera->state.active.translation.value.x))
-      cse::print<COUT>("Camera moved from {} to {}\n", previous_camera->state.active.translation.value.x,
-                       current_camera->state.active.translation.value.x);
   }
 }
