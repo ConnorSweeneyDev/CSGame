@@ -1,6 +1,6 @@
 #pragma once
 
-#include "cse/collision.hpp"
+#include "SDL3/SDL_stdinc.h"
 #include "cse/interface.hpp"
 #include "glm/ext/vector_double2.hpp"
 
@@ -14,10 +14,15 @@ namespace csg
   protected:
     void on_prepare() override final;
     void on_simulate(const double tick) override final;
-    void on_hover(const cse::hitbox hitbox) override final;
-    void on_unhover(const cse::hitbox hitbox) override final;
-    void on_press(const cse::hitbox hitbox) override final;
-    void on_release(const cse::hitbox hitbox) override final;
-    void on_click(const cse::hitbox hitbox) override final;
+    void on_hover() override final;
+    void on_unhover() override final;
+    void on_press(const Uint8 button) override final;
+    void on_release(const Uint8 button) override final;
+    void on_click(const Uint8 button) override final;
+    void on_scroll(const glm::dvec2 &delta) override final;
+
+  private:
+    bool is_dragging{};
+    bool is_red{};
   };
 }

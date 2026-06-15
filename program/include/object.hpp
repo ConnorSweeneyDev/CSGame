@@ -18,9 +18,9 @@ namespace csg
     void on_simulate(const double tick) override final;
 
   private:
-    double max_velocity{200.0};
-    double friction{50.0};
-    double transparency_change{0.5};
+    const double max_velocity{200.0};
+    const double friction{50.0};
+    const double transparency_change{0.5};
   };
 
   class environment final : public cse::object
