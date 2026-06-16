@@ -1,15 +1,14 @@
 #include "interface.hpp"
 
 #include "SDL3/SDL_mouse.h"
-#include "SDL3/SDL_stdinc.h"
+#include "cse/game.hpp"
 #include "cse/interface.hpp"
 #include "cse/resource.hpp"
 #include "cse/scene.hpp"
+#include "cse/window.hpp"
 #include "glm/ext/vector_double2.hpp"
 
 #include "resource.hpp"
-#include <cse/game.hpp>
-#include <cse/window.hpp>
 
 namespace csg
 {
@@ -47,69 +46,63 @@ namespace csg
 
   void icon::on_simulate(const double)
   {
-    state.active.timer.call<void()>("hide_text");
     const auto &mouse{scene ? scene->game->state.active.window->state.active.mouse
                             : game->state.active.window->state.active.mouse};
-    if (is_dragging)
+
+    const auto hover =
+      state.active.target.hovered == hitbox::box.main && state.previous.target.hovered != hitbox::box.main;
+    const auto unhover =
+      state.active.target.hovered != hitbox::box.main && state.previous.target.hovered == hitbox::box.main;
+    if (hover)
+    {
+      state.active.text = "Hi";
+      state.active.timer.remove("hide_text");
+    }
+    else if (unhover)
+    {
+      state.active.text = "Bye";
+      state.active.timer.set("hide_text", 0.5, [this]() { state.active.text.clear(); });
+    }
+
+    const auto hovered = state.active.target.hovered == hitbox::box.main;
+    if (hovered)
+    {
+      state.active.translation.value.x += mouse.wheel.x;
+      state.active.translation.value.y -= mouse.wheel.y;
+    }
+
+    const auto right_press = state.active.target.pressed[SDL_BUTTON_RIGHT] == hitbox::box.main;
+    const auto left_press = state.active.target.pressed[SDL_BUTTON_LEFT] == hitbox::box.main;
+    if (right_press)
     {
       state.active.translation.value.x = mouse.position.x;
       state.active.translation.value.y = mouse.position.y;
       graphics.active.text.color = {0.0, 0.0, 1.0, 1.0};
     }
-    if (is_red) graphics.active.text.color = {1.0, 0.0, 0.0, 1.0};
-  }
+    if (left_press) graphics.active.text.color = {1.0, 0.0, 0.0, 1.0};
+    if (!right_press && !left_press) graphics.active.text.color = {1.0, 1.0, 1.0, 1.0};
 
-  void icon::on_hover()
-  {
-    state.active.text = "Hi";
-    state.active.timer.remove("hide_text");
-  }
-
-  void icon::on_unhover()
-  {
-    state.active.text = "Bye";
-    state.active.timer.set("hide_text", 0.5, [this]() { state.active.text.clear(); });
-  }
-
-  void icon::on_press(const Uint8 button)
-  {
-    if (state.active.target.interacted[button] != hitbox::box.main) return;
-    if (button == SDL_BUTTON_LEFT)
-      is_red = true;
-    else if (button == SDL_BUTTON_RIGHT)
-      is_dragging = true;
-  }
-
-  void icon::on_release(const Uint8 button)
-  {
-    if (button == SDL_BUTTON_LEFT) is_red = false;
-    if (button == SDL_BUTTON_RIGHT) is_dragging = false;
-    graphics.active.text.color = {1.0, 1.0, 1.0, 1.0};
-  }
-
-  void icon::on_click(const Uint8 button)
-  {
-    if (button != SDL_BUTTON_LEFT) return;
-    auto &scene_mixer = scene ? scene->state.active.mixer : game->state.active.scene->state.active.mixer;
-    if (name == "icon1")
+    const auto left_click = state.active.target.released[SDL_BUTTON_LEFT] == hitbox::box.main &&
+                            state.active.target.hovered == hitbox::box.main;
+    if (left_click)
     {
-      auto &song = scene_mixer.get<cse::music>("main");
-      song.playing = !song.playing;
-      auto &sfx = state.active.mixer.get<cse::sound>("sample3");
-      sfx.position = 0;
-      sfx.playing = true;
+      auto &scene_mixer = scene ? scene->state.active.mixer : game->state.active.scene->state.active.mixer;
+      if (name == "icon1")
+      {
+        auto &song = scene_mixer.get<cse::music>("main");
+        song.playing = !song.playing;
+        auto &sfx = state.active.mixer.get<cse::sound>("sample3");
+        sfx.position = 0;
+        sfx.playing = true;
+      }
+      else if (name == "icon2")
+      {
+        auto &song = scene_mixer.get<cse::music>("main");
+        song.position = 0.0;
+        song.speed = song.speed.value + 0.1;
+      }
     }
-    else if (name == "icon2")
-    {
-      auto &song = scene_mixer.get<cse::music>("main");
-      song.position = 0.0;
-      song.speed = song.speed.value + 0.1;
-    }
-  }
 
-  void icon::on_scroll(const glm::dvec2 &delta)
-  {
-    state.active.translation.value.x += delta.x;
-    state.active.translation.value.y -= delta.y;
+    state.active.timer.call<void()>("hide_text");
   }
 }

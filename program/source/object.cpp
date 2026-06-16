@@ -7,12 +7,14 @@
 #include "SDL3/SDL_scancode.h"
 #include "cse/collision.hpp"
 #include "cse/container.hpp"
+#include "cse/game.hpp"
 #include "cse/name.hpp"
 #include "cse/numeric.hpp"
 #include "cse/object.hpp"
 #include "cse/pointer.hpp"
 #include "cse/resource.hpp"
 #include "cse/scene.hpp"
+#include "cse/window.hpp"
 #include "glm/ext/vector_double3.hpp"
 
 #include "resource.hpp"
@@ -109,26 +111,19 @@ namespace csg
     }
   }
 
-  void player::on_input(const bool *keys)
-  {
-    auto &acceleration{state.active.translation.curve};
-    if (keys[SDL_SCANCODE_E]) acceleration.y += max_velocity;
-    if (keys[SDL_SCANCODE_D]) acceleration.y -= max_velocity;
-    if (keys[SDL_SCANCODE_F]) acceleration.x += max_velocity;
-    if (keys[SDL_SCANCODE_S]) acceleration.x -= max_velocity;
-    if (keys[SDL_SCANCODE_W]) acceleration.z += max_velocity;
-    if (keys[SDL_SCANCODE_R]) acceleration.z -= max_velocity;
-
-    auto &transparency_rate{graphics.active.render.transparency.rate};
-    if (keys[SDL_SCANCODE_A]) transparency_rate -= transparency_change;
-    if (keys[SDL_SCANCODE_G]) transparency_rate += transparency_change;
-  }
-
   void player::on_simulate(const double tick)
   {
+    const auto &keyboard{scene->game->state.active.window->state.active.keyboard};
+
     auto &position{state.active.translation.value};
     auto &velocity{state.active.translation.rate};
     auto &acceleration{state.active.translation.curve};
+    if (keyboard[SDL_SCANCODE_E]) acceleration.y += max_velocity;
+    if (keyboard[SDL_SCANCODE_D]) acceleration.y -= max_velocity;
+    if (keyboard[SDL_SCANCODE_F]) acceleration.x += max_velocity;
+    if (keyboard[SDL_SCANCODE_S]) acceleration.x -= max_velocity;
+    if (keyboard[SDL_SCANCODE_W]) acceleration.z += max_velocity;
+    if (keyboard[SDL_SCANCODE_R]) acceleration.z -= max_velocity;
     velocity += acceleration * tick;
     acceleration = {0.0, 0.0, 0.0};
     for (int index{}; index < 3; ++index)
@@ -145,6 +140,8 @@ namespace csg
 
     auto &transparency_value{graphics.active.render.transparency.value};
     auto &transparency_rate{graphics.active.render.transparency.rate};
+    if (keyboard[SDL_SCANCODE_A]) transparency_rate -= transparency_change;
+    if (keyboard[SDL_SCANCODE_G]) transparency_rate += transparency_change;
     transparency_value += transparency_rate * tick;
     transparency_rate = 0.0;
     if (transparency_value < 0.0) transparency_value = 0.0;

@@ -14,13 +14,12 @@ namespace csg
 
   protected:
     void on_event(const SDL_Event &event) override final;
-    void on_input(const bool *keys) override final;
     void on_simulate(const double tick) override final;
 
   private:
-    const double max_velocity{200.0};
-    const double friction{50.0};
-    const double transparency_change{0.5};
+    static constexpr double max_velocity{200.0};
+    static constexpr double friction{50.0};
+    static constexpr double transparency_change{0.5};
   };
 
   class environment final : public cse::object
