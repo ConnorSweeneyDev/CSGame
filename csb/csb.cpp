@@ -143,16 +143,15 @@ int csb::build()
   using frame_dimensions = std::pair<unsigned int, unsigned int>;
   using frame_data = std::pair<frame_dimensions, animations>;
   std::unordered_map<std::filesystem::path, frame_data> frame_map{};
-  for (const auto &object : csb::read_file<nlohmann::json>("program/texture/frames.json"))
+  for (const auto &object : csb::read_file<nlohmann::json>("program/texture/config.json"))
   {
     const auto &file{object["file"].get<std::filesystem::path>()};
-    const auto &dimensions{object["frame_dimensions"].get<frame_dimensions>()};
+    const auto &dimensions{object["dimensions"].get<frame_dimensions>()};
     animations animations{};
     for (const auto &animation : object["animations"])
       animations.emplace_back(animation["name"].get<animation_name>(), animation["range"].get<animation_range>(),
                               animation["times"].get<animation_times>(),
-                              animation.contains("hitboxes") ? animation["hitboxes"].get<animation_hitboxes>()
-                                                             : animation_hitboxes{});
+                              animation["hitboxes"].get<animation_hitboxes>());
     frame_map.emplace(file, frame_data{dimensions, animations});
   }
 

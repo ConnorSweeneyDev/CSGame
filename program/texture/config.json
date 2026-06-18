@@ -1,22 +1,43 @@
 [
   {
     "file": "background1.png",
-    "frame_dimensions": [500, 250],
-    "animations": [{ "name": "main", "range": [1, 1], "times": [0] }]
+    "dimensions": [500, 250],
+    "animations": [
+      {
+        "name": "main",
+        "range": [1, 1],
+        "times": [0],
+        "hitboxes": []
+      }
+    ]
   },
   {
     "file": "background2.png",
-    "frame_dimensions": [500, 250],
-    "animations": [{ "name": "main", "range": [1, 1], "times": [0] }]
+    "dimensions": [500, 250],
+    "animations": [
+      {
+        "name": "main",
+        "range": [1, 1],
+        "times": [0],
+        "hitboxes": []
+      }
+    ]
   },
   {
     "file": "background3.png",
-    "frame_dimensions": [500, 250],
-    "animations": [{ "name": "main", "range": [1, 1], "times": [0] }]
+    "dimensions": [500, 250],
+    "animations": [
+      {
+        "name": "main",
+        "range": [1, 1],
+        "times": [0],
+        "hitboxes": []
+      }
+    ]
   },
   {
     "file": "floor.png",
-    "frame_dimensions": [550, 100],
+    "dimensions": [550, 100],
     "animations": [
       {
         "name": "main",
@@ -28,7 +49,7 @@
   },
   {
     "file": "redhood.png",
-    "frame_dimensions": [50, 50],
+    "dimensions": [50, 50],
     "animations": [
       {
         "name": "idle",
@@ -59,22 +80,30 @@
       },
       {
         "name": "jump",
-        "range": [19, 36],
+        "range": [18, 34],
         "times": [
-          0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1,
-          0.1, 0.1, 0.1, 0.1
-        ]
+          0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.2, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1,
+          0.1, 0.1, 0.1
+        ],
+        "hitboxes": []
       }
     ]
   },
   {
     "file": "shop.png",
-    "frame_dimensions": [150, 100],
-    "animations": [{ "name": "main", "range": [1, 1], "times": [0] }]
+    "dimensions": [150, 100],
+    "animations": [
+      {
+        "name": "main",
+        "range": [1, 1],
+        "times": [0],
+        "hitboxes": []
+      }
+    ]
   },
   {
     "file": "box.png",
-    "frame_dimensions": [50, 30],
+    "dimensions": [50, 30],
     "animations": [
       {
         "name": "main",
