@@ -104,7 +104,7 @@ int csb::build()
                                 {"IndentCaseLabels", "true"},
                                 {"NamespaceIndentation", "All"},
                                 {"FixNamespaceComments", "false"}});
-    csb::format("22.1.5", csb::choose_files({"program/shader"}),
+    csb::format("22.1.5", csb::choose_files({"program/vertex", "program/fragment"}),
                 {"program/include/resource.hpp", "program/source/resource.cpp"});
   }
 
@@ -131,7 +131,7 @@ int csb::build()
                          csb::host_platform == WINDOWS ? "build\\dxc\\dxc.exe" : "./build/dxc/dxc",
                          file.extension() == ".vert" ? "vs" : "ps");
     },
-    csb::choose_files({"program/shader"}), {"build/shader/(filename).spv"});
+    csb::choose_files({"program/vertex", "program/fragment"}), {"build/shader/(filename).spv"});
 
   using animation_name = std::string;
   using animation_range = std::pair<unsigned int, unsigned int>;
@@ -459,8 +459,7 @@ int csb::build()
     csb::combine(
       {csb::choose_files({"build/shader"}, [](const auto &file) { return file.stem().extension() == ".vert"; }),
        csb::choose_files({"build/shader"}, [](const auto &file) { return file.stem().extension() == ".frag"; }),
-       csb::choose_files({"program/font"}), csb::choose_files({"program/sound"}), csb::choose_files({"program/music"}),
-       csb::choose_files({"program/texture"})}),
+       csb::choose_files({"program/font", "program/sound", "program/music", "program/texture"})}),
     {"program/include/resource.hpp", "program/source/resource.cpp"});
 
   csb::subproject_install({"ConnorSweeneyDev/CSEngine", "0.0.0", COMPILED_LIBRARY});
