@@ -276,13 +276,14 @@ int csb::build()
                                          names.push_back(identifier);
                                  return names;
                                }};
-       std::vector<std::string> blocks{};
+       std::vector<std::string> textures{};
        for (const auto &[file, name, value] : files)
        {
          const auto &texture{std::get<1>(value)};
          if (texture.space != "image") continue;
          const unsigned int per_row{texture.width / texture.frame_width};
          const unsigned int per_column{texture.height / texture.frame_height};
+         std::string blocks{};
          for (const auto &animation : texture.animations)
          {
            const auto start{animation.range.first};
@@ -306,7 +307,7 @@ int csb::build()
                  ++box;
                }
                block += "}\n  };";
-               blocks.push_back(block);
+               blocks += block + "\n";
              }
              ++index;
            }
@@ -333,14 +334,15 @@ int csb::build()
              ++index;
            }
            block += "}\n  };";
-           blocks.push_back(block);
+           blocks += block + "\n";
          }
+         textures.push_back(blocks);
        }
        std::string result{"namespace\n{\n"};
-       for (std::size_t block{}; block < blocks.size(); ++block)
+       for (std::size_t texture{}; texture < textures.size(); ++texture)
        {
-         result += blocks[block] + "\n";
-         if (block + 1 < blocks.size()) result += "\n";
+         result += textures[texture];
+         if (texture + 1 < textures.size()) result += "\n";
        }
        result += "}\n\n";
 
