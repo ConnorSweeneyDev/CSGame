@@ -163,7 +163,9 @@ int csb::build()
      "#include \"csp/csp.hpp\"\n"
      "#include \"cse/numeric.hpp\"\n"
      "#include \"cse/resource.hpp\"\n\n"},
-    {nullptr, nullptr, [](const std::filesystem::path &file) -> std::string
+    {{},
+     {},
+     [](const std::filesystem::path &file) -> std::string
      { return file.extension() == ".spv" ? file.stem().stem().string() : file.stem().string(); },
      [](const std::filesystem::path &file) -> data
      {
@@ -195,7 +197,7 @@ int csb::build()
          blob = csb::read_file<std::vector<std::byte>>(file);
        return data{blob, current};
      },
-     nullptr},
+     {}},
     {[](const std::vector<std::tuple<std::filesystem::path, std::string, data>> &files) -> std::string
      {
        std::string result{"namespace csg\n{\n"};
