@@ -160,7 +160,7 @@ int csb::build()
      "#include <cstdint>\n"
      "#include <utility>\n\n"
      "#include \"cse/collision.hpp\"\n"
-     "#include \"cse/csp.hpp\"\n"
+     "#include \"csp/csp.hpp\"\n"
      "#include \"cse/numeric.hpp\"\n"
      "#include \"cse/resource.hpp\"\n\n"},
     {nullptr, nullptr, [](const std::filesystem::path &file) -> std::string
@@ -262,9 +262,9 @@ int csb::build()
      },
      [&csp_file](const std::vector<std::tuple<std::filesystem::path, std::string, data>> &files) -> std::string
      {
-       csb::csp csp{};
-       for (const auto &[file, name, value] : files) csp.append(std::get<0>(value));
-       csb::write_file<csb::csp>(csp_file, csp);
+       csp::pack container{};
+       for (const auto &[file, name, value] : files) container.append(std::get<0>(value));
+       csb::write_file<csp::pack>(csp_file, container);
 
        const auto hitbox_names{[&](const info &texture)
                                {
@@ -411,17 +411,17 @@ int csb::build()
        result += "}\n\n";
 
        result += "namespace csp\n{\n";
-       result += std::format("  constexpr std::uint64_t signature{{{}ull}};\n", csp.signature());
+       result += std::format("  constexpr std::uint64_t expected{{{}ull}};\n", container.signature());
        result += std::format("  const std::array<patch, {}> patches{{{{\n", files.size());
        std::size_t entry{};
        for (const auto &[file, name, value] : files)
        {
          result += std::format("    {{&csg::{}::{}.data, {}, {}}},\n", std::get<1>(value).space, name,
-                               csp.table[entry].first, csp.table[entry].second);
+                               container.table[entry].first, container.table[entry].second);
          ++entry;
        }
        result += "  }};\n";
-       result += "  const manifest instance{\"CSGame.csp\", signature, patches};\n";
+       result += "  const manifest instance{\"CSGame.csp\", expected, patches};\n";
        result += "}\n";
        return result;
      }},
