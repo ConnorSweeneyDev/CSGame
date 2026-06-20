@@ -6,10 +6,8 @@
 #include "SDL3/SDL_scancode.h"
 #include "cse/container.hpp"
 #include "cse/game.hpp"
-#include "cse/print.hpp"
 #include "cse/resource.hpp"
 #include "cse/scene.hpp"
-#include "cse/system.hpp"
 
 #include "resource.hpp"
 
@@ -50,15 +48,5 @@ namespace csg
         break;
       default: break;
     }
-  }
-
-  void scene::pre_simulate(const double)
-  {
-    if (!cse::debug) return;
-    auto &current_scene{game->state.active.scene};
-    auto &previous_scene{game->state.previous.scene};
-    if (current_scene->name == "main" && previous_scene->name == "other")
-      cse::print<COUT>("Scene changed from '{}' to '{}': {}\n", previous_scene->name.string(),
-                       current_scene->name.string(), previous_scene->state.active.objects.size());
   }
 }

@@ -1,5 +1,7 @@
 #include "interface.hpp"
 
+#include <string>
+
 #include "SDL3/SDL_mouse.h"
 #include "cse/game.hpp"
 #include "cse/interface.hpp"
@@ -12,7 +14,29 @@
 
 namespace csg
 {
-  icon::icon(const glm::dvec2 &translation_)
+  text::text(const glm::dvec2 &translation_, const glm::dvec2 &scale_)
+    : cse::interface(
+        initial_state{
+          .translation = translation_,
+          .rotation = 0.0,
+          .scale = scale_,
+          .text = "",
+          .priority = 100,
+        },
+        initial_graphics{
+          .shader = {.vertex = vertex::main, .fragment = fragment::main},
+          .texture = {.image = image::empty, .animation = animation::empty.main},
+          .render = {.playback = {.frame = 0, .speed = 0.0, .loop = false, .elapsed = 0.0},
+                     .flip = {.horizontal = false, .vertical = false},
+                     .color = {0.5, 0.5, 0.5, 1.0},
+                     .transparency = 1.0},
+          .text = {.font = font::main, .size = 12, .color = {1.0, 1.0, 1.0, 1.0}},
+          .priority = 100,
+        })
+  {
+  }
+
+  button::button(const glm::dvec2 &translation_)
     : cse::interface(
         initial_state{
           .translation = translation_,
@@ -34,17 +58,17 @@ namespace csg
   {
   }
 
-  void icon::on_prepare()
+  void button::on_prepare()
   {
     state.active.mixer.load({{"sample1", sound::sample1}, {"sample2", sound::sample2}, {"sample3", sound::sample3}});
-    if (name == "icon1")
+    if (name == "button1")
     {
       state.active.priority = 1;
       graphics.active.priority = 1;
     }
   }
 
-  void icon::on_simulate(const double)
+  void button::on_simulate(const double)
   {
     const auto &mouse{scene ? scene->game->state.active.window->state.active.mouse
                             : game->state.active.window->state.active.mouse};
@@ -87,7 +111,7 @@ namespace csg
     if (left_click)
     {
       auto &scene_mixer = scene ? scene->state.active.mixer : game->state.active.scene->state.active.mixer;
-      if (name == "icon1")
+      if (name == "button1")
       {
         auto &song = scene_mixer.get<cse::music>("main");
         song.playing = !song.playing;
@@ -95,7 +119,7 @@ namespace csg
         sfx.position = 0;
         sfx.playing = true;
       }
-      else if (name == "icon2")
+      else if (name == "button2")
       {
         auto &song = scene_mixer.get<cse::music>("main");
         song.position = 0.0;

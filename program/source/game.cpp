@@ -1,11 +1,12 @@
 #include "game.hpp"
 
+#include <string>
+
 #include "SDL3/SDL_events.h"
 #include "SDL3/SDL_scancode.h"
+#include "cse/container.hpp"
 #include "cse/game.hpp"
 #include "cse/numeric.hpp"
-#include "cse/print.hpp"
-#include "cse/system.hpp"
 
 #include "window.hpp"
 
@@ -43,16 +44,16 @@ namespace csg
           graphics.active.aspect = 16.0 / 9.0;
         break;
       case SDL_SCANCODE_F9:
-        if (equal(graphics.active.frame, 144.0))
-          graphics.active.frame = 60.0;
+        if (equal(graphics.active.frame.target, 144.0))
+          graphics.active.frame.target = 60.0;
         else
-          graphics.active.frame = 144.0;
+          graphics.active.frame.target = 144.0;
         break;
       case SDL_SCANCODE_F10:
-        if (equal(state.active.tick, 300.0))
-          state.active.tick = 60.0;
+        if (equal(state.active.tick.target, 300.0))
+          state.active.tick.target = 60.0;
         else
-          state.active.tick = 300.0;
+          state.active.tick.target = 300.0;
         break;
       default: break;
     }
@@ -60,15 +61,8 @@ namespace csg
 
   void game::pre_simulate(const double)
   {
-    if (!cse::debug) return;
-    if (state.previous.window != state.active.window) cse::print<COUT>("Window changed\n");
-    if (equal(graphics.previous.aspect.value, 16.0 / 9.0) && equal(graphics.active.aspect.value, 4.0 / 3.0))
-      cse::print<COUT>("Aspect ratio changed from 16:9 to 4:3\n");
-    else if (equal(graphics.previous.aspect.value, 4.0 / 3.0) && equal(graphics.active.aspect.value, 16.0 / 9.0))
-      cse::print<COUT>("Aspect ratio changed from 4:3 to 16:9\n");
-    if (!equal(graphics.previous.frame, graphics.active.frame))
-      cse::print<COUT>("Frame rate changed from {} to {}\n", graphics.previous.frame, graphics.active.frame);
-    if (!equal(state.previous.tick, state.active.tick))
-      cse::print<COUT>("Poll rate changed from {} to {}\n", state.previous.tick, state.active.tick);
+    throw_find(state.active.interfaces, "tick")->state.active.text = "TPS:" + std::to_string(state.active.tick.count);
+    throw_find(state.active.interfaces, "frame")->state.active.text =
+      "FPS:" + std::to_string(graphics.active.frame.count);
   }
 }
