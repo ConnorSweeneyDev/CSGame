@@ -442,6 +442,7 @@ int csb::build()
 
   csb::generate_clangd({{"Diagnostics", {{"UnusedIncludes", "Strict"}, {"MissingIncludes", "Strict"}}}});
   csb::generate_compile_commands();
+
   csb::compile();
   csb::link();
   return csb::run();
