@@ -17,8 +17,8 @@ namespace csg
   {
     game->set<csg::window>()
       .current("main", scene::main)
-      .set<text>("tick", glm::dvec2{-70.0, -46.0}, glm::dvec2{50, 10})
-      .set<text>("frame", glm::dvec2{70.0, -46.0}, glm::dvec2{50, 10});
+      .set<text>("tick", glm::dvec2{-63.0, -46.0}, glm::dvec2{50, 10})
+      .set<text>("frame", glm::dvec2{78.0, -46.0}, glm::dvec2{50, 10});
   }
 
   void scene::main(const std::shared_ptr<scene> &scene)

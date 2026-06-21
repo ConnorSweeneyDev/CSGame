@@ -31,7 +31,15 @@ namespace csg
                       .flip = {.horizontal = false, .vertical = false},
                       .color = {0.5, 0.5, 0.5, 1.0},
                       .transparency = 1.0},
-          .text = {.content = "", .font = font::main, .size = 12, .color = {1.0, 1.0, 1.0, 1.0}},
+          .text = {.content = "",
+                   .font = font::main,
+                   .size = 12,
+                   .style = {.bold = false, .italic = false, .underline = false, .strikethrough = false},
+                   .color = {1.0, 1.0, 1.0, 1.0},
+                   .align = {.horizontal = cse::align::LEFT, .vertical = cse::align::MIDDLE, .offset = {0.0, 0.0}},
+                   .spacing = 0.0,
+                   .wrap = false,
+                   .overflow = false},
           .priority = 100,
         })
   {
@@ -54,7 +62,15 @@ namespace csg
                       .flip = {.horizontal = false, .vertical = false},
                       .color = {0.5, 0.5, 0.5, 1.0},
                       .transparency = 1.0},
-          .text = {.content = "", .font = font::main, .size = 20, .color = {1.0, 1.0, 1.0, 1.0}},
+          .text = {.content = "",
+                   .font = font::main,
+                   .size = 20,
+                   .style = {.bold = true, .italic = false, .underline = false, .strikethrough = false},
+                   .color = {1.0, 1.0, 1.0, 1.0},
+                   .align = {.horizontal = cse::align::CENTER, .vertical = cse::align::MIDDLE, .offset = {0.0, 0.0}},
+                   .spacing = 0.0,
+                   .wrap = false,
+                   .overflow = false},
           .priority = 0,
         })
   {
