@@ -32,11 +32,12 @@ namespace csg
         },
         initial_graphics{
           .shader = {.vertex = vertex::main, .fragment = fragment::main},
-          .texture = {.image = image::redhood, .animation = animation::redhood.idle},
-          .render = {.playback = {.frame = 0, .speed = 1.0, .loop = true, .elapsed = 0.0},
-                     .flip = {.horizontal = false, .vertical = false},
-                     .color = {0.5, 0.5, 0.5, 1.0},
-                     .transparency = 1.0},
+          .texture = {.image = image::redhood,
+                      .animation = animation::redhood.idle,
+                      .playback = {.frame = 0, .speed = 1.0, .loop = true, .elapsed = 0.0},
+                      .flip = {.horizontal = false, .vertical = false},
+                      .color = {0.5, 0.5, 0.5, 1.0},
+                      .transparency = 1.0},
           .priority = 1,
         })
   {
@@ -57,7 +58,7 @@ namespace csg
                                      if (!should) return;
                                      graphics.active.texture.image = image::shop;
                                      graphics.active.texture.animation = animation::shop.main;
-                                     graphics.active.render.playback = {};
+                                     graphics.active.texture.playback = {};
                                    });
           else
             state.active.timer.set("texture_change", 1.0,
@@ -66,21 +67,21 @@ namespace csg
                                      if (!should) return;
                                      graphics.active.texture.image = image::redhood;
                                      graphics.active.texture.animation = animation::redhood.idle;
-                                     graphics.active.render.playback = {0, 1.0, true};
+                                     graphics.active.texture.playback = {0, 1.0, true};
                                    });
         }
         break;
       case SDL_SCANCODE_2:
         if (!key.repeat && key.type == SDL_EVENT_KEY_DOWN)
-          graphics.active.render.flip.horizontal = !graphics.active.render.flip.horizontal;
+          graphics.active.texture.flip.horizontal = !graphics.active.texture.flip.horizontal;
         break;
       case SDL_SCANCODE_3:
         if (!key.repeat && key.type == SDL_EVENT_KEY_DOWN)
         {
-          if (equal(graphics.active.render.playback.speed.value, 1.0))
-            graphics.active.render.playback.speed.value = -1.0;
+          if (equal(graphics.active.texture.playback.speed.value, 1.0))
+            graphics.active.texture.playback.speed.value = -1.0;
           else
-            graphics.active.render.playback.speed.value = 1.0;
+            graphics.active.texture.playback.speed.value = 1.0;
         }
         break;
       case SDL_SCANCODE_4:
@@ -98,7 +99,7 @@ namespace csg
       case SDL_SCANCODE_0:
         if (!key.repeat && key.type == SDL_EVENT_KEY_DOWN)
         {
-          auto &playback{graphics.active.render.playback};
+          auto &playback{graphics.active.texture.playback};
           auto &animation{graphics.active.texture.animation};
           if (animation == animation::redhood.idle)
           {
@@ -138,8 +139,8 @@ namespace csg
     }
     position += velocity * tick;
 
-    auto &transparency_value{graphics.active.render.transparency.value};
-    auto &transparency_rate{graphics.active.render.transparency.rate};
+    auto &transparency_value{graphics.active.texture.transparency.value};
+    auto &transparency_rate{graphics.active.texture.transparency.rate};
     if (keyboard[SDL_SCANCODE_A]) transparency_rate -= transparency_change;
     if (keyboard[SDL_SCANCODE_G]) transparency_rate += transparency_change;
     transparency_value += transparency_rate * tick;
@@ -150,7 +151,7 @@ namespace csg
     state.active.timer.call<void(const bool)>("texture_change", true);
 
     auto &animation{graphics.active.texture.animation};
-    auto &playback{graphics.active.render.playback};
+    auto &playback{graphics.active.texture.playback};
     auto final{animation.frames.size() - 1};
     if (animation == animation::redhood.jump)
       if (playback.frame == final && playback.elapsed >= animation.frames[final].duration)
@@ -159,16 +160,16 @@ namespace csg
         playback = {0, 2.0, true};
       }
     if (graphics.previous.texture.animation == animation && animation == animation::redhood.idle)
-      if (playback.frame == 0 && graphics.previous.render.playback.frame == final)
+      if (playback.frame == 0 && graphics.previous.texture.playback.frame == final)
       {
         playback.speed = 1.0;
-        if (equal(graphics.active.render.color.value.r, 0.5))
-          graphics.active.render.color.value.r = 0.125;
+        if (equal(graphics.active.texture.color.value.r, 0.5))
+          graphics.active.texture.color.value.r = 0.125;
         else
-          graphics.active.render.color.value.r = 0.5;
+          graphics.active.texture.color.value.r = 0.5;
       }
     if (graphics.previous.texture.image == image::shop && graphics.active.texture.image != image::shop)
-      graphics.active.render.color.value = {0.5, 0.5, 1.0, 1.0};
+      graphics.active.texture.color.value = {0.5, 0.5, 1.0, 1.0};
   }
 
   environment::environment(const glm::dvec3 &translation_, const cse::image &image_, const cse::animation &animation_)
@@ -182,11 +183,12 @@ namespace csg
         },
         initial_graphics{
           .shader = {.vertex = vertex::main, .fragment = fragment::main},
-          .texture = {.image = image_, .animation = animation_},
-          .render = {.playback = {.frame = 0, .speed = 0.0, .loop = false, .elapsed = 0.0},
-                     .flip = {.horizontal = false, .vertical = false},
-                     .color = {0.5, 0.5, 0.5, 1.0},
-                     .transparency = 1.0},
+          .texture = {.image = image_,
+                      .animation = animation_,
+                      .playback = {.frame = 0, .speed = 0.0, .loop = false, .elapsed = 0.0},
+                      .flip = {.horizontal = false, .vertical = false},
+                      .color = {0.5, 0.5, 0.5, 1.0},
+                      .transparency = 1.0},
           .priority = 0,
         })
   {
