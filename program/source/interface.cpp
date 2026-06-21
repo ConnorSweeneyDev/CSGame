@@ -20,7 +20,7 @@ namespace csg
           .translation = translation_,
           .rotation = 0.0,
           .scale = scale_,
-          .text = "",
+          .interactable = false,
           .priority = 100,
         },
         initial_graphics{
@@ -31,7 +31,7 @@ namespace csg
                       .flip = {.horizontal = false, .vertical = false},
                       .color = {0.5, 0.5, 0.5, 1.0},
                       .transparency = 1.0},
-          .text = {.font = font::main, .size = 12, .color = {1.0, 1.0, 1.0, 1.0}},
+          .text = {.content = "", .font = font::main, .size = 12, .color = {1.0, 1.0, 1.0, 1.0}},
           .priority = 100,
         })
   {
@@ -43,7 +43,7 @@ namespace csg
           .translation = translation_,
           .rotation = 0.0,
           .scale = {1.0, 1.0},
-          .text = "",
+          .interactable = true,
           .priority = 0,
         },
         initial_graphics{
@@ -54,7 +54,7 @@ namespace csg
                       .flip = {.horizontal = false, .vertical = false},
                       .color = {0.5, 0.5, 0.5, 1.0},
                       .transparency = 1.0},
-          .text = {.font = font::main, .size = 20, .color = {1.0, 1.0, 1.0, 1.0}},
+          .text = {.content = "", .font = font::main, .size = 20, .color = {1.0, 1.0, 1.0, 1.0}},
           .priority = 0,
         })
   {
@@ -81,13 +81,13 @@ namespace csg
       state.active.target.hovered != hitbox::box.main && state.previous.target.hovered == hitbox::box.main;
     if (hover)
     {
-      state.active.text = "Hi";
+      graphics.active.text.content = "Hi";
       state.active.timer.remove("hide_text");
     }
     else if (unhover)
     {
-      state.active.text = "Bye";
-      state.active.timer.set("hide_text", 0.5, [this]() { state.active.text.clear(); });
+      graphics.active.text.content = "Bye";
+      state.active.timer.set("hide_text", 0.5, [this]() { graphics.active.text.content.clear(); });
     }
 
     const auto hovered = state.active.target.hovered == hitbox::box.main;

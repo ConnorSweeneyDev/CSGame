@@ -61,8 +61,9 @@ namespace csg
 
   void game::pre_simulate(const double)
   {
-    throw_find(state.active.interfaces, "tick")->state.active.text = "TPS:" + std::to_string(state.active.tick.count);
-    throw_find(state.active.interfaces, "frame")->state.active.text =
+    throw_find(state.active.interfaces, "tick")->graphics.active.text.content =
+      "TPS:" + std::to_string(state.active.tick.count);
+    throw_find(state.active.interfaces, "frame")->graphics.active.text.content =
       "FPS:" + std::to_string(graphics.active.frame.count);
   }
 }
