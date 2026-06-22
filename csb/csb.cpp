@@ -412,8 +412,8 @@ int csb::build()
        result += "}\n\n";
 
        if (!entries.empty())
-         result += std::format("namespace\n{{\n  const cse::resource::loader loader{{"
-                               "std::array<cse::resource::binding, {}>{{{{\n",
+         result += std::format("namespace cse::resource\n{{\n  const loader instance{{"
+                               "std::array<binding, {}>{{{{\n",
                                binding_count) +
                    entries + "  }}};\n}\n\n";
 
