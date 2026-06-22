@@ -222,9 +222,9 @@ int csb::build()
            const auto names{hitbox_names(texture)};
            if (names.empty()) continue;
            structs += std::format("      struct {}_hitbox\n      {{\n", name);
-           for (const auto &identifier : names) structs += std::format("        const cse::hitbox {};\n", identifier);
+           for (const auto &identifier : names) structs += std::format("        cse::hitbox {};\n", identifier);
            structs += "      };\n";
-           externs += std::format("    extern const detail::{}_hitbox {};\n", name, name);
+           externs += std::format("    extern detail::{}_hitbox {};\n", name, name);
          }
          if (!externs.empty())
            result += "  namespace hitbox\n  {\n    namespace detail\n    {\n" + structs + "    }\n" + externs + "  }\n";
@@ -397,7 +397,7 @@ int csb::build()
            if (texture.space != "image") continue;
            const auto names{hitbox_names(texture)};
            if (names.empty()) continue;
-           block += std::format("    const detail::{}_hitbox {}\n    {{\n", name, name);
+           block += std::format("    detail::{}_hitbox {}\n    {{\n", name, name);
            for (std::size_t index{}; index < names.size(); ++index)
            {
              block += std::format("      \"{}\"", name + "." + names[index]);
