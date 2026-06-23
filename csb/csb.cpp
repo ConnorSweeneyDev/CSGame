@@ -103,17 +103,49 @@ int csb::build()
                         {"build/dxc/executable.(filename)"});
     csb::prepend_environment_variable("LD_LIBRARY_PATH", "build/dxc");
   }
-  csb::multi_task_run(
-    [](const std::filesystem::path &file, const auto &, const auto &) -> std::string
-    {
-      return std::format("{} -spirv -T {}_6_0 -E main () -Fo []",
-                         csb::host_platform == WINDOWS ? "build\\dxc\\dxc.exe" : "./build/dxc/dxc",
-                         file.extension() == ".vert" ? "vs" : "ps");
-    },
-    csb::choose_files({"program/vertex", "program/fragment"}), {"build/shader/(filename).spv"});
+  std::unordered_map<std::filesystem::path, std::vector<std::filesystem::path>> shader_groups{};
+  for (const auto &file : csb::choose_files({"program/vertex", "program/fragment"}, [](const auto &file)
+                                            { return file.extension() == ".vert" || file.extension() == ".frag"; }))
+    shader_groups[file.parent_path()].push_back(file);
+  for (const auto &[source, group] : shader_groups)
+    csb::multi_task_run(
+      [](const std::filesystem::path &file, const auto &, const auto &) -> std::string
+      {
+        return std::format("{} -spirv -T {}_6_0 -E main () -Fo []",
+                           csb::host_platform == WINDOWS ? "build\\dxc\\dxc.exe" : "./build/dxc/dxc",
+                           file.extension() == ".vert" ? "vs" : "ps");
+      },
+      group, {(csb::path("build") / source.lexically_relative("program") / "(filename).spv").string()});
 
-  const auto csp_file =
-    csb::path("build") / (csb::target_configuration == RELEASE ? "release" : "debug") / "CSGame.csp";
+  const auto pack_of{[](const std::filesystem::path &file) -> std::string
+                     {
+                       std::vector<std::string> parts{};
+                       for (const auto &part : file) parts.push_back(part.string());
+                       static const std::vector<std::pair<std::string, std::string>> roots{
+                         {"build", "vertex"}, {"build", "fragment"}, {"program", "texture"},
+                         {"program", "font"}, {"program", "sound"},  {"program", "music"}};
+                       for (std::size_t index{}; index + 1 < parts.size(); ++index)
+                         for (const auto &[first, second] : roots)
+                           if (parts[index] == first && parts[index + 1] == second)
+                             return index + 3 < parts.size() ? parts[index + 2] : "base";
+                       return "base";
+                     }};
+  const auto accept{[](const std::filesystem::path &file) -> bool
+                    {
+                      return file.extension() == ".spv" || file.extension() == ".ttf" ||
+                             file.extension() == ".aseprite" || file.extension() == ".wav" ||
+                             file.extension() == ".opus";
+                    }};
+  const auto resources{csb::choose_files(
+    {"build/vertex", "build/fragment", "program/font", "program/texture", "program/sound", "program/music"})};
+  const auto pack_directory{csb::path("build") / (csb::target_configuration == RELEASE ? "release" : "debug")};
+  std::vector<std::filesystem::path> pack_files{};
+  for (const auto &file : resources)
+  {
+    if (!accept(file)) continue;
+    const auto pack_file{pack_directory / (pack_of(file) + ".csp")};
+    if (std::find(pack_files.begin(), pack_files.end(), pack_file) == pack_files.end()) pack_files.push_back(pack_file);
+  }
   struct info
   {
     std::string space{};
@@ -232,7 +264,8 @@ int csb::build()
        result += "}\n";
        return result;
      },
-     [&csp_file](const std::vector<std::tuple<std::filesystem::path, std::string, data>> &files) -> std::string
+     [&pack_directory,
+      &pack_of](const std::vector<std::tuple<std::filesystem::path, std::string, data>> &files) -> std::string
      {
        const bool debug{csb::target_configuration == DEBUG};
        const auto put_u64{[](std::vector<std::byte> &out, std::uint64_t value)
@@ -255,103 +288,6 @@ int csb::build()
                                     return hash;
                                   }};
 
-       std::vector<std::byte> frames_blob{};
-       std::vector<std::byte> hitboxes_blob{};
-       std::vector<std::byte> strings_blob{};
-       std::unordered_map<std::string, std::pair<std::uint64_t, std::uint64_t>> string_pool{};
-       std::unordered_map<std::string,
-                          std::vector<std::tuple<std::uint64_t, std::uint64_t, unsigned int, unsigned int>>>
-         clips{};
-       std::uint64_t frames_total{};
-       std::uint64_t hitboxes_total{};
-       for (const auto &[file, name, value] : files)
-       {
-         const auto &texture{std::get<1>(value)};
-         if (texture.space != "image") continue;
-         const unsigned int per_row{texture.width / texture.frame_width};
-         const unsigned int per_column{texture.height / texture.frame_height};
-         for (const auto &animation : texture.animations)
-         {
-           const std::uint64_t frame_index{frames_total};
-           const auto start{animation.range.first};
-           const auto end{animation.range.second};
-           std::size_t index{};
-           for (unsigned int frame{start}; frame <= end; ++frame)
-           {
-             const unsigned int x{frame % per_row};
-             const unsigned int y{(per_column - 1) - (frame / per_row)};
-             const double top{static_cast<double>((y + 1) * texture.frame_height) /
-                              static_cast<double>(texture.height)};
-             const double left{static_cast<double>(x * texture.frame_width) / static_cast<double>(texture.width)};
-             const double bottom{static_cast<double>(y * texture.frame_height) / static_cast<double>(texture.height)};
-             const double right{static_cast<double>((x + 1) * texture.frame_width) /
-                                static_cast<double>(texture.width)};
-
-             const std::uint64_t hitbox_index{hitboxes_total};
-             std::uint64_t hitbox_count{};
-             if (index < animation.hitboxes.size() && !animation.hitboxes[index].empty())
-               for (const auto &[identifier, rectangles] : animation.hitboxes[index])
-               {
-                 const std::string full{name + "." + identifier};
-                 std::uint64_t label_offset{}, label_size{}, label_hash{};
-                 if (debug)
-                 {
-                   auto entry{string_pool.find(full)};
-                   if (entry == string_pool.end())
-                   {
-                     const auto offset{static_cast<std::uint64_t>(strings_blob.size())};
-                     const auto *raw{reinterpret_cast<const std::byte *>(full.data())};
-                     strings_blob.insert(strings_blob.end(), raw, raw + full.size());
-                     entry =
-                       string_pool.emplace(full, std::pair{offset, static_cast<std::uint64_t>(full.size())}).first;
-                   }
-                   label_offset = entry->second.first;
-                   label_size = entry->second.second;
-                 }
-                 else
-                   label_hash = hash_identifier(full);
-                 for (const auto &bounds : rectangles)
-                 {
-                   if (debug)
-                   {
-                     put_u64(hitboxes_blob, label_offset);
-                     put_u64(hitboxes_blob, label_size);
-                   }
-                   else
-                     put_u64(hitboxes_blob, label_hash);
-                   put_f64(hitboxes_blob, bounds[0]);
-                   put_f64(hitboxes_blob, bounds[1]);
-                   put_f64(hitboxes_blob, bounds[2]);
-                   put_f64(hitboxes_blob, bounds[3]);
-                   ++hitboxes_total;
-                   ++hitbox_count;
-                 }
-               }
-
-             put_f64(frames_blob, left);
-             put_f64(frames_blob, top);
-             put_f64(frames_blob, right);
-             put_f64(frames_blob, bottom);
-             put_f64(frames_blob, animation.times.at(index));
-             put_u64(frames_blob, hitbox_count > 0 ? hitbox_index : 0);
-             put_u64(frames_blob, hitbox_count);
-             ++frames_total;
-             ++index;
-           }
-           clips[name].push_back({frame_index, frames_total - frame_index, start, end});
-         }
-       }
-
-       csp::pack container{};
-       for (const auto &[file, name, value] : files) container.append(std::get<0>(value));
-       const std::size_t frames_entry{container.table.size()};
-       container.append(frames_blob);
-       const std::size_t hitboxes_entry{container.table.size()};
-       container.append(hitboxes_blob);
-       const std::size_t strings_entry{container.table.size()};
-       if (debug) container.append(strings_blob);
-       csb::write_file(csp_file, container);
-
        const auto hitbox_names{[&](const info &texture)
                                {
                                  std::vector<std::string> names{};
@@ -363,31 +299,152 @@ int csb::build()
                                  return names;
                                }};
 
-       std::string result{"namespace cse::resource\n{\n"};
-       if (debug)
-         result += std::format("  const loader loaded{{\"CSGame.csp\", {}ull, {}, {}, {}, {}, {}}};\n",
-                               container.signature(), container.table[frames_entry].first,
-                               container.table[frames_entry].second, container.table[hitboxes_entry].first,
-                               container.table[hitboxes_entry].second, container.table[strings_entry].first);
-       else
-         result +=
-           std::format("  const loader loaded{{\"CSGame.csp\", {}ull, {}, {}, {}, {}}};\n", container.signature(),
-                       container.table[frames_entry].first, container.table[frames_entry].second,
-                       container.table[hitboxes_entry].first, container.table[hitboxes_entry].second);
-       result += "}\n\n";
+       struct placement
+       {
+         std::string key;
+         std::uint64_t offset;
+         std::uint64_t size;
+       };
+       std::unordered_map<std::filesystem::path, placement> placements{};
+       std::unordered_map<std::filesystem::path,
+                          std::vector<std::tuple<std::uint64_t, std::uint64_t, unsigned int, unsigned int>>>
+         clips{};
+       std::vector<std::string> packs{};
+       for (const auto &[file, name, value] : files)
+       {
+         std::string pack{pack_of(file)};
+         if (std::find(packs.begin(), packs.end(), pack) == packs.end()) packs.push_back(pack);
+       }
+       std::sort(packs.begin(), packs.end());
+
+       std::string loaders{};
+       for (const std::string &pack : packs)
+       {
+         std::vector<std::byte> frames_blob{};
+         std::vector<std::byte> hitboxes_blob{};
+         std::vector<std::byte> strings_blob{};
+         std::unordered_map<std::string, std::pair<std::uint64_t, std::uint64_t>> string_pool{};
+         std::uint64_t frames_total{};
+         std::uint64_t hitboxes_total{};
+         for (const auto &[file, name, value] : files)
+         {
+           const auto &texture{std::get<1>(value)};
+           if (texture.space != "image" || pack_of(file) != pack) continue;
+           const unsigned int per_row{texture.width / texture.frame_width};
+           const unsigned int per_column{texture.height / texture.frame_height};
+           for (const auto &animation : texture.animations)
+           {
+             const std::uint64_t frame_index{frames_total};
+             const auto start{animation.range.first};
+             const auto end{animation.range.second};
+             std::size_t index{};
+             for (unsigned int frame{start}; frame <= end; ++frame)
+             {
+               const unsigned int x{frame % per_row};
+               const unsigned int y{(per_column - 1) - (frame / per_row)};
+               const double top{static_cast<double>((y + 1) * texture.frame_height) /
+                                static_cast<double>(texture.height)};
+               const double left{static_cast<double>(x * texture.frame_width) / static_cast<double>(texture.width)};
+               const double bottom{static_cast<double>(y * texture.frame_height) / static_cast<double>(texture.height)};
+               const double right{static_cast<double>((x + 1) * texture.frame_width) /
+                                  static_cast<double>(texture.width)};
+
+               const std::uint64_t hitbox_index{hitboxes_total};
+               std::uint64_t hitbox_count{};
+               if (index < animation.hitboxes.size() && !animation.hitboxes[index].empty())
+                 for (const auto &[identifier, rectangles] : animation.hitboxes[index])
+                 {
+                   const std::string full{name + "." + identifier};
+                   std::uint64_t label_offset{}, label_size{}, label_hash{};
+                   if (debug)
+                   {
+                     auto entry{string_pool.find(full)};
+                     if (entry == string_pool.end())
+                     {
+                       const auto offset{static_cast<std::uint64_t>(strings_blob.size())};
+                       const auto *raw{reinterpret_cast<const std::byte *>(full.data())};
+                       strings_blob.insert(strings_blob.end(), raw, raw + full.size());
+                       entry =
+                         string_pool.emplace(full, std::pair{offset, static_cast<std::uint64_t>(full.size())}).first;
+                     }
+                     label_offset = entry->second.first;
+                     label_size = entry->second.second;
+                   }
+                   else
+                     label_hash = hash_identifier(full);
+                   for (const auto &bounds : rectangles)
+                   {
+                     if (debug)
+                     {
+                       put_u64(hitboxes_blob, label_offset);
+                       put_u64(hitboxes_blob, label_size);
+                     }
+                     else
+                       put_u64(hitboxes_blob, label_hash);
+                     put_f64(hitboxes_blob, bounds[0]);
+                     put_f64(hitboxes_blob, bounds[1]);
+                     put_f64(hitboxes_blob, bounds[2]);
+                     put_f64(hitboxes_blob, bounds[3]);
+                     ++hitboxes_total;
+                     ++hitbox_count;
+                   }
+                 }
+
+               put_f64(frames_blob, left);
+               put_f64(frames_blob, top);
+               put_f64(frames_blob, right);
+               put_f64(frames_blob, bottom);
+               put_f64(frames_blob, animation.times.at(index));
+               put_u64(frames_blob, hitbox_count > 0 ? hitbox_index : 0);
+               put_u64(frames_blob, hitbox_count);
+               ++frames_total;
+               ++index;
+             }
+             clips[file].push_back({frame_index, frames_total - frame_index, start, end});
+           }
+         }
+
+         csp::pack container{};
+         for (const auto &[file, name, value] : files)
+         {
+           if (pack_of(file) != pack) continue;
+           const std::size_t entry{container.table.size()};
+           container.append(std::get<0>(value));
+           placements[file] = {pack + ".csp", container.table[entry].first, container.table[entry].second};
+         }
+         const std::size_t frames_entry{container.table.size()};
+         container.append(frames_blob);
+         const std::size_t hitboxes_entry{container.table.size()};
+         container.append(hitboxes_blob);
+         const std::size_t strings_entry{container.table.size()};
+         if (debug) container.append(strings_blob);
+         csb::write_file(pack_directory / (pack + ".csp"), container);
+
+         if (debug)
+           loaders += std::format("  const loader loaded_{}{{\"{}.csp\", {}ull, {}, {}, {}, {}, {}}};\n", pack, pack,
+                                  container.signature(), container.table[frames_entry].first,
+                                  container.table[frames_entry].second, container.table[hitboxes_entry].first,
+                                  container.table[hitboxes_entry].second, container.table[strings_entry].first);
+         else
+           loaders += std::format("  const loader loaded_{}{{\"{}.csp\", {}ull, {}, {}, {}, {}}};\n", pack, pack,
+                                  container.signature(), container.table[frames_entry].first,
+                                  container.table[frames_entry].second, container.table[hitboxes_entry].first,
+                                  container.table[hitboxes_entry].second);
+       }
+
+       std::string result{"namespace cse::resource\n{\n" + loaders + "}\n\n"};
 
        result += "namespace csg\n{\n";
        const auto define{[&](const std::string &space, const std::string &type)
                          {
                            std::string block{};
-                           std::size_t entry{};
                            for (const auto &[file, name, value] : files)
-                           {
                              if (std::get<1>(value).space == space)
-                               block += std::format("    const cse::{} {}{{cse::resource::region({}, {})}};\n", type,
-                                                    name, container.table[entry].first, container.table[entry].second);
-                             ++entry;
-                           }
+                             {
+                               const auto &place{placements.at(file)};
+                               block += std::format("    const cse::{} {}{{cse::resource::region(\"{}\", {}, {})}};\n",
+                                                    type, name, place.key, place.offset, place.size);
+                             }
                            if (!block.empty()) result += std::format("  namespace {}\n  {{\n{}  }}\n", space, block);
                          }};
        define("vertex", "vertex");
@@ -395,15 +452,15 @@ int csb::build()
        define("font", "font");
        {
          std::string block{};
-         std::size_t entry{};
          for (const auto &[file, name, value] : files)
          {
            const auto &texture{std::get<1>(value)};
-           if (texture.space == "image")
-             block += std::format("    const cse::image {}{{cse::resource::region({}, {}), {}, {}, {}, {}, {}}};\n",
-                                  name, container.table[entry].first, container.table[entry].second, texture.width,
-                                  texture.height, texture.frame_width, texture.frame_height, texture.channels);
-           ++entry;
+           if (texture.space != "image") continue;
+           const auto &place{placements.at(file)};
+           block +=
+             std::format("    const cse::image {}{{cse::resource::region(\"{}\", {}, {}), {}, {}, {}, {}, {}}};\n",
+                         name, place.key, place.offset, place.size, texture.width, texture.height, texture.frame_width,
+                         texture.frame_height, texture.channels);
          }
          if (!block.empty()) result += "  namespace image\n  {\n" + block + "  }\n";
        }
@@ -413,12 +470,14 @@ int csb::build()
          {
            const auto &texture{std::get<1>(value)};
            if (texture.space != "image") continue;
+           const auto &place{placements.at(file)};
            block += std::format("    const detail::{}_animation {}{{", name, name);
-           const auto &list{clips[name]};
+           const auto &list{clips[file]};
            for (std::size_t index{}; index < list.size(); ++index)
            {
              const auto &[frame_index, frame_count, start, end]{list[index]};
-             block += std::format("{{cse::resource::frames({}, {}), {}, {}}}", frame_index, frame_count, start, end);
+             block += std::format("{{cse::resource::frames(\"{}\", {}, {}), {}, {}}}", place.key, frame_index,
+                                  frame_count, start, end);
              if (index + 1 < list.size()) block += ", ";
            }
            block += "};\n";
@@ -448,16 +507,7 @@ int csb::build()
        result += "}\n";
        return result;
      }},
-    [](const std::filesystem::path &file) -> bool
-    {
-      return file.extension() == ".spv" || file.extension() == ".ttf" || file.extension() == ".aseprite" ||
-             file.extension() == ".wav" || file.extension() == ".opus";
-    },
-    csb::combine(
-      {csb::choose_files({"build/shader"}, [](const auto &file) { return file.stem().extension() == ".vert"; }),
-       csb::choose_files({"build/shader"}, [](const auto &file) { return file.stem().extension() == ".frag"; }),
-       csb::choose_files({"program/font", "program/texture", "program/sound", "program/music"})}),
-    {"program/include/resource.hpp", "program/source/resource.cpp"}, {csp_file});
+    accept, resources, {"program/include/resource.hpp", "program/source/resource.cpp"}, pack_files);
 
   csb::subproject_install({"ConnorSweeneyDev/CSEngine", "0.0.0", COMPILED_LIBRARY});
 
