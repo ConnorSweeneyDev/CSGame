@@ -354,13 +354,13 @@ int csb::build()
 
        std::string result{"namespace cse::resource\n{\n"};
        if (debug)
-         result += std::format("  const loader mounted{{\"CSGame.csp\", {}ull, {}, {}, {}, {}, {}}};\n",
+         result += std::format("  const loader loaded{{\"CSGame.csp\", {}ull, {}, {}, {}, {}, {}}};\n",
                                container.signature(), container.table[frames_entry].first,
                                container.table[frames_entry].second, container.table[hitboxes_entry].first,
                                container.table[hitboxes_entry].second, container.table[strings_entry].first);
        else
          result +=
-           std::format("  const loader mounted{{\"CSGame.csp\", {}ull, {}, {}, {}, {}}};\n", container.signature(),
+           std::format("  const loader loaded{{\"CSGame.csp\", {}ull, {}, {}, {}, {}}};\n", container.signature(),
                        container.table[frames_entry].first, container.table[frames_entry].second,
                        container.table[hitboxes_entry].first, container.table[hitboxes_entry].second);
        result += "}\n\n";
