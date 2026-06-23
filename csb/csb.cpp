@@ -290,9 +290,10 @@ int csb::build()
              const std::uint64_t hitbox_index{hitboxes_total};
              std::uint64_t hitbox_count{};
              if (index < animation.hitboxes.size() && !animation.hitboxes[index].empty())
-               for (const auto &[identifier, bounds] : animation.hitboxes[index])
+               for (const auto &[identifier, rectangles] : animation.hitboxes[index])
                {
                  const std::string full{name + "." + identifier};
+                 std::uint64_t label_offset{}, label_size{}, label_hash{};
                  if (debug)
                  {
                    auto entry{string_pool.find(full)};
@@ -304,17 +305,27 @@ int csb::build()
                      entry =
                        string_pool.emplace(full, std::pair{offset, static_cast<std::uint64_t>(full.size())}).first;
                    }
-                   put_u64(hitboxes_blob, entry->second.first);
-                   put_u64(hitboxes_blob, entry->second.second);
+                   label_offset = entry->second.first;
+                   label_size = entry->second.second;
                  }
                  else
-                   put_u64(hitboxes_blob, hash_identifier(full));
-                 put_f64(hitboxes_blob, bounds[0]);
-                 put_f64(hitboxes_blob, bounds[1]);
-                 put_f64(hitboxes_blob, bounds[2]);
-                 put_f64(hitboxes_blob, bounds[3]);
-                 ++hitboxes_total;
-                 ++hitbox_count;
+                   label_hash = hash_identifier(full);
+                 for (const auto &bounds : rectangles)
+                 {
+                   if (debug)
+                   {
+                     put_u64(hitboxes_blob, label_offset);
+                     put_u64(hitboxes_blob, label_size);
+                   }
+                   else
+                     put_u64(hitboxes_blob, label_hash);
+                   put_f64(hitboxes_blob, bounds[0]);
+                   put_f64(hitboxes_blob, bounds[1]);
+                   put_f64(hitboxes_blob, bounds[2]);
+                   put_f64(hitboxes_blob, bounds[3]);
+                   ++hitboxes_total;
+                   ++hitbox_count;
+                 }
                }
 
              put_f64(frames_blob, left);
@@ -346,7 +357,7 @@ int csb::build()
                                  std::vector<std::string> names{};
                                  for (const auto &animation : texture.animations)
                                    for (const auto &frame : animation.hitboxes)
-                                     for (const auto &[identifier, bounds] : frame)
+                                     for (const auto &[identifier, rectangles] : frame)
                                        if (std::find(names.begin(), names.end(), identifier) == names.end())
                                          names.push_back(identifier);
                                  return names;
