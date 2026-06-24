@@ -14,6 +14,43 @@
 
 namespace csg
 {
+  cursor::cursor()
+    : cse::interface(
+        initial_state{
+          .translation = {0.0, 0.0},
+          .rotation = 0.0,
+          .scale = {1.0, 1.0},
+          .interactable = false,
+          .priority = -1000,
+        },
+        initial_graphics{
+          .shader = {.vertex = vertex::main, .fragment = fragment::main},
+          .texture = {.image = image::cursor,
+                      .animation = animation::cursor.main,
+                      .playback = {.frame = 0, .speed = 0.0, .loop = false, .elapsed = 0.0},
+                      .flip = {.horizontal = false, .vertical = false},
+                      .color = {0.5, 0.5, 0.5, 1.0},
+                      .transparency = 1.0},
+          .text = {.content = "",
+                   .font = {},
+                   .size = 0,
+                   .style = {.bold = false, .italic = false, .underline = false, .strikethrough = false},
+                   .color = {0.0, 0.0, 0.0, 0.0},
+                   .align = {.horizontal = cse::align::CENTER, .vertical = cse::align::MIDDLE, .offset = {0.0, 0.0}},
+                   .spacing = 0.0,
+                   .wrap = false,
+                   .overflow = false},
+          .priority = 1000,
+        })
+  {
+  }
+
+  void cursor::on_simulate(const double)
+  {
+    const auto &mouse{game->state.active.window->state.active.mouse};
+    state.active.translation = mouse.position;
+  }
+
   text::text(const glm::dvec2 &translation_, const glm::dvec2 &scale_)
     : cse::interface(
         initial_state{
@@ -21,7 +58,7 @@ namespace csg
           .rotation = 0.0,
           .scale = scale_,
           .interactable = false,
-          .priority = 100,
+          .priority = -100,
         },
         initial_graphics{
           .shader = {.vertex = vertex::main, .fragment = fragment::main},
@@ -88,8 +125,7 @@ namespace csg
 
   void button::on_simulate(const double)
   {
-    const auto &mouse{scene ? scene->game->state.active.window->state.active.mouse
-                            : game->state.active.window->state.active.mouse};
+    const auto &mouse{game->state.active.window->state.active.mouse};
 
     const auto hover =
       state.active.target.hovered == hitbox::box.main && state.previous.target.hovered != hitbox::box.main;
@@ -124,11 +160,11 @@ namespace csg
     if (left_press) graphics.active.text.color = {1.0, 0.0, 0.0, 1.0};
     if (!right_press && !left_press) graphics.active.text.color = {1.0, 1.0, 1.0, 1.0};
 
-    const auto left_click = state.active.target.released[SDL_BUTTON_LEFT] == hitbox::box.main &&
+    const auto left_click = state.active.target.clicked[SDL_BUTTON_LEFT] == hitbox::box.main &&
                             state.active.target.hovered == hitbox::box.main;
-    if (left_click)
+    if (left_click && scene)
     {
-      auto &scene_mixer = scene ? scene->state.active.mixer : game->state.active.scene->state.active.mixer;
+      auto &scene_mixer = (*scene)->state.active.mixer;
       if (name == "button1")
       {
         auto &song = scene_mixer.get<cse::music>("main");

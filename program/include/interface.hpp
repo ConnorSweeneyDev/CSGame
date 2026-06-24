@@ -1,12 +1,19 @@
 #pragma once
 
-#include <string>
-
 #include "cse/interface.hpp"
 #include "glm/ext/vector_double2.hpp"
 
 namespace csg
 {
+  class cursor final : public cse::interface
+  {
+  public:
+    cursor();
+
+  protected:
+    void on_simulate(const double tick) override final;
+  };
+
   class text final : public cse::interface
   {
   public:

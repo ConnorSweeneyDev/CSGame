@@ -15,6 +15,7 @@ namespace csg
           .top = CENTER,
           .width = 1280,
           .height = 720,
+          .mouse = {.visible = false, .position = {0.0, 0.0}},
         },
         initial_graphics{
           .title = "CSGame",
