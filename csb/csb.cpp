@@ -117,8 +117,7 @@ int csb::build()
       },
       group, {(csb::path("build") / source.lexically_relative("program") / "(filename).spv").string()});
   for (const auto &compiled : csb::choose_files({"build/vertex", "build/fragment"}))
-    if (!std::filesystem::exists(csb::path("program") / compiled.lexically_relative("build").parent_path() /
-                                 compiled.stem()))
+    if (!csb::exists(csb::path("program") / compiled.lexically_relative("build").parent_path() / compiled.stem()))
       csb::remove(compiled);
 
   const auto pack_of{[](const std::filesystem::path &file) -> std::string
@@ -131,8 +130,8 @@ int csb::build()
                        for (std::size_t index{}; index + 1 < parts.size(); ++index)
                          for (const auto &[first, second] : roots)
                            if (parts[index] == first && parts[index + 1] == second)
-                             return index + 3 < parts.size() ? parts[index + 2] : "base";
-                       return "base";
+                             return index + 3 < parts.size() ? parts[index + 2] : "CSGame";
+                       return "CSGame";
                      }};
   const auto accept{[](const std::filesystem::path &file) -> bool
                     {
@@ -524,6 +523,9 @@ int csb::build()
        return result;
      }},
     accept, resources, {"program/include/resource.hpp", "program/source/resource.cpp"}, pack_files);
+  for (const auto &pack :
+       csb::choose_files({pack_directory}, [](const auto &file) { return file.extension() == ".csp"; }))
+    if (!csb::contains(pack_files, pack)) csb::remove(pack);
 
   csb::subproject_install({"ConnorSweeneyDev/CSEngine", "0.0.0", COMPILED_LIBRARY});
 
