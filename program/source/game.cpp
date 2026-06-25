@@ -19,14 +19,14 @@ namespace csg
         },
         initial_graphics{
           .frame = 144.0,
-          .aspect = 16.0 / 9.0,
+          .aspect = {.value = 16.0 / 9.0, .interpolate = true},
           .resolution = 100,
-          .clear = {0.0, 0.0, 0.0},
+          .clear = {.value = {0.0, 0.0, 0.0}, .interpolate = true},
         },
         initial_audio{
-          .master = 0.5,
-          .sound = 0.5,
-          .music = 0.5,
+          .master = {.value = 0.5, .interpolate = true},
+          .sound = {.value = 0.5, .interpolate = true},
+          .music = {.value = 0.5, .interpolate = true},
         })
   {
   }
@@ -39,9 +39,9 @@ namespace csg
       case SDL_SCANCODE_F7: set<csg::window>(); break;
       case SDL_SCANCODE_F8:
         if (equal(graphics.active.aspect.value, 16.0 / 9.0))
-          graphics.active.aspect = 4.0 / 3.0;
+          graphics.active.aspect.value = 4.0 / 3.0;
         else
-          graphics.active.aspect = 16.0 / 9.0;
+          graphics.active.aspect.value = 16.0 / 9.0;
         break;
       case SDL_SCANCODE_F9:
         if (equal(graphics.active.frame.target, 144.0))

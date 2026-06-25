@@ -20,7 +20,7 @@ namespace csg
     auto &song = state.active.mixer.load("main", music::main);
     song.playing = true;
     song.loop = true;
-    song.speed = 0.80;
+    song.speed.value = 0.80;
   }
 
   void scene::pre_event(const SDL_Event &event)

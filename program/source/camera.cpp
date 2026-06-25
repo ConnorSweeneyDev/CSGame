@@ -15,12 +15,12 @@ namespace csg
   camera::camera(const glm::dvec3 &translation_)
     : cse::camera(
         initial_state{
-          .translation = translation_,
-          .forward = {0.0, 0.0, -1.0},
-          .up = {0.0, 1.0, 0.0},
+          .translation = {.value = translation_, .interpolate = true},
+          .forward = {.value = {0.0, 0.0, -1.0}, .interpolate = true},
+          .up = {.value = {0.0, 1.0, 0.0}, .interpolate = true},
         },
         initial_graphics{
-          .fov = 45.0,
+          .fov = {.value = 45.0, .interpolate = true},
           .clip = {.near = 0.01, .far = 100.0},
         })
   {
@@ -59,7 +59,7 @@ namespace csg
     if (keyboard[SDL_SCANCODE_SEMICOLON]) fov_rate += fov_change;
     fov_value += fov_rate * tick;
     fov_rate = 0.0;
-    if (graphics.active.fov.value < 30.0) graphics.active.fov = 30.0;
-    if (graphics.active.fov.value > 60.0) graphics.active.fov = 60.0;
+    if (graphics.active.fov.value < 30.0) graphics.active.fov.value = 30.0;
+    if (graphics.active.fov.value > 60.0) graphics.active.fov.value = 60.0;
   }
 }

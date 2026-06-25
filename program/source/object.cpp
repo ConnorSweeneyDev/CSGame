@@ -24,9 +24,9 @@ namespace csg
   player::player(const glm::dvec3 &translation_)
     : cse::object(
         initial_state{
-          .translation = translation_,
-          .rotation = 0.0,
-          .scale = {1.0, 1.0},
+          .translation = {.value = translation_, .interpolate = true},
+          .rotation = {.value = 0.0, .interpolate = true},
+          .scale = {.value = {1.0, 1.0}, .interpolate = true},
           .collidable = true,
           .priority = 0,
         },
@@ -34,10 +34,10 @@ namespace csg
           .shader = {.vertex = vertex::main, .fragment = fragment::main},
           .texture = {.image = image::redhood,
                       .animation = animation::redhood.idle,
-                      .playback = {.frame = 0, .speed = 1.0, .loop = true, .elapsed = 0.0},
+                      .playback = {.frame = 0, .speed = {1.0}, .loop = true, .elapsed = 0.0},
                       .flip = {.horizontal = false, .vertical = false},
-                      .color = {0.5, 0.5, 0.5, 1.0},
-                      .transparency = 1.0},
+                      .color = {.value = {0.5, 0.5, 0.5, 1.0}, .interpolate = true},
+                      .transparency = {.value = 1.0, .interpolate = true}},
           .priority = 1,
         })
   {
@@ -67,7 +67,7 @@ namespace csg
                                      if (!should) return;
                                      graphics.active.texture.image = image::redhood;
                                      graphics.active.texture.animation = animation::redhood.idle;
-                                     graphics.active.texture.playback = {0, 1.0, true};
+                                     graphics.active.texture.playback = {0, {1.0}, true};
                                    });
         }
         break;
@@ -104,7 +104,7 @@ namespace csg
           if (animation == animation::redhood.idle)
           {
             animation = animation::redhood.jump;
-            playback = {0, 1.0, false};
+            playback = {0, {1.0}, false};
           }
         }
         break;
@@ -157,27 +157,31 @@ namespace csg
       if (playback.frame == final && playback.elapsed >= animation.frames[final].duration)
       {
         animation = animation::redhood.idle;
-        playback = {0, 2.0, true};
+        playback = {0, {2.0}, true};
       }
     if (graphics.previous.texture.animation == animation && animation == animation::redhood.idle)
       if (playback.frame == 0 && graphics.previous.texture.playback.frame == final)
       {
-        playback.speed = 1.0;
+        playback.speed.value = 1.0;
         if (equal(graphics.active.texture.color.value.r, 0.5))
           graphics.active.texture.color.value.r = 0.125;
         else
           graphics.active.texture.color.value.r = 0.5;
+        graphics.active.texture.color.instant = true;
       }
     if (graphics.previous.texture.image == image::shop && graphics.active.texture.image != image::shop)
+    {
       graphics.active.texture.color.value = {0.5, 0.5, 1.0, 1.0};
+      graphics.active.texture.color.instant = true;
+    }
   }
 
   environment::environment(const glm::dvec3 &translation_, const cse::image &image_, const cse::animation &animation_)
     : cse::object(
         initial_state{
-          .translation = translation_,
-          .rotation = 0.0,
-          .scale = {1.0, 1.0},
+          .translation = {.value = translation_, .interpolate = true},
+          .rotation = {.value = 0.0, .interpolate = true},
+          .scale = {.value = {1.0, 1.0}, .interpolate = true},
           .collidable = true,
           .priority = 1,
         },
@@ -185,10 +189,10 @@ namespace csg
           .shader = {.vertex = vertex::main, .fragment = fragment::main},
           .texture = {.image = image_,
                       .animation = animation_,
-                      .playback = {.frame = 0, .speed = 0.0, .loop = false, .elapsed = 0.0},
+                      .playback = {.frame = 0, .speed = {0.0}, .loop = false, .elapsed = 0.0},
                       .flip = {.horizontal = false, .vertical = false},
-                      .color = {0.5, 0.5, 0.5, 1.0},
-                      .transparency = 1.0},
+                      .color = {.value = {0.5, 0.5, 0.5, 1.0}, .interpolate = true},
+                      .transparency = {.value = 1.0, .interpolate = true}},
           .priority = 0,
         })
   {

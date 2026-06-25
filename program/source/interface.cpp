@@ -17,9 +17,9 @@ namespace csg
   cursor::cursor()
     : cse::interface(
         initial_state{
-          .translation = {0.0, 0.0},
-          .rotation = 0.0,
-          .scale = {1.0, 1.0},
+          .translation = {.value = {0.0, 0.0}, .interpolate = false},
+          .rotation = {.value = 0.0, .interpolate = false},
+          .scale = {.value = {1.0, 1.0}, .interpolate = false},
           .interactable = false,
           .priority = -1000,
         },
@@ -27,16 +27,18 @@ namespace csg
           .shader = {.vertex = vertex::main, .fragment = fragment::main},
           .texture = {.image = image::cursor,
                       .animation = animation::cursor.main,
-                      .playback = {.frame = 0, .speed = 0.0, .loop = false, .elapsed = 0.0},
+                      .playback = {.frame = 0, .speed = {0.0}, .loop = false, .elapsed = 0.0},
                       .flip = {.horizontal = false, .vertical = false},
-                      .color = {0.5, 0.5, 0.5, 1.0},
-                      .transparency = 1.0},
+                      .color = {.value = {0.5, 0.5, 0.5, 1.0}, .interpolate = true},
+                      .transparency = {.value = 1.0, .interpolate = true}},
           .text = {.content = "",
                    .font = {},
                    .size = 0,
                    .style = {.bold = false, .italic = false, .underline = false, .strikethrough = false},
-                   .color = {0.0, 0.0, 0.0, 0.0},
-                   .align = {.horizontal = cse::align::CENTER, .vertical = cse::align::MIDDLE, .offset = {0.0, 0.0}},
+                   .color = {.value = {0.0, 0.0, 0.0, 0.0}, .interpolate = true},
+                   .align = {.horizontal = cse::align::CENTER,
+                             .vertical = cse::align::MIDDLE,
+                             .offset = {.value = {0.0, 0.0}, .interpolate = true}},
                    .spacing = 0.0,
                    .wrap = false,
                    .overflow = false},
@@ -48,16 +50,16 @@ namespace csg
   void cursor::on_simulate(const double)
   {
     const auto &mouse{game->state.active.window->state.active.mouse};
-    state.active.translation = mouse.position;
-    graphics.active.texture.transparency = SDL_CursorVisible() ? 0.0 : 1.0;
+    state.active.translation.value = mouse.position;
+    graphics.active.texture.transparency.value = SDL_CursorVisible() ? 0.0 : 1.0;
   }
 
   text::text(const glm::dvec2 &translation_, const glm::dvec2 &scale_)
     : cse::interface(
         initial_state{
-          .translation = translation_,
-          .rotation = 0.0,
-          .scale = scale_,
+          .translation = {.value = translation_, .interpolate = true},
+          .rotation = {.value = 0.0, .interpolate = true},
+          .scale = {.value = scale_, .interpolate = true},
           .interactable = false,
           .priority = -100,
         },
@@ -65,16 +67,18 @@ namespace csg
           .shader = {.vertex = vertex::main, .fragment = fragment::main},
           .texture = {.image = image::empty,
                       .animation = animation::empty.main,
-                      .playback = {.frame = 0, .speed = 0.0, .loop = false, .elapsed = 0.0},
+                      .playback = {.frame = 0, .speed = {0.0}, .loop = false, .elapsed = 0.0},
                       .flip = {.horizontal = false, .vertical = false},
-                      .color = {0.5, 0.5, 0.5, 1.0},
-                      .transparency = 1.0},
+                      .color = {.value = {0.5, 0.5, 0.5, 1.0}, .interpolate = true},
+                      .transparency = {.value = 1.0, .interpolate = true}},
           .text = {.content = "",
                    .font = font::main,
                    .size = 12,
                    .style = {.bold = false, .italic = false, .underline = false, .strikethrough = false},
-                   .color = {1.0, 1.0, 1.0, 1.0},
-                   .align = {.horizontal = cse::align::LEFT, .vertical = cse::align::MIDDLE, .offset = {0.0, 0.0}},
+                   .color = {.value = {1.0, 1.0, 1.0, 1.0}, .interpolate = true},
+                   .align = {.horizontal = cse::align::LEFT,
+                             .vertical = cse::align::MIDDLE,
+                             .offset = {.value = {0.0, 0.0}, .interpolate = true}},
                    .spacing = 0.0,
                    .wrap = false,
                    .overflow = false},
@@ -86,9 +90,9 @@ namespace csg
   button::button(const glm::dvec2 &translation_)
     : cse::interface(
         initial_state{
-          .translation = translation_,
-          .rotation = 0.0,
-          .scale = {1.0, 1.0},
+          .translation = {.value = translation_, .interpolate = true},
+          .rotation = {.value = 0.0, .interpolate = true},
+          .scale = {.value = {1.0, 1.0}, .interpolate = true},
           .interactable = true,
           .priority = 0,
         },
@@ -96,16 +100,18 @@ namespace csg
           .shader = {.vertex = vertex::main, .fragment = fragment::main},
           .texture = {.image = image::box,
                       .animation = animation::box.main,
-                      .playback = {.frame = 0, .speed = 0.0, .loop = false, .elapsed = 0.0},
+                      .playback = {.frame = 0, .speed = {0.0}, .loop = false, .elapsed = 0.0},
                       .flip = {.horizontal = false, .vertical = false},
-                      .color = {0.5, 0.5, 0.5, 1.0},
-                      .transparency = 1.0},
+                      .color = {.value = {0.5, 0.5, 0.5, 1.0}, .interpolate = true},
+                      .transparency = {.value = 1.0, .interpolate = true}},
           .text = {.content = "",
                    .font = font::main,
                    .size = 20,
                    .style = {.bold = true, .italic = false, .underline = false, .strikethrough = false},
-                   .color = {1.0, 1.0, 1.0, 1.0},
-                   .align = {.horizontal = cse::align::CENTER, .vertical = cse::align::MIDDLE, .offset = {0.0, 0.0}},
+                   .color = {.value = {1.0, 1.0, 1.0, 1.0}, .interpolate = true},
+                   .align = {.horizontal = cse::align::CENTER,
+                             .vertical = cse::align::MIDDLE,
+                             .offset = {.value = {0.0, 0.0}, .interpolate = true}},
                    .spacing = 0.0,
                    .wrap = false,
                    .overflow = false},
@@ -156,10 +162,10 @@ namespace csg
     {
       state.active.translation.value.x = mouse.position.x;
       state.active.translation.value.y = mouse.position.y;
-      graphics.active.text.color = {0.0, 0.0, 1.0, 1.0};
+      graphics.active.text.color.value = {0.0, 0.0, 1.0, 1.0};
     }
-    if (left_press) graphics.active.text.color = {1.0, 0.0, 0.0, 1.0};
-    if (!right_press && !left_press) graphics.active.text.color = {1.0, 1.0, 1.0, 1.0};
+    if (left_press) graphics.active.text.color.value = {1.0, 0.0, 0.0, 1.0};
+    if (!right_press && !left_press) graphics.active.text.color.value = {1.0, 1.0, 1.0, 1.0};
 
     const auto left_click = state.active.target.clicked[SDL_BUTTON_LEFT] == hitbox::box.main &&
                             state.active.target.hovered == hitbox::box.main;
@@ -178,7 +184,7 @@ namespace csg
       {
         auto &song = scene_mixer.get<cse::music>("main");
         song.position = 0.0;
-        song.speed = song.speed.value + 0.1;
+        song.speed.value = song.speed.value + 0.1;
       }
     }
 
