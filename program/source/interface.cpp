@@ -49,6 +49,7 @@ namespace csg
   {
     const auto &mouse{game->state.active.window->state.active.mouse};
     state.active.translation = mouse.position;
+    graphics.active.texture.transparency = SDL_CursorVisible() ? 0.0 : 1.0;
   }
 
   text::text(const glm::dvec2 &translation_, const glm::dvec2 &scale_)
