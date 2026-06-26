@@ -8,20 +8,15 @@
 namespace csg
 {
   window::window()
-    : cse::window(
-        initial_state{
-          .display = PRIMARY,
-          .left = CENTER,
-          .top = CENTER,
-          .width = 1280,
-          .height = 720,
-          .mouse = {.visible = false, .position = {0.0, 0.0}},
-        },
-        initial_graphics{
-          .title = "CSGame",
-          .fullscreen = false,
-          .vsync = true,
-        })
+    : cse::window({.title = "CSGame",
+                   .display = PRIMARY,
+                   .left = CENTER,
+                   .top = CENTER,
+                   .width = 1280,
+                   .height = 720,
+                   .fullscreen = false,
+                   .vsync = true,
+                   .mouse = {.visible = false, .position = {0.0, 0.0}}})
   {
   }
 
@@ -30,18 +25,18 @@ namespace csg
     if (event.type != SDL_EVENT_KEY_DOWN || event.key.repeat) return;
     switch (const auto &key{event.key}; key.scancode)
     {
-      case SDL_SCANCODE_ESCAPE: state.active.running = false; break;
-      case SDL_SCANCODE_F11: graphics.active.fullscreen = !graphics.active.fullscreen; break;
-      case SDL_SCANCODE_F12: graphics.active.vsync = !graphics.active.vsync; break;
+      case SDL_SCANCODE_ESCAPE: active.running = false; break;
+      case SDL_SCANCODE_F11: active.fullscreen = !active.fullscreen; break;
+      case SDL_SCANCODE_F12: active.vsync = !active.vsync; break;
       default: break;
     }
   }
 
   void window::on_simulate(const double)
   {
-    if (!graphics.previous.vsync && graphics.active.vsync)
+    if (!previous.vsync && active.vsync)
       cse::print<COUT>("VSync toggled on\n");
-    else if (graphics.previous.vsync && !graphics.active.vsync)
+    else if (previous.vsync && !active.vsync)
       cse::print<COUT>("VSync toggled off\n");
   }
 }

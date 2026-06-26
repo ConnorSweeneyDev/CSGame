@@ -13,26 +13,21 @@
 namespace csg
 {
   camera::camera(const glm::dvec3 &translation_)
-    : cse::camera(
-        initial_state{
-          .translation = {.value = translation_, .interpolate = true},
-          .forward = {.value = {0.0, 0.0, -1.0}, .interpolate = true},
-          .up = {.value = {0.0, 1.0, 0.0}, .interpolate = true},
-        },
-        initial_graphics{
-          .fov = {.value = 45.0, .interpolate = true},
-          .clip = {.near = 0.01, .far = 100.0},
-        })
+    : cse::camera({.translation = {.value = translation_, .interpolate = true},
+                   .forward = {.value = {0.0, 0.0, -1.0}, .interpolate = true},
+                   .up = {.value = {0.0, 1.0, 0.0}, .interpolate = true},
+                   .fov = {.value = 45.0, .interpolate = true},
+                   .clip = {.near = 0.01, .far = 100.0}})
   {
   }
 
   void camera::on_simulate(const double tick)
   {
-    const auto &keyboard{scene->game->state.active.window->state.active.keyboard};
+    const auto &keyboard{scene->game->active.window->active.keyboard};
 
-    auto &position{state.active.translation.value};
-    auto &velocity{state.active.translation.rate};
-    auto &acceleration{state.active.translation.curve};
+    auto &position{active.translation.value};
+    auto &velocity{active.translation.rate};
+    auto &acceleration{active.translation.curve};
     if (keyboard[SDL_SCANCODE_I]) acceleration.y += max_velocity;
     if (keyboard[SDL_SCANCODE_K]) acceleration.y -= max_velocity;
     if (keyboard[SDL_SCANCODE_L]) acceleration.x += max_velocity;
@@ -53,13 +48,13 @@ namespace csg
     }
     position += velocity * tick;
 
-    auto &fov_value{graphics.active.fov.value};
-    auto &fov_rate{graphics.active.fov.rate};
+    auto &fov_value{active.fov.value};
+    auto &fov_rate{active.fov.rate};
     if (keyboard[SDL_SCANCODE_H]) fov_rate -= fov_change;
     if (keyboard[SDL_SCANCODE_SEMICOLON]) fov_rate += fov_change;
     fov_value += fov_rate * tick;
     fov_rate = 0.0;
-    if (graphics.active.fov.value < 30.0) graphics.active.fov.value = 30.0;
-    if (graphics.active.fov.value > 60.0) graphics.active.fov.value = 60.0;
+    if (active.fov.value < 30.0) active.fov.value = 30.0;
+    if (active.fov.value > 60.0) active.fov.value = 60.0;
   }
 }

@@ -22,24 +22,18 @@
 namespace csg
 {
   player::player(const glm::dvec3 &translation_)
-    : cse::object(
-        initial_state{
-          .translation = {.value = translation_, .interpolate = true},
-          .rotation = {.value = 0.0, .interpolate = true},
-          .scale = {.value = {1.0, 1.0}, .interpolate = true},
-          .collidable = true,
-          .priority = 0,
-        },
-        initial_graphics{
-          .shader = {.vertex = vertex::main, .fragment = fragment::main},
-          .texture = {.image = image::redhood,
-                      .animation = animation::redhood.idle,
-                      .playback = {.frame = 0, .speed = {1.0}, .loop = true, .elapsed = 0.0},
-                      .flip = {.horizontal = false, .vertical = false},
-                      .color = {.value = {0.5, 0.5, 0.5, 1.0}, .interpolate = true},
-                      .transparency = {.value = 1.0, .interpolate = true}},
-          .priority = 1,
-        })
+    : cse::object({.translation = {.value = translation_, .interpolate = true},
+                   .rotation = {.value = 0.0, .interpolate = true},
+                   .scale = {.value = {1.0, 1.0}, .interpolate = true},
+                   .collidable = true,
+                   .shader = {.vertex = vertex::main, .fragment = fragment::main},
+                   .texture = {.image = image::redhood,
+                               .animation = animation::redhood.idle,
+                               .playback = {.frame = 0, .speed = {1.0}, .loop = true, .elapsed = 0.0},
+                               .flip = {.horizontal = false, .vertical = false},
+                               .color = {.value = {0.5, 0.5, 0.5, 1.0}, .interpolate = true},
+                               .transparency = {.value = 1.0, .interpolate = true}},
+                   .priority = {.simulation = 0, .rendering = 1}})
   {
   }
 
@@ -51,43 +45,43 @@ namespace csg
       case SDL_SCANCODE_1:
         if (!key.repeat && key.type == SDL_EVENT_KEY_DOWN)
         {
-          if (graphics.active.texture.image == image::redhood)
-            state.active.timer.set("texture_change", 1.0,
-                                   [this](const bool should)
-                                   {
-                                     if (!should) return;
-                                     graphics.active.texture.image = image::shop;
-                                     graphics.active.texture.animation = animation::shop.main;
-                                     graphics.active.texture.playback = {};
-                                   });
+          if (active.texture.image == image::redhood)
+            active.timer.set("texture_change", 1.0,
+                             [this](const bool should)
+                             {
+                               if (!should) return;
+                               active.texture.image = image::shop;
+                               active.texture.animation = animation::shop.main;
+                               active.texture.playback = {};
+                             });
           else
-            state.active.timer.set("texture_change", 1.0,
-                                   [this](const bool should)
-                                   {
-                                     if (!should) return;
-                                     graphics.active.texture.image = image::redhood;
-                                     graphics.active.texture.animation = animation::redhood.idle;
-                                     graphics.active.texture.playback = {0, {1.0}, true};
-                                   });
+            active.timer.set("texture_change", 1.0,
+                             [this](const bool should)
+                             {
+                               if (!should) return;
+                               active.texture.image = image::redhood;
+                               active.texture.animation = animation::redhood.idle;
+                               active.texture.playback = {0, {1.0}, true};
+                             });
         }
         break;
       case SDL_SCANCODE_2:
         if (!key.repeat && key.type == SDL_EVENT_KEY_DOWN)
-          graphics.active.texture.flip.horizontal = !graphics.active.texture.flip.horizontal;
+          active.texture.flip.horizontal = !active.texture.flip.horizontal;
         break;
       case SDL_SCANCODE_3:
         if (!key.repeat && key.type == SDL_EVENT_KEY_DOWN)
         {
-          if (equal(graphics.active.texture.playback.speed.value, 1.0))
-            graphics.active.texture.playback.speed.value = -1.0;
+          if (equal(active.texture.playback.speed.value, 1.0))
+            active.texture.playback.speed.value = -1.0;
           else
-            graphics.active.texture.playback.speed.value = 1.0;
+            active.texture.playback.speed.value = 1.0;
         }
         break;
       case SDL_SCANCODE_4:
         if (!key.repeat && key.type == SDL_EVENT_KEY_DOWN)
         {
-          if (try_contains(scene->state.active.objects, "temp"))
+          if (try_contains(scene->active.objects, "temp"))
             scene->remove("temp");
           else
             scene->set<environment>("temp", glm::dvec3{-80.0, 24.0, -1.0}, image::shop, animation::shop.main);
@@ -99,8 +93,8 @@ namespace csg
       case SDL_SCANCODE_0:
         if (!key.repeat && key.type == SDL_EVENT_KEY_DOWN)
         {
-          auto &playback{graphics.active.texture.playback};
-          auto &animation{graphics.active.texture.animation};
+          auto &playback{active.texture.playback};
+          auto &animation{active.texture.animation};
           if (animation == animation::redhood.idle)
           {
             animation = animation::redhood.jump;
@@ -114,11 +108,11 @@ namespace csg
 
   void player::on_simulate(const double tick)
   {
-    const auto &keyboard{scene->game->state.active.window->state.active.keyboard};
+    const auto &keyboard{scene->game->active.window->active.keyboard};
 
-    auto &position{state.active.translation.value};
-    auto &velocity{state.active.translation.rate};
-    auto &acceleration{state.active.translation.curve};
+    auto &position{active.translation.value};
+    auto &velocity{active.translation.rate};
+    auto &acceleration{active.translation.curve};
     if (keyboard[SDL_SCANCODE_E]) acceleration.y += max_velocity;
     if (keyboard[SDL_SCANCODE_D]) acceleration.y -= max_velocity;
     if (keyboard[SDL_SCANCODE_F]) acceleration.x += max_velocity;
@@ -139,8 +133,8 @@ namespace csg
     }
     position += velocity * tick;
 
-    auto &transparency_value{graphics.active.texture.transparency.value};
-    auto &transparency_rate{graphics.active.texture.transparency.rate};
+    auto &transparency_value{active.texture.transparency.value};
+    auto &transparency_rate{active.texture.transparency.rate};
     if (keyboard[SDL_SCANCODE_A]) transparency_rate -= transparency_change;
     if (keyboard[SDL_SCANCODE_G]) transparency_rate += transparency_change;
     transparency_value += transparency_rate * tick;
@@ -148,10 +142,10 @@ namespace csg
     if (transparency_value < 0.0) transparency_value = 0.0;
     if (transparency_value > 1.0) transparency_value = 1.0;
 
-    state.active.timer.call<void(const bool)>("texture_change", true);
+    active.timer.call<void(const bool)>("texture_change", true);
 
-    auto &animation{graphics.active.texture.animation};
-    auto &playback{graphics.active.texture.playback};
+    auto &animation{active.texture.animation};
+    auto &playback{active.texture.playback};
     auto final{animation.frames.size() - 1};
     if (animation == animation::redhood.jump)
       if (playback.frame == final && playback.elapsed >= animation.frames[final].duration)
@@ -159,56 +153,50 @@ namespace csg
         animation = animation::redhood.idle;
         playback = {0, {2.0}, true};
       }
-    if (graphics.previous.texture.animation == animation && animation == animation::redhood.idle)
-      if (playback.frame == 0 && graphics.previous.texture.playback.frame == final)
+    if (previous.texture.animation == animation && animation == animation::redhood.idle)
+      if (playback.frame == 0 && previous.texture.playback.frame == final)
       {
         playback.speed.value = 1.0;
-        if (equal(graphics.active.texture.color.value.r, 0.5))
-          graphics.active.texture.color.value.r = 0.125;
+        if (equal(active.texture.color.value.r, 0.5))
+          active.texture.color.value.r = 0.125;
         else
-          graphics.active.texture.color.value.r = 0.5;
-        graphics.active.texture.color.instant = true;
+          active.texture.color.value.r = 0.5;
+        active.texture.color.instant = true;
       }
-    if (graphics.previous.texture.image == image::shop && graphics.active.texture.image != image::shop)
+    if (previous.texture.image == image::shop && active.texture.image != image::shop)
     {
-      graphics.active.texture.color.value = {0.5, 0.5, 1.0, 1.0};
-      graphics.active.texture.color.instant = true;
+      active.texture.color.value = {0.5, 0.5, 1.0, 1.0};
+      active.texture.color.instant = true;
     }
   }
 
   environment::environment(const glm::dvec3 &translation_, const cse::image &image_, const cse::animation &animation_)
-    : cse::object(
-        initial_state{
-          .translation = {.value = translation_, .interpolate = true},
-          .rotation = {.value = 0.0, .interpolate = true},
-          .scale = {.value = {1.0, 1.0}, .interpolate = true},
-          .collidable = true,
-          .priority = 1,
-        },
-        initial_graphics{
-          .shader = {.vertex = vertex::main, .fragment = fragment::main},
-          .texture = {.image = image_,
-                      .animation = animation_,
-                      .playback = {.frame = 0, .speed = {0.0}, .loop = false, .elapsed = 0.0},
-                      .flip = {.horizontal = false, .vertical = false},
-                      .color = {.value = {0.5, 0.5, 0.5, 1.0}, .interpolate = true},
-                      .transparency = {.value = 1.0, .interpolate = true}},
-          .priority = 0,
-        })
+    : cse::object({.translation = {.value = translation_, .interpolate = true},
+                   .rotation = {.value = 0.0, .interpolate = true},
+                   .scale = {.value = {1.0, 1.0}, .interpolate = true},
+                   .collidable = true,
+                   .shader = {.vertex = vertex::main, .fragment = fragment::main},
+                   .texture = {.image = image_,
+                               .animation = animation_,
+                               .playback = {.frame = 0, .speed = {0.0}, .loop = false, .elapsed = 0.0},
+                               .flip = {.horizontal = false, .vertical = false},
+                               .color = {.value = {0.5, 0.5, 0.5, 1.0}, .interpolate = true},
+                               .transparency = {.value = 1.0, .interpolate = true}},
+                   .priority = {.simulation = 1, .rendering = 0}})
   {
   }
 
   void environment::on_collide(const double)
   {
-    auto &contacts{scene->state.active.contacts};
+    auto &contacts{scene->active.contacts};
     for (const auto &contact : contacts)
     {
       if (name != contact.self.name) continue;
       if (contact.self.hitbox != hitbox::floor.main) continue;
       if (!is<player>(contact.target.pointer)) continue;
 
-      auto &position{contact.target.pointer->state.active.translation.value};
-      auto &velocity{contact.target.pointer->state.active.translation.rate};
+      auto &position{contact.target.pointer->active.translation.value};
+      auto &velocity{contact.target.pointer->active.translation.rate};
       position.x += contact.penetration.x;
       position.y += contact.penetration.y;
       const auto into{(velocity.x * contact.normal.x) + (velocity.y * contact.normal.y)};

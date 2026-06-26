@@ -13,11 +13,9 @@
 
 namespace csg
 {
-  scene::scene() : cse::scene() {}
-
   void scene::pre_prepare()
   {
-    auto &song = state.active.mixer.load("main", music::main);
+    auto &song = active.mixer.load("main", music::main);
     song.playing = true;
     song.loop = true;
     song.speed.value = 0.80;
@@ -35,15 +33,15 @@ namespace csg
         if (!key.repeat && key.type == SDL_EVENT_KEY_DOWN) game->current("other", other);
         break;
       case SDL_SCANCODE_8:
-        if (!key.repeat && key.type == SDL_EVENT_KEY_DOWN) state.active.mixer.unload<cse::music>("main");
+        if (!key.repeat && key.type == SDL_EVENT_KEY_DOWN) active.mixer.unload<cse::music>("main");
         break;
       case SDL_SCANCODE_9:
-        if (const auto &player{try_find(state.active.objects, "player")})
+        if (const auto &player{try_find(active.objects, "player")})
         {
           if (!key.repeat && key.type == SDL_EVENT_KEY_DOWN)
-            player->graphics.active.texture.color.value = {0.25, 0.0, 0.0, 0.5};
+            player->active.texture.color.value = {0.25, 0.0, 0.0, 0.5};
           else if (key.type == SDL_EVENT_KEY_UP)
-            player->graphics.active.texture.color.value = {0.5, 0.5, 0.5, 1.0};
+            player->active.texture.color.value = {0.5, 0.5, 0.5, 1.0};
         }
         break;
       default: break;

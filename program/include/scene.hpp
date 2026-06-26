@@ -10,7 +10,7 @@ namespace csg
   class scene final : public cse::scene
   {
   public:
-    scene();
+    scene() = default;
 
     static void main(const std::shared_ptr<scene> &scene);
     static void other(const std::shared_ptr<scene> &scene);
