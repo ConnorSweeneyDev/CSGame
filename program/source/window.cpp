@@ -10,11 +10,11 @@ namespace csg
   window::window()
     : cse::window({.title = "CSGame",
                    .display = PRIMARY,
-                   .left = CENTER,
-                   .top = CENTER,
+                   .left = ORIGIN,
+                   .top = ORIGIN,
                    .width = 1280,
                    .height = 720,
-                   .fullscreen = false,
+                   .mode = WINDOWED,
                    .vsync = true,
                    .mouse = {.visible = false, .position = {0.0, 0.0}}})
   {
@@ -26,7 +26,12 @@ namespace csg
     switch (const auto &key{event.key}; key.scancode)
     {
       case SDL_SCANCODE_ESCAPE: active.running = false; break;
-      case SDL_SCANCODE_F11: active.fullscreen = !active.fullscreen; break;
+      case SDL_SCANCODE_F11:
+        if (active.mode == WINDOWED)
+          active.mode = BORDERLESS;
+        else
+          active.mode = WINDOWED;
+        break;
       case SDL_SCANCODE_F12: active.vsync = !active.vsync; break;
       default: break;
     }
