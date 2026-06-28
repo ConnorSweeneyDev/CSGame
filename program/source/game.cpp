@@ -19,8 +19,8 @@ namespace csg
                  .resolution = 100,
                  .clear = {.value = {0.0, 0.0, 0.0}, .interpolate = true},
                  .master = {.value = 0.5, .interpolate = true},
-                 .sound = {.value = 0.5, .interpolate = true},
-                 .music = {.value = 0.5, .interpolate = true}})
+                 .sound = {.value = 1.0, .interpolate = true},
+                 .music = {.value = 1.0, .interpolate = true}})
   {
   }
 
