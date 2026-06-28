@@ -17,7 +17,7 @@ namespace csg
                    .forward = {.value = {0.0, 0.0, -1.0}, .interpolate = true},
                    .up = {.value = {0.0, 1.0, 0.0}, .interpolate = true},
                    .fov = {.value = 45.0, .interpolate = true},
-                   .clip = {.near = 0.01, .far = 100.0}})
+                   .clip = {.near = 10.0, .far = 400.0}})
   {
   }
 
@@ -48,12 +48,12 @@ namespace csg
     }
     position += velocity * tick;
 
-    auto &fov_value{active.fov.value};
-    auto &fov_rate{active.fov.rate};
-    if (keyboard[SDL_SCANCODE_H]) fov_rate -= fov_change;
-    if (keyboard[SDL_SCANCODE_SEMICOLON]) fov_rate += fov_change;
-    fov_value += fov_rate * tick;
-    fov_rate = 0.0;
+    auto &forward_value{active.forward.value.x};
+    auto &forward_rate{active.forward.rate.x};
+    if (keyboard[SDL_SCANCODE_APOSTROPHE]) forward_rate -= forward_change;
+    if (keyboard[SDL_SCANCODE_SEMICOLON]) forward_rate += forward_change;
+    forward_value += forward_rate * tick;
+    forward_rate = 0.0;
     if (active.fov.value < 30.0) active.fov.value = 30.0;
     if (active.fov.value > 60.0) active.fov.value = 60.0;
   }

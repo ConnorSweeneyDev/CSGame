@@ -16,6 +16,6 @@ namespace csg
   private:
     static constexpr double max_velocity{200.0};
     static constexpr double friction{50.0};
-    static constexpr double fov_change{10.0};
+    static constexpr double forward_change{1.5};
   };
 }

@@ -30,7 +30,7 @@ cbuffer Lights : register(b0, space3)
   float4 meta; // x = active light count, y = active occluder count, z = occluder array width, w = height
 };
 
-static const float SHADOW_RADIUS = 8.0f;
+static const float SHADOW_RADIUS = 8.0f;       // max penumbra radius (world units) at softness 1
 static const float SHADOW_GOLDEN = 2.3999632f; // golden angle (radians)
 
 float2 layer_texel() { return 1.0f / float2(max(meta.z, 1.0f), max(meta.w, 1.0f)); }

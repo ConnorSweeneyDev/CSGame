@@ -9,6 +9,7 @@ struct Input
   float4 color : TEXCOORD6;          // xyz = tint colour, w = tint strength
   float4 uv_rect : TEXCOORD7;        // xy = frame uv min (left, bottom), zw = max (right, top)
   float4 material : TEXCOORD8;       // x = lit, y = shadowed, z = brightness, w = transparency
+  float depth : TEXCOORD9;           // clip-space depth bias (NDC), nearer = larger; coplanar ordering only
 };
 struct Output
 {
@@ -29,7 +30,9 @@ Output main(Input input)
 {
   float4x4 model_matrix = {input.model_column_0, input.model_column_1, input.model_column_2, input.model_column_3};
   float4 world_position = mul(float4(input.corner, 0.0f, 1.0f), model_matrix);
-  Output output = {mul(projection_matrix, mul(view_matrix, world_position)), input.color,
-                   lerp(input.uv_rect.xy, input.uv_rect.zw, input.uv_corner), world_position.xyz, input.material};
+  float4 clip = mul(projection_matrix, mul(view_matrix, world_position));
+  clip.z -= input.depth * clip.w;
+  Output output = {clip, input.color, lerp(input.uv_rect.xy, input.uv_rect.zw, input.uv_corner), world_position.xyz,
+                   input.material};
   return output;
 }
