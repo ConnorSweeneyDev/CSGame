@@ -3,6 +3,7 @@
 #include "SDL3/SDL_events.h"
 #include "SDL3/SDL_scancode.h"
 #include "cse/light.hpp"
+#include "cse/numeric.hpp"
 #include "glm/ext/vector_double3.hpp"
 
 sun::sun()
@@ -42,7 +43,7 @@ void lamp::on_event(const SDL_Event &event)
   {
     case SDL_SCANCODE_Y:
       if (!key.repeat && key.type == SDL_EVENT_KEY_DOWN)
-        active.illumination.angle.value = active.illumination.angle.value == 170.0 ? 360.0 : 170.0;
+        active.illumination.angle.value = equal(active.illumination.angle.value, 170.0) ? 360.0 : 170.0;
       break;
     default: break;
   }
