@@ -28,6 +28,7 @@ namespace csg
     environment(const glm::dvec3 &translation_, const cse::image &image_, const cse::animation &animation_);
 
   protected:
+    void on_prepare() override final;
     void on_collide(const double tick) override final;
   };
 }

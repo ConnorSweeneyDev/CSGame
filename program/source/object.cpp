@@ -33,6 +33,11 @@ namespace csg
                                .flip = {.horizontal = false, .vertical = false},
                                .color = {.value = {0.5, 0.5, 0.5, 1.0}, .interpolate = true},
                                .transparency = {.value = 1.0, .interpolate = true}},
+                   .illumination = {.show = true, .brightness = {.value = 1.0, .interpolate = true}},
+                   .shadow = {.cast = true,
+                              .show = true,
+                              .darkness = {.value = 1.0, .interpolate = true},
+                              .softness = {.value = 1.0, .interpolate = true}},
                    .priority = {.simulation = 0, .rendering = 1}})
   {
   }
@@ -182,8 +187,23 @@ namespace csg
                                .flip = {.horizontal = false, .vertical = false},
                                .color = {.value = {0.5, 0.5, 0.5, 1.0}, .interpolate = true},
                                .transparency = {.value = 1.0, .interpolate = true}},
+                   .illumination = {.show = true, .brightness = {.value = 1.0, .interpolate = true}},
+                   .shadow = {.cast = true,
+                              .show = true,
+                              .darkness = {.value = 1.0, .interpolate = true},
+                              .softness = {.value = 1.0, .interpolate = true}},
                    .priority = {.simulation = 1, .rendering = 0}})
   {
+  }
+
+  void environment::on_prepare()
+  {
+    if (name == "shop") active.shadow.cast = false;
+    if (name == "background3")
+    {
+      active.illumination.brightness.value = 0.4;
+      active.shadow.show = false;
+    }
   }
 
   void environment::on_collide(const double)
