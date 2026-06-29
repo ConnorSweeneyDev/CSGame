@@ -16,7 +16,7 @@ namespace csg
 {
   void game::setup(const std::shared_ptr<game> &game)
   {
-    game->set<csg::window>()
+    game->set<window>()
       .current("main", scene::main)
       .set<cursor>("cursor")
       .set<text>("tick", glm::dvec2{-63.0, -46.0}, glm::dvec2{50, 10})
@@ -25,7 +25,7 @@ namespace csg
 
   void scene::main(const std::shared_ptr<scene> &scene)
   {
-    scene->set<csg::camera>(glm::dvec3{0.0, 0.0, 80.0})
+    scene->set<camera>(glm::dvec3{0.0, 0.0, 80.0})
       .set<player>("player", glm::dvec3{0.0, 0.0, 0.0})
       .set<environment>("floor", glm::dvec3{0.0, -61.0, 0.0}, image::floor, animation::floor.main)
       .set<environment>("shop", glm::dvec3{80.0, 24.0, -1.0}, image::shop, animation::shop.main)
@@ -42,7 +42,7 @@ namespace csg
 
   void scene::other(const std::shared_ptr<scene> &scene)
   {
-    scene->set<csg::camera>(glm::dvec3{0.0, 0.0, 80.0})
+    scene->set<camera>(glm::dvec3{0.0, 0.0, 80.0})
       .set<player>("player", glm::dvec3{0.0, 0.0, 0.0})
       .set<environment>("floor", glm::dvec3{0.0, -61.0, 0.0}, image::floor, animation::floor.main)
       .set<environment>("background3", glm::dvec3{0.0, 80.0, -9.0}, image::background3, animation::background3.main)
