@@ -25,7 +25,9 @@ namespace csg
 
   void scene::main(const std::shared_ptr<scene> &scene)
   {
-    scene->set<camera>(glm::dvec3{0.0, 0.0, 80.0})
+    scene->set<button>("button1", glm::dvec2{-22.0, -40.0})
+      .set<button>("button2", glm::dvec2{22.0, -40.0})
+      .set<camera>(glm::dvec3{0.0, 0.0, 80.0})
       .set<player>("player", glm::dvec3{0.0, 0.0, 0.0})
       .set<environment>("floor", glm::dvec3{0.0, -61.0, 0.0}, image::floor, animation::floor.main)
       .set<environment>("shop", glm::dvec3{80.0, 24.0, -1.0}, image::shop, animation::shop.main)
@@ -35,9 +37,7 @@ namespace csg
       .set<sun>("sun")
       .set<lamp>("lamp1", glm::dvec3{32.0, 3.0, 0.0})
       .set<lamp>("lamp2", glm::dvec3{130.0, 3.0, 0.0})
-      .set<spot>("spot", glm::dvec3{-80, 20.0, -9.0})
-      .set<button>("button1", glm::dvec2{-22.0, -40.0})
-      .set<button>("button2", glm::dvec2{22.0, -40.0});
+      .set<spot>("spot", glm::dvec3{-80, 20.0, -9.0});
   }
 
   void scene::other(const std::shared_ptr<scene> &scene)
