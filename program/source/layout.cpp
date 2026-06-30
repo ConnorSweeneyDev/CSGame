@@ -10,13 +10,15 @@
 #include "object.hpp"
 #include "resource.hpp"
 #include "scene.hpp"
+#include "state.hpp"
 #include "window.hpp"
 
 namespace csg
 {
   void game::setup(const std::shared_ptr<game> &game)
   {
-    game->set<window>()
+    game->set<settings>("settings")
+      .set<window>()
       .current("main", scene::main)
       .set<cursor>("cursor")
       .set<text>("tick", glm::dvec2{-63.0, -46.0}, glm::dvec2{50, 10})

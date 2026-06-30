@@ -164,6 +164,6 @@ namespace csg
       }
     }
 
-    active.timer.call<void()>("hide_text");
+    active.timer.poll<void()>("hide_text");
   }
 }

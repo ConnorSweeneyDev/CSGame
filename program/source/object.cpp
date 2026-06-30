@@ -147,7 +147,7 @@ namespace csg
     if (transparency_value < 0.0) transparency_value = 0.0;
     if (transparency_value > 1.0) transparency_value = 1.0;
 
-    active.timer.call<void(const bool)>("texture_change", true);
+    active.timer.poll<void(const bool)>("texture_change", true);
 
     auto &animation{active.texture.animation};
     auto &playback{active.texture.playback};

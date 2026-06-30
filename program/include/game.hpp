@@ -16,7 +16,9 @@ namespace csg
     static void setup(const std::shared_ptr<game> &game);
 
   protected:
+    void pre_create() override final;
     void pre_event(const SDL_Event &event) override final;
     void pre_simulate(const double tick) override final;
+    void post_destroy() override final;
   };
 }

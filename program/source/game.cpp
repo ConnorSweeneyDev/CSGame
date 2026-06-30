@@ -8,6 +8,7 @@
 #include "cse/game.hpp"
 #include "cse/numeric.hpp"
 
+#include "state.hpp"
 #include "window.hpp"
 
 namespace csg
@@ -24,11 +25,22 @@ namespace csg
   {
   }
 
+  void game::pre_create()
+  {
+    const auto &settings{find_as<csg::settings>(active.states, "settings")};
+    settings->read();
+    active.master.value = settings->game->master;
+    active.sound.value = settings->game->sound;
+    active.music.value = settings->game->music;
+  }
+
   void game::pre_event(const SDL_Event &event)
   {
     if (event.type != SDL_EVENT_KEY_DOWN || event.key.repeat) return;
     switch (const auto &key{event.key}; key.scancode)
     {
+      case SDL_SCANCODE_T: active.master.value = active.master.value + 0.1; break;
+      case SDL_SCANCODE_G: active.master.value = active.master.value - 0.1; break;
       case SDL_SCANCODE_F7: set<csg::window>(); break;
       case SDL_SCANCODE_F8:
         if (equal(active.aspect.value, 16.0 / 9.0))
@@ -54,7 +66,16 @@ namespace csg
 
   void game::pre_simulate(const double)
   {
-    throw_find(active.interfaces, "tick")->active.text.content = "TPS:" + std::to_string(active.tick.count);
-    throw_find(active.interfaces, "frame")->active.text.content = "FPS:" + std::to_string(active.frame.count);
+    find(active.interfaces, "tick")->active.text.content = "TPS:" + std::to_string(active.tick.count);
+    find(active.interfaces, "frame")->active.text.content = "FPS:" + std::to_string(active.frame.count);
+  }
+
+  void game::post_destroy()
+  {
+    const auto &settings{find_as<csg::settings>(active.states, "settings")};
+    settings->game->master = active.master.value;
+    settings->game->sound = active.sound.value;
+    settings->game->music = active.music.value;
+    settings->write();
   }
 }
