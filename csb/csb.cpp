@@ -527,7 +527,7 @@ int csb::build()
        csb::choose_files({pack_directory}, [](const auto &file) { return file.extension() == ".csp"; }))
     if (!csb::contains(pack_files, pack)) csb::remove(pack);
 
-  csb::subproject_install({"ConnorSweeneyDev/CSEngine", "0.0.0", COMPILED_LIBRARY});
+  csb::subproject_install({"ConnorSweeneyDev/CSEngine", "1.0.0", COMPILED_LIBRARY});
 
   if (!csb::is_subproject)
   {
