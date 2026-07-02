@@ -24,19 +24,19 @@ namespace csg
                                   .animation = animation::cursor.main,
                                   .playback = {.frame = 0, .speed = {0.0}, .loop = false, .elapsed = 0.0},
                                   .flip = {.horizontal = false, .vertical = false},
-                                  .color = {.value = {0.5, 0.5, 0.5, 1.0}, .interpolate = true},
-                                  .transparency = {.value = 1.0, .interpolate = true}},
+                                  .color = {.tint = {.value = {0.5, 0.5, 0.5, 1.0}, .interpolate = true},
+                                            .alpha = {.value = 1.0, .interpolate = true}}},
                       .text = {.content = "",
                                .font = {},
-                               .size = 0,
-                               .style = {.bold = false, .italic = false, .underline = false, .strikethrough = false},
-                               .color = {.value = {0.0, 0.0, 0.0, 0.0}, .interpolate = true},
-                               .align = {.horizontal = CENTER,
-                                         .vertical = MIDDLE,
+                               .animation = {},
+                               .playback = {.frame = 0, .speed = {0.0}, .loop = false, .elapsed = 0.0},
+                               .align = {.horizontal = {.preset = CENTER, .spacing = {0.0}},
+                                         .vertical = {.preset = MIDDLE, .spacing = {0.0}},
                                          .offset = {.value = {0.0, 0.0}, .interpolate = true}},
-                               .spacing = 0.0,
-                               .wrap = false,
-                               .overflow = false},
+                               .scale = {.value = {1.0, 1.0}, .interpolate = true},
+                               .overflow = {.wrap = false, .clip = true},
+                               .color = {.tint = {.value = {0.5, 0.5, 0.5, 1.0}, .interpolate = true},
+                                         .alpha = {.value = 1.0, .interpolate = true}}},
                       .priority = {-1000, 1000}})
   {
   }
@@ -45,7 +45,7 @@ namespace csg
   {
     const auto &mouse{game->active.window->active.mouse};
     active.translation.value = mouse.position;
-    active.texture.transparency.value = SDL_CursorVisible() ? 0.0 : 1.0;
+    active.texture.color.alpha.value = SDL_CursorVisible() ? 0.0 : 1.0;
   }
 
   text::text(const glm::dvec2 &translation_, const glm::dvec2 &scale_)
@@ -58,19 +58,19 @@ namespace csg
                                   .animation = animation::empty.main,
                                   .playback = {.frame = 0, .speed = {0.0}, .loop = false, .elapsed = 0.0},
                                   .flip = {.horizontal = false, .vertical = false},
-                                  .color = {.value = {0.5, 0.5, 0.5, 1.0}, .interpolate = true},
-                                  .transparency = {.value = 1.0, .interpolate = true}},
+                                  .color = {.tint = {.value = {0.5, 0.5, 0.5, 1.0}, .interpolate = true},
+                                            .alpha = {.value = 1.0, .interpolate = true}}},
                       .text = {.content = "",
-                               .font = font::main,
-                               .size = 12,
-                               .style = {.bold = false, .italic = false, .underline = false, .strikethrough = false},
-                               .color = {.value = {1.0, 1.0, 1.0, 1.0}, .interpolate = true},
-                               .align = {.horizontal = LEFT,
-                                         .vertical = MIDDLE,
+                               .font = font::text,
+                               .animation = animation::text.main,
+                               .playback = {.frame = 0, .speed = {0.0}, .loop = false, .elapsed = 0.0},
+                               .align = {.horizontal = {.preset = LEFT, .spacing = {-1.0}},
+                                         .vertical = {.preset = MIDDLE, .spacing = {0.0}},
                                          .offset = {.value = {0.0, 0.0}, .interpolate = true}},
-                               .spacing = 0.0,
-                               .wrap = false,
-                               .overflow = false},
+                               .scale = {.value = {1.0, 1.0}, .interpolate = true},
+                               .overflow = {.wrap = false, .clip = true},
+                               .color = {.tint = {.value = {0.5, 0.5, 0.5, 1.0}, .interpolate = true},
+                                         .alpha = {.value = 1.0, .interpolate = true}}},
                       .priority = {-100, 100}})
   {
   }
@@ -85,19 +85,19 @@ namespace csg
                                   .animation = animation::box.main,
                                   .playback = {.frame = 0, .speed = {0.0}, .loop = false, .elapsed = 0.0},
                                   .flip = {.horizontal = false, .vertical = false},
-                                  .color = {.value = {0.5, 0.5, 0.5, 1.0}, .interpolate = true},
-                                  .transparency = {.value = 1.0, .interpolate = true}},
+                                  .color = {.tint = {.value = {0.5, 0.5, 0.5, 1.0}, .interpolate = true},
+                                            .alpha = {.value = 1.0, .interpolate = true}}},
                       .text = {.content = "",
-                               .font = font::main,
-                               .size = 20,
-                               .style = {.bold = true, .italic = false, .underline = false, .strikethrough = false},
-                               .color = {.value = {1.0, 1.0, 1.0, 1.0}, .interpolate = true},
-                               .align = {.horizontal = CENTER,
-                                         .vertical = MIDDLE,
+                               .font = font::text,
+                               .animation = animation::text.main,
+                               .playback = {.frame = 0, .speed = {0.0}, .loop = false, .elapsed = 0.0},
+                               .align = {.horizontal = {.preset = CENTER, .spacing = {-1.0}},
+                                         .vertical = {.preset = MIDDLE, .spacing = {0.0}},
                                          .offset = {.value = {0.0, 0.0}, .interpolate = true}},
-                               .spacing = 0.0,
-                               .wrap = false,
-                               .overflow = false},
+                               .scale = {.value = {1.0, 1.0}, .interpolate = true},
+                               .overflow = {.wrap = false, .clip = true},
+                               .color = {.tint = {.value = {0.5, 0.5, 0.5, 1.0}, .interpolate = true},
+                                         .alpha = {.value = 1.0, .interpolate = true}}},
                       .priority = {0, 0}})
   {
   }
@@ -138,10 +138,10 @@ namespace csg
     {
       active.translation.value.x = mouse.position.x;
       active.translation.value.y = mouse.position.y;
-      active.text.color.value = {0.0, 0.0, 1.0, 1.0};
+      active.text.color.tint.value = {0.3, 0.3, 0.5, 1.0};
     }
-    if (left_press) active.text.color.value = {1.0, 0.0, 0.0, 1.0};
-    if (!right_press && !left_press) active.text.color.value = {1.0, 1.0, 1.0, 1.0};
+    if (left_press) active.text.color.tint.value = {0.5, 0.3, 0.3, 1.0};
+    if (!right_press && !left_press) active.text.color.tint.value = {0.5, 0.5, 0.5, 1.0};
 
     const auto left_click =
       active.target.clicked[SDL_BUTTON_LEFT] == hitbox::box.main && active.target.hovered == hitbox::box.main;

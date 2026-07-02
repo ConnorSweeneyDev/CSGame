@@ -6,6 +6,7 @@
 #include <cstring>
 #include <filesystem>
 #include <format>
+#include <stdexcept>
 #include <string>
 #include <tuple>
 #include <unordered_map>
@@ -25,56 +26,13 @@ void csb::configure()
   csb::source_files = csb::choose_files({"program/source"}, {}, {"program/source/resource.cpp"});
   if (csb::host_platform == WINDOWS)
     csb::libraries = {
-      "kernel32",
-      "user32",
-      "shell32",
-      "gdi32",
-      "imm32",
-      "comdlg32",
-      "ole32",
-      "oleaut32",
-      "advapi32",
-      "dinput8",
-      "winmm",
-      "winspool",
-      "setupapi",
-      "uuid",
-      "version",
-      "cse",
-      "SDL3-static",
-      "SDL3_ttf-static",
-      csb::target_configuration == RELEASE ? "freetype" : "freetyped",
-      csb::target_configuration == RELEASE ? "libpng16" : "libpng16d",
-      csb::target_configuration == RELEASE ? "zs" : "zsd",
-      csb::target_configuration == RELEASE ? "bz2" : "bz2d",
-      "brotlidec",
-      "brotlicommon",
-      "SDL3_mixer-static",
-      "opusfile",
-      "opus",
-      "ogg",
-      "glm",
+      "kernel32", "user32", "shell32",  "gdi32",    "imm32", "comdlg32", "ole32", "oleaut32",    "advapi32",
+      "dinput8",  "winmm",  "winspool", "setupapi", "uuid",  "version",  "cse",   "SDL3-static", "SDL3_mixer-static",
+      "opusfile", "opus",   "ogg",      "glm",
     };
   else if (csb::host_platform == LINUX)
     csb::libraries = {
-      "c",
-      "m",
-      "pthread",
-      "dl",
-      "cse",
-      "SDL3",
-      "SDL3_ttf",
-      csb::target_configuration == RELEASE ? "freetype" : "freetyped",
-      "png",
-      "z",
-      csb::target_configuration == RELEASE ? "bz2" : "bz2d",
-      "brotlidec",
-      "brotlicommon",
-      "SDL3_mixer",
-      "opusfile",
-      "opus",
-      "ogg",
-      "glm",
+      "c", "m", "pthread", "dl", "cse", "SDL3", "SDL3_mixer", "opusfile", "opus", "ogg", "glm",
     };
 }
 
@@ -135,9 +93,8 @@ int csb::build()
                      }};
   const auto accept{[](const std::filesystem::path &file) -> bool
                     {
-                      return file.extension() == ".spv" || file.extension() == ".ttf" ||
-                             file.extension() == ".aseprite" || file.extension() == ".wav" ||
-                             file.extension() == ".opus";
+                      return file.extension() == ".spv" || file.extension() == ".aseprite" ||
+                             file.extension() == ".wav" || file.extension() == ".opus";
                     }};
   const auto resources{csb::choose_files(
     {"build/vertex", "build/fragment", "program/font", "program/texture", "program/sound", "program/music"})};
@@ -149,6 +106,14 @@ int csb::build()
     const auto pack_file{pack_directory / (pack_of(file) + ".csp")};
     if (std::find(pack_files.begin(), pack_files.end(), pack_file) == pack_files.end()) pack_files.push_back(pack_file);
   }
+  struct glyph_entry
+  {
+    std::uint64_t character{};
+    unsigned int x{};
+    unsigned int y{};
+    unsigned int width{};
+    unsigned int height{};
+  };
   struct extra
   {
     std::string space{};
@@ -158,6 +123,7 @@ int csb::build()
     unsigned int frame_width{};
     unsigned int frame_height{};
     std::vector<csb::aseprite::animation> animations{};
+    std::vector<glyph_entry> glyphs{};
   };
   using data = std::tuple<std::vector<std::byte>, extra>;
   const auto manifest{csb::path("build") / "resource" / "embedded.manifest"};
@@ -190,16 +156,20 @@ int csb::build()
        std::vector<std::byte> blob{};
        if (file.extension() == ".spv")
          current.space = file.stem().extension() == ".vert" ? "vertex" : "fragment";
-       else if (file.extension() == ".ttf")
-         current.space = "font";
        else if (file.extension() == ".aseprite")
+       {
          current.space = "image";
+         std::vector<std::string> parts{};
+         for (const auto &part : file) parts.push_back(part.string());
+         for (std::size_t index{}; index + 1 < parts.size(); ++index)
+           if (parts[index] == "program" && parts[index + 1] == "font") current.space = "font";
+       }
        else if (file.extension() == ".wav")
          current.space = "sound";
        else if (file.extension() == ".opus")
          current.space = "music";
 
-       if (current.space == "image")
+       if (current.space == "image" || current.space == "font")
        {
          const auto texture{csb::read_file<csb::aseprite>(file)};
          blob = texture.data;
@@ -209,6 +179,58 @@ int csb::build()
          current.frame_width = texture.resolution.first;
          current.frame_height = texture.resolution.second;
          current.animations = texture.animations;
+         if (current.space == "font")
+         {
+           if (texture.hitboxes) throw std::runtime_error("Font must not contain a 'hitbox' group: " + file.string());
+           if (texture.slices.empty())
+             throw std::runtime_error("Font must contain at least one slice: " + file.string());
+           const auto decode{[&file](const std::string &name) -> std::uint64_t
+                             {
+                               const auto invalid{
+                                 [&file, &name]()
+                                 {
+                                   return std::runtime_error("Font slice name '" + name +
+                                                             "' must be a single character: " + file.string());
+                                 }};
+                               if (name.empty()) throw invalid();
+                               const auto first{static_cast<unsigned char>(name[0])};
+                               std::size_t length{1};
+                               std::uint64_t character{first};
+                               if (first >= 0xF0)
+                                 length = 4, character = first & 0x07u;
+                               else if (first >= 0xE0)
+                                 length = 3, character = first & 0x0Fu;
+                               else if (first >= 0xC0)
+                                 length = 2, character = first & 0x1Fu;
+                               else if (first >= 0x80)
+                                 throw invalid();
+                               if (name.size() != length) throw invalid();
+                               for (std::size_t offset{1}; offset < length; ++offset)
+                               {
+                                 const auto continuation{static_cast<unsigned char>(name[offset])};
+                                 if ((continuation & 0xC0u) != 0x80u) throw invalid();
+                                 character = (character << 6) | (continuation & 0x3Fu);
+                               }
+                               return character;
+                             }};
+           for (const auto &entry : texture.slices)
+           {
+             if (entry.x < 0 || entry.y < 0 || entry.width == 0 || entry.height == 0 ||
+                 static_cast<unsigned int>(entry.x) + entry.width > current.frame_width ||
+                 static_cast<unsigned int>(entry.y) + entry.height > current.frame_height)
+               throw std::runtime_error("Font slice '" + entry.name + "' must fit within the canvas: " + file.string());
+             if (entry.height != texture.slices.front().height)
+               throw std::runtime_error("Font slice '" + entry.name +
+                                        "' must match the height of every other slice: " + file.string());
+             current.glyphs.push_back({decode(entry.name), static_cast<unsigned int>(entry.x),
+                                       static_cast<unsigned int>(entry.y), entry.width, entry.height});
+           }
+           std::sort(current.glyphs.begin(), current.glyphs.end(), [](const glyph_entry &left, const glyph_entry &right)
+                     { return left.character < right.character; });
+           for (std::size_t index{}; index + 1 < current.glyphs.size(); ++index)
+             if (current.glyphs[index].character == current.glyphs[index + 1].character)
+               throw std::runtime_error("Font contains duplicate slices for the same character: " + file.string());
+         }
        }
        else
          blob = csb::read_file<std::vector<std::byte>>(file);
@@ -236,7 +258,7 @@ int csb::build()
          for (const auto &[file, name, value] : files)
          {
            const auto &texture{std::get<1>(value)};
-           if (texture.space != "image") continue;
+           if (texture.space != "image" && texture.space != "font") continue;
            structs += std::format("      struct {}_animation\n      {{\n", name);
            for (const auto &animation : texture.animations)
              structs += std::format("        const cse::animation {};\n", animation.name);
@@ -324,6 +346,7 @@ int csb::build()
        std::unordered_map<std::filesystem::path,
                           std::vector<std::tuple<std::uint64_t, std::uint64_t, unsigned int, unsigned int>>>
          clips{};
+       std::unordered_map<std::filesystem::path, std::pair<std::uint64_t, std::uint64_t>> glyph_spans{};
        std::vector<std::string> packs{};
        for (const auto &[file, name, value] : files)
        {
@@ -337,14 +360,16 @@ int csb::build()
        {
          std::vector<std::byte> frames_blob{};
          std::vector<std::byte> hitboxes_blob{};
+         std::vector<std::byte> glyphs_blob{};
          std::vector<std::byte> strings_blob{};
          std::unordered_map<std::string, std::pair<std::uint64_t, std::uint64_t>> string_pool{};
          std::uint64_t frames_total{};
          std::uint64_t hitboxes_total{};
+         std::uint64_t glyphs_total{};
          for (const auto &[file, name, value] : files)
          {
            const auto &texture{std::get<1>(value)};
-           if (texture.space != "image" || pack_of(file) != pack) continue;
+           if ((texture.space != "image" && texture.space != "font") || pack_of(file) != pack) continue;
            const unsigned int per_row{texture.width / texture.frame_width};
            const unsigned int per_column{texture.height / texture.frame_height};
            for (const auto &animation : texture.animations)
@@ -417,6 +442,23 @@ int csb::build()
              }
              clips[file].push_back({frame_index, frames_total - frame_index, start, end});
            }
+           if (texture.space == "font")
+           {
+             glyph_spans[file] = {glyphs_total, texture.glyphs.size()};
+             const auto canvas_width{static_cast<double>(texture.frame_width)};
+             const auto canvas_height{static_cast<double>(texture.frame_height)};
+             for (const auto &entry : texture.glyphs)
+             {
+               put_u64(glyphs_blob, entry.character);
+               put_f64(glyphs_blob, static_cast<double>(entry.x) / canvas_width);
+               put_f64(glyphs_blob, 1.0 - static_cast<double>(entry.y) / canvas_height);
+               put_f64(glyphs_blob, static_cast<double>(entry.x + entry.width) / canvas_width);
+               put_f64(glyphs_blob, 1.0 - static_cast<double>(entry.y + entry.height) / canvas_height);
+               put_f64(glyphs_blob, static_cast<double>(entry.width));
+               put_f64(glyphs_blob, static_cast<double>(entry.height));
+               ++glyphs_total;
+             }
+           }
          }
 
          csp::pack container{};
@@ -431,20 +473,24 @@ int csb::build()
          container.append(frames_blob);
          const std::size_t hitboxes_entry{container.table.size()};
          container.append(hitboxes_blob);
+         const std::size_t glyphs_entry{container.table.size()};
+         container.append(glyphs_blob);
          const std::size_t strings_entry{container.table.size()};
          if (debug) container.append(strings_blob);
          csb::write_file(pack_directory / (pack + ".csp"), container);
 
          if (debug)
-           loaders += std::format("  const loader loaded_{}{{\"{}.csp\", {}ull, {}, {}, {}, {}, {}}};\n", pack, pack,
-                                  container.signature(), container.table[frames_entry].first,
+           loaders += std::format("  const loader loaded_{}{{\"{}.csp\", {}ull, {}, {}, {}, {}, {}, {}, {}}};\n", pack,
+                                  pack, container.signature(), container.table[frames_entry].first,
                                   container.table[frames_entry].second, container.table[hitboxes_entry].first,
-                                  container.table[hitboxes_entry].second, container.table[strings_entry].first);
+                                  container.table[hitboxes_entry].second, container.table[glyphs_entry].first,
+                                  container.table[glyphs_entry].second, container.table[strings_entry].first);
          else
-           loaders += std::format("  const loader loaded_{}{{\"{}.csp\", {}ull, {}, {}, {}, {}}};\n", pack, pack,
-                                  container.signature(), container.table[frames_entry].first,
+           loaders += std::format("  const loader loaded_{}{{\"{}.csp\", {}ull, {}, {}, {}, {}, {}, {}}};\n", pack,
+                                  pack, container.signature(), container.table[frames_entry].first,
                                   container.table[frames_entry].second, container.table[hitboxes_entry].first,
-                                  container.table[hitboxes_entry].second);
+                                  container.table[hitboxes_entry].second, container.table[glyphs_entry].first,
+                                  container.table[glyphs_entry].second);
        }
 
        std::string result{"namespace cse::resource\n{\n" + loaders + "}\n\n"};
@@ -464,7 +510,22 @@ int csb::build()
                          }};
        define("vertex", "vertex");
        define("fragment", "fragment");
-       define("font", "font");
+       {
+         std::string block{};
+         for (const auto &[file, name, value] : files)
+         {
+           const auto &texture{std::get<1>(value)};
+           if (texture.space != "font") continue;
+           const auto &place{placements.at(file)};
+           const auto &span{glyph_spans.at(file)};
+           block +=
+             std::format("    const cse::font {}{{{{cse::resource::region(\"{}\", {}, {}), {}, {}, {}, {}, "
+                         "{}}}, cse::resource::glyphs(\"{}\", {}, {})}};\n",
+                         name, place.key, place.offset, place.size, texture.width, texture.height, texture.frame_width,
+                         texture.frame_height, texture.channels, place.key, span.first, span.second);
+         }
+         if (!block.empty()) result += "  namespace font\n  {\n" + block + "  }\n";
+       }
        {
          std::string block{};
          for (const auto &[file, name, value] : files)
@@ -484,7 +545,7 @@ int csb::build()
          for (const auto &[file, name, value] : files)
          {
            const auto &texture{std::get<1>(value)};
-           if (texture.space != "image") continue;
+           if (texture.space != "image" && texture.space != "font") continue;
            const auto &place{placements.at(file)};
            block += std::format("    const detail::{}_animation {}{{", name, name);
            const auto &list{clips[file]};

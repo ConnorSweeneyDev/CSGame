@@ -22,7 +22,7 @@ namespace csg
       .current("main", scene::main)
       .set<cursor>("cursor")
       .set<text>("tick", glm::dvec2{-63.0, -46.0}, glm::dvec2{50, 10})
-      .set<text>("frame", glm::dvec2{78.0, -46.0}, glm::dvec2{50, 10});
+      .set<text>("frame", glm::dvec2{75.0, -46.0}, glm::dvec2{50, 10});
   }
 
   void scene::main(const std::shared_ptr<scene> &scene)

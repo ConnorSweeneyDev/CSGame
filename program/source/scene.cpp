@@ -39,9 +39,9 @@ namespace csg
         if (const auto &player{try_find(active.objects, "player")})
         {
           if (!key.repeat && key.type == SDL_EVENT_KEY_DOWN)
-            player->active.texture.color.value = {0.25, 0.0, 0.0, 0.5};
+            player->active.texture.color.tint.value = {0.25, 0.0, 0.0, 0.5};
           else if (key.type == SDL_EVENT_KEY_UP)
-            player->active.texture.color.value = {0.5, 0.5, 0.5, 1.0};
+            player->active.texture.color.tint.value = {0.5, 0.5, 0.5, 1.0};
         }
         break;
       default: break;

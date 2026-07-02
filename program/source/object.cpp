@@ -31,8 +31,8 @@ namespace csg
                                .animation = animation::redhood.idle,
                                .playback = {.frame = 0, .speed = {1.0}, .loop = true, .elapsed = 0.0},
                                .flip = {.horizontal = false, .vertical = false},
-                               .color = {.value = {0.5, 0.5, 0.5, 1.0}, .interpolate = true},
-                               .transparency = {.value = 1.0, .interpolate = true}},
+                               .color = {.tint = {.value = {0.5, 0.5, 0.5, 1.0}, .interpolate = true},
+                                         .alpha = {.value = 1.0, .interpolate = true}}},
                    .illumination = {.show = true, .brightness = {.value = 1.0, .interpolate = true}},
                    .shadow = {.cast = true,
                               .show = true,
@@ -138,8 +138,8 @@ namespace csg
     }
     position += velocity * tick;
 
-    auto &transparency_value{active.texture.transparency.value};
-    auto &transparency_rate{active.texture.transparency.rate};
+    auto &transparency_value{active.texture.color.alpha.value};
+    auto &transparency_rate{active.texture.color.alpha.rate};
     if (keyboard[SDL_SCANCODE_A]) transparency_rate -= transparency_change;
     if (keyboard[SDL_SCANCODE_G]) transparency_rate += transparency_change;
     transparency_value += transparency_rate * tick;
@@ -162,16 +162,16 @@ namespace csg
       if (playback.frame == 0 && previous.texture.playback.frame == final)
       {
         playback.speed.value = 1.0;
-        if (equal(active.texture.color.value.r, 0.5))
-          active.texture.color.value.r = 0.125;
+        if (equal(active.texture.color.tint.value.r, 0.5))
+          active.texture.color.tint.value.r = 0.125;
         else
-          active.texture.color.value.r = 0.5;
-        active.texture.color.instant = true;
+          active.texture.color.tint.value.r = 0.5;
+        active.texture.color.tint.instant = true;
       }
     if (previous.texture.image == image::shop && active.texture.image != image::shop)
     {
-      active.texture.color.value = {0.5, 0.5, 1.0, 1.0};
-      active.texture.color.instant = true;
+      active.texture.color.tint.value = {0.5, 0.5, 1.0, 1.0};
+      active.texture.color.tint.instant = true;
     }
   }
 
@@ -185,8 +185,8 @@ namespace csg
                                .animation = animation_,
                                .playback = {.frame = 0, .speed = {0.0}, .loop = false, .elapsed = 0.0},
                                .flip = {.horizontal = false, .vertical = false},
-                               .color = {.value = {0.5, 0.5, 0.5, 1.0}, .interpolate = true},
-                               .transparency = {.value = 1.0, .interpolate = true}},
+                               .color = {.tint = {.value = {0.5, 0.5, 0.5, 1.0}, .interpolate = true},
+                                         .alpha = {.value = 1.0, .interpolate = true}}},
                    .illumination = {.show = true, .brightness = {.value = 1.0, .interpolate = true}},
                    .shadow = {.cast = true,
                               .show = true,
