@@ -45,59 +45,22 @@ int csb::clean()
 
 int csb::build()
 {
-  csb::archive_install(
-    {csb::host_platform == WINDOWS
-       ? "https://github.com/microsoft/DirectXShaderCompiler/releases/download/v1.8.2505.1/dxc_2025_07_14.zip"
-       : "https://github.com/microsoft/DirectXShaderCompiler/releases/download/v1.8.2505.1/"
-         "linux_dxc_2025_07_14.x86_64.tar.gz",
-     "build/dxc",
-     {csb::host_platform == WINDOWS ? "bin/" + csb::host_architecture : "bin",
-      csb::host_platform == WINDOWS ? "lib/" + csb::host_architecture : "lib"},
-     {}});
-  if (csb::host_platform == LINUX)
-  {
-    csb::multi_task_run("chmod +x ()",
-                        csb::choose_files({"build/dxc"}, [](const auto &file) { return file.extension() == ""; }),
-                        {"build/dxc/executable.(filename)"});
-    csb::prepend_environment_variable("LD_LIBRARY_PATH", "build/dxc");
-  }
-  std::unordered_map<std::filesystem::path, std::vector<std::filesystem::path>> shader_groups{};
-  for (const auto &file : csb::choose_files({"program/vertex", "program/fragment"}, [](const auto &file)
-                                            { return file.extension() == ".vert" || file.extension() == ".frag"; }))
-    shader_groups[file.parent_path()].push_back(file);
-  for (const auto &[source, group] : shader_groups)
-    csb::multi_task_run(
-      [](const std::filesystem::path &file, const auto &, const auto &) -> std::string
-      {
-        return std::format("{} -spirv -T {}_6_0 -E main () -Fo []",
-                           csb::host_platform == WINDOWS ? "build\\dxc\\dxc.exe" : "./build/dxc/dxc",
-                           file.extension() == ".vert" ? "vs" : "ps");
-      },
-      group, {(csb::path("build") / source.lexically_relative("program") / "(filename).spv").string()});
-  for (const auto &compiled : csb::choose_files({"build/vertex", "build/fragment"}))
-    if (!csb::exists(csb::path("program") / compiled.lexically_relative("build").parent_path() / compiled.stem()))
-      csb::remove(compiled);
-
   const auto pack_of{[](const std::filesystem::path &file) -> std::string
                      {
                        std::vector<std::string> parts{};
                        for (const auto &part : file) parts.push_back(part.string());
                        static const std::vector<std::pair<std::string, std::string>> roots{
-                         {"build", "vertex"}, {"build", "fragment"}, {"program", "texture"},
-                         {"program", "font"}, {"program", "sound"},  {"program", "music"}};
+                         {"program", "texture"}, {"program", "font"}, {"program", "sound"}, {"program", "music"}};
                        for (std::size_t index{}; index + 1 < parts.size(); ++index)
                          for (const auto &[first, second] : roots)
                            if (parts[index] == first && parts[index + 1] == second)
                              return index + 3 < parts.size() ? parts[index + 2] : "CSGame";
                        return "CSGame";
                      }};
-  const auto accept{[](const std::filesystem::path &file) -> bool
-                    {
-                      return file.extension() == ".spv" || file.extension() == ".aseprite" ||
-                             file.extension() == ".wav" || file.extension() == ".opus";
-                    }};
-  const auto resources{csb::choose_files(
-    {"build/vertex", "build/fragment", "program/font", "program/texture", "program/sound", "program/music"})};
+  const auto accept{
+    [](const std::filesystem::path &file) -> bool
+    { return file.extension() == ".aseprite" || file.extension() == ".wav" || file.extension() == ".opus"; }};
+  const auto resources{csb::choose_files({"program/font", "program/texture", "program/sound", "program/music"})};
   const auto pack_directory{csb::path("build") / (csb::target_configuration == RELEASE ? "release" : "debug")};
   std::vector<std::filesystem::path> pack_files{};
   for (const auto &file : resources)
@@ -140,15 +103,12 @@ int csb::build()
      "#include \"cse/resource.hpp\"\n\n"},
     {{},
      {},
-     [](const std::filesystem::path &file) -> std::string
-     { return file.extension() == ".spv" ? file.stem().stem().string() : file.stem().string(); },
+     [](const std::filesystem::path &file) -> std::string { return file.stem().string(); },
      [](const std::filesystem::path &file) -> data
      {
        extra current{};
        std::vector<std::byte> blob{};
-       if (file.extension() == ".spv")
-         current.space = file.stem().extension() == ".vert" ? "vertex" : "fragment";
-       else if (file.extension() == ".aseprite")
+       if (file.extension() == ".aseprite")
        {
          current.space = "image";
          std::vector<std::string> parts{};
@@ -195,8 +155,6 @@ int csb::build()
                                 block += std::format("    extern const cse::{} {};\n", type, name);
                             if (!block.empty()) result += std::format("  namespace {}\n  {{\n{}  }}\n", space, block);
                           }};
-       declare("vertex", "vertex");
-       declare("fragment", "fragment");
        declare("font", "font");
        declare("image", "image");
        {
@@ -455,8 +413,6 @@ int csb::build()
                              }
                            if (!block.empty()) result += std::format("  namespace {}\n  {{\n{}  }}\n", space, block);
                          }};
-       define("vertex", "vertex");
-       define("fragment", "fragment");
        {
          std::string block{};
          for (const auto &[file, name, value] : files)
@@ -559,7 +515,7 @@ int csb::build()
                                 {"IndentCaseLabels", "true"},
                                 {"NamespaceIndentation", "All"},
                                 {"FixNamespaceComments", "false"}});
-    csb::format("22.1.5", csb::choose_files({"program/vertex", "program/fragment"}));
+    csb::format("22.1.5");
   }
   csb::generate_clangd({{"Diagnostics", {{"UnusedIncludes", "Strict"}, {"MissingIncludes", "Strict"}}}});
   csb::generate_compile_commands();

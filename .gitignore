@@ -7,10 +7,9 @@
 
 # Build Output
 build/
+program/**/resource.*
 .clang-format
 .clangd
-program/source/resource.cpp
-program/include/resource.hpp
 
 # User Files
 .env
