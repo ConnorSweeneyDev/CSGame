@@ -106,14 +106,6 @@ int csb::build()
     const auto pack_file{pack_directory / (pack_of(file) + ".csp")};
     if (std::find(pack_files.begin(), pack_files.end(), pack_file) == pack_files.end()) pack_files.push_back(pack_file);
   }
-  struct glyph_entry
-  {
-    std::uint64_t character{};
-    unsigned int x{};
-    unsigned int y{};
-    unsigned int width{};
-    unsigned int height{};
-  };
   struct extra
   {
     std::string space{};
@@ -123,7 +115,7 @@ int csb::build()
     unsigned int frame_width{};
     unsigned int frame_height{};
     std::vector<csb::aseprite::animation> animations{};
-    std::vector<glyph_entry> glyphs{};
+    std::vector<csb::aseprite::glyph> glyphs{};
   };
   using data = std::tuple<std::vector<std::byte>, extra>;
   const auto manifest{csb::path("build") / "resource" / "embedded.manifest"};
@@ -182,54 +174,9 @@ int csb::build()
          if (current.space == "font")
          {
            if (texture.hitboxes) throw std::runtime_error("Font must not contain a 'hitbox' group: " + file.string());
-           if (texture.slices.empty())
+           if (texture.glyphs.empty())
              throw std::runtime_error("Font must contain at least one slice: " + file.string());
-           const auto decode{[&file](const std::string &name) -> std::uint64_t
-                             {
-                               const auto invalid{
-                                 [&file, &name]()
-                                 {
-                                   return std::runtime_error("Font slice name '" + name +
-                                                             "' must be a single character: " + file.string());
-                                 }};
-                               if (name.empty()) throw invalid();
-                               const auto first{static_cast<unsigned char>(name[0])};
-                               std::size_t length{1};
-                               std::uint64_t character{first};
-                               if (first >= 0xF0)
-                                 length = 4, character = first & 0x07u;
-                               else if (first >= 0xE0)
-                                 length = 3, character = first & 0x0Fu;
-                               else if (first >= 0xC0)
-                                 length = 2, character = first & 0x1Fu;
-                               else if (first >= 0x80)
-                                 throw invalid();
-                               if (name.size() != length) throw invalid();
-                               for (std::size_t offset{1}; offset < length; ++offset)
-                               {
-                                 const auto continuation{static_cast<unsigned char>(name[offset])};
-                                 if ((continuation & 0xC0u) != 0x80u) throw invalid();
-                                 character = (character << 6) | (continuation & 0x3Fu);
-                               }
-                               return character;
-                             }};
-           for (const auto &entry : texture.slices)
-           {
-             if (entry.x < 0 || entry.y < 0 || entry.width == 0 || entry.height == 0 ||
-                 static_cast<unsigned int>(entry.x) + entry.width > current.frame_width ||
-                 static_cast<unsigned int>(entry.y) + entry.height > current.frame_height)
-               throw std::runtime_error("Font slice '" + entry.name + "' must fit within the canvas: " + file.string());
-             if (entry.height != texture.slices.front().height)
-               throw std::runtime_error("Font slice '" + entry.name +
-                                        "' must match the height of every other slice: " + file.string());
-             current.glyphs.push_back({decode(entry.name), static_cast<unsigned int>(entry.x),
-                                       static_cast<unsigned int>(entry.y), entry.width, entry.height});
-           }
-           std::sort(current.glyphs.begin(), current.glyphs.end(), [](const glyph_entry &left, const glyph_entry &right)
-                     { return left.character < right.character; });
-           for (std::size_t index{}; index + 1 < current.glyphs.size(); ++index)
-             if (current.glyphs[index].character == current.glyphs[index + 1].character)
-               throw std::runtime_error("Font contains duplicate slices for the same character: " + file.string());
+           current.glyphs = texture.glyphs;
          }
        }
        else
