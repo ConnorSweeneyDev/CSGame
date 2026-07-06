@@ -101,7 +101,7 @@ namespace csg
 
   void button::on_prepare()
   {
-    active.mixer.load({{"sample1", sound::sample1}, {"sample2", sound::sample2}, {"sample3", sound::sample3}});
+    active.mixer.set({{"sample1", sound::sample1}, {"sample2", sound::sample2}, {"sample3", sound::sample3}});
     if (name == "button1") active.priority = {1, 1};
   }
 
@@ -119,7 +119,7 @@ namespace csg
     else if (unhover)
     {
       active.text.content = "Bye";
-      active.timer.set("hide_text", 0.5, [this]() { active.text.content.clear(); });
+      active.timer.set("hide_text", 0.0, 0.5, true, [this]() { active.text.content.clear(); });
     }
 
     const auto hovered = active.target.hovered == hitbox::box.main;

@@ -15,7 +15,7 @@ namespace csg
 {
   void scene::pre_prepare()
   {
-    auto &song = active.mixer.load("main", music::main);
+    auto &song = active.mixer.set("main", music::main);
     song.playing = true;
     song.loop = true;
     song.speed.value = 0.80;
@@ -33,7 +33,7 @@ namespace csg
         if (!key.repeat && key.type == SDL_EVENT_KEY_DOWN) game->current("other", other);
         break;
       case SDL_SCANCODE_8:
-        if (!key.repeat && key.type == SDL_EVENT_KEY_DOWN) active.mixer.unload<cse::music>("main");
+        if (!key.repeat && key.type == SDL_EVENT_KEY_DOWN) active.mixer.remove<cse::music>("main");
         break;
       case SDL_SCANCODE_9:
         if (const auto &player{try_find(active.objects, "player")})

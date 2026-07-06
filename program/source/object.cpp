@@ -50,7 +50,7 @@ namespace csg
         if (!key.repeat && key.type == SDL_EVENT_KEY_DOWN)
         {
           if (active.texture.image == image::redhood)
-            active.timer.set("texture_change", 1.0,
+            active.timer.set("texture_change", 0.0, 1.0, true,
                              [this](const bool should)
                              {
                                if (!should) return;
@@ -59,7 +59,7 @@ namespace csg
                                active.texture.playback = {};
                              });
           else
-            active.timer.set("texture_change", 1.0,
+            active.timer.set("texture_change", 0.0, 1.0, true,
                              [this](const bool should)
                              {
                                if (!should) return;
