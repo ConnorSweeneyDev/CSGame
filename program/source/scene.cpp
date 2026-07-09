@@ -16,9 +16,9 @@ namespace csg
   void scene::pre_prepare()
   {
     auto &song = active.mixer.set("main", music::main);
-    song.playing = true;
     song.loop = true;
     song.speed.value = 0.80;
+    song.playing = true;
   }
 
   void scene::pre_event(const SDL_Event &event)

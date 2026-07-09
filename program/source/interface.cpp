@@ -119,7 +119,7 @@ namespace csg
     else if (unhover)
     {
       active.text.content = "Bye";
-      active.timer.set("hide_text", 0.0, 0.5, true, [this]() { active.text.content.clear(); });
+      active.timer.set("hide_text", [this]() { active.text.content.clear(); }).target = 0.5;
     }
 
     const auto hovered = active.target.hovered == hitbox::box.main;
@@ -161,6 +161,6 @@ namespace csg
       }
     }
 
-    active.timer.poll<void()>("hide_text");
+    active.timer.call<void()>("hide_text");
   }
 }

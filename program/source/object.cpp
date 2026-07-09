@@ -48,26 +48,22 @@ namespace csg
     {
       case SDL_SCANCODE_1:
         if (!key.repeat && key.type == SDL_EVENT_KEY_DOWN)
-        {
-          if (active.texture.image == image::redhood)
-            active.timer.set("texture_change", 0.0, 1.0, true,
-                             [this](const bool should)
-                             {
-                               if (!should) return;
-                               active.texture.image = image::shop;
-                               active.texture.animation = animation::shop.main;
-                               active.texture.playback = {};
-                             });
-          else
-            active.timer.set("texture_change", 0.0, 1.0, true,
-                             [this](const bool should)
-                             {
-                               if (!should) return;
-                               active.texture.image = image::redhood;
-                               active.texture.animation = animation::redhood.idle;
-                               active.texture.playback = {0, {1.0}, true};
-                             });
-        }
+          active.timer
+            .set("texture_change",
+                 [this](const bool is_redhood)
+                 {
+                   if (is_redhood)
+                   {
+                     active.texture.image = image::shop;
+                     active.texture.animation = animation::shop.main;
+                     active.texture.playback = {};
+                     return;
+                   }
+                   active.texture.image = image::redhood;
+                   active.texture.animation = animation::redhood.idle;
+                   active.texture.playback = {0, {1.0}, true};
+                 })
+            .target = 1.0;
         break;
       case SDL_SCANCODE_2:
         if (!key.repeat && key.type == SDL_EVENT_KEY_DOWN)
@@ -146,7 +142,7 @@ namespace csg
     if (transparency_value < 0.0) transparency_value = 0.0;
     if (transparency_value > 1.0) transparency_value = 1.0;
 
-    active.timer.poll<void(const bool)>("texture_change", true);
+    active.timer.call<void(const bool)>("texture_change", active.texture.image == image::redhood);
 
     auto &animation{active.texture.animation};
     auto &playback{active.texture.playback};
