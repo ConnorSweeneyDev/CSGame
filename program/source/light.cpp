@@ -11,6 +11,7 @@ sun::sun()
                 .rotation = {.value = {0.0, 0.0}, .interpolate = true},
                 .illumination = {.global = true,
                                  .brightness = {.value = {0.15, 0.15, 0.2, 1.0}, .interpolate = true},
+                                 .penetration = {.value = 1.0, .interpolate = true},
                                  .softness = {.value = 0.0, .interpolate = true},
                                  .range = {.value = 0.0, .interpolate = true},
                                  .angle = {.value = 0.0, .interpolate = true}},
@@ -26,12 +27,13 @@ lamp::lamp(const glm::dvec3 &translation_)
                 .rotation = {.value = {0.0, 0.0}, .interpolate = true},
                 .illumination = {.global = false,
                                  .brightness = {.value = {1.0, 0.7, 0.3, 2.0}, .interpolate = true},
+                                 .penetration = {.value = 0.3, .interpolate = true},
                                  .softness = {.value = 0.0, .interpolate = true},
                                  .range = {.value = 80.0, .interpolate = true},
                                  .angle = {.value = 360.0, .interpolate = true}},
                 .shadow = {.cast = true,
                            .darkness = {.value = 1.0, .interpolate = true},
-                           .softness = {.value = 0.5, .interpolate = true}},
+                           .softness = {.value = 0.3, .interpolate = true}},
                 .priority = 0})
 {
 }
@@ -54,6 +56,7 @@ spot::spot(const glm::dvec3 &translation_)
                 .rotation = {.value = {0.0, 90.0}, .interpolate = true},
                 .illumination = {.global = false,
                                  .brightness = {.value = {0.45, 1.05, 1.5, 1.0}, .interpolate = true},
+                                 .penetration = {.value = 1.0, .interpolate = true},
                                  .softness = {.value = 1.0, .interpolate = true},
                                  .range = {.value = 90.0, .interpolate = true},
                                  .angle = {.value = 70.0, .interpolate = true}},

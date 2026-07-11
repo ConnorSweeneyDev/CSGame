@@ -39,8 +39,8 @@ namespace csg
     if (event.type != SDL_EVENT_KEY_DOWN || event.key.repeat) return;
     switch (const auto &key{event.key}; key.scancode)
     {
+      case SDL_SCANCODE_Q: active.master.value = active.master.value - 0.1; break;
       case SDL_SCANCODE_T: active.master.value = active.master.value + 0.1; break;
-      case SDL_SCANCODE_G: active.master.value = active.master.value - 0.1; break;
       case SDL_SCANCODE_F7: set<csg::window>(); break;
       case SDL_SCANCODE_F8:
         if (equal(active.aspect.value, 16.0 / 9.0))
