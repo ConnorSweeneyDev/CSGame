@@ -126,7 +126,7 @@ namespace csg
     if (hovered)
     {
       active.translation.value.x += mouse.wheel.x;
-      active.translation.value.y -= mouse.wheel.y;
+      active.translation.value.y += mouse.wheel.y;
     }
 
     const auto right_press = active.target.pressed[SDL_BUTTON_RIGHT] == hitbox::box.main;
