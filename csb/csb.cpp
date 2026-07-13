@@ -25,15 +25,12 @@ void csb::configure()
   csb::include_files = csb::choose_files({"program/include"}, {}, {"program/include/resource.hpp"});
   csb::source_files = csb::choose_files({"program/source"}, {}, {"program/source/resource.cpp"});
   if (csb::host_platform == WINDOWS)
-    csb::libraries = {
-      "kernel32", "user32", "shell32",  "gdi32",    "imm32", "comdlg32", "ole32", "oleaut32",    "advapi32",
-      "dinput8",  "winmm",  "winspool", "setupapi", "uuid",  "version",  "cse",   "SDL3-static", "SDL3_mixer-static",
-      "opusfile", "opus",   "ogg",      "glm",
-    };
+    csb::libraries = {"kernel32", "user32",   "shell32",  "gdi32",   "imm32",       "comdlg32",
+                      "ole32",    "oleaut32", "advapi32", "dinput8", "winmm",       "winspool",
+                      "setupapi", "uuid",     "version",  "cse",     "SDL3-static", "SDL3_mixer-static",
+                      "opusfile", "opus",     "ogg",      "glm"};
   else if (csb::host_platform == LINUX)
-    csb::libraries = {
-      "c", "m", "pthread", "dl", "cse", "SDL3", "SDL3_mixer", "opusfile", "opus", "ogg", "glm",
-    };
+    csb::libraries = {"c", "m", "pthread", "dl", "cse", "SDL3", "SDL3_mixer", "opusfile", "opus", "ogg", "glm"};
 }
 
 int csb::clean()
