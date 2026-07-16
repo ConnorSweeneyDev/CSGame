@@ -125,7 +125,7 @@ namespace csg
     acceleration = {0.0, 0.0, 0.0};
     for (int index{}; index < 3; ++index)
     {
-      auto &component = velocity[index];
+      auto &component{velocity[index]};
       const auto drag{(std::abs(component) * (1.0 - (friction / max_velocity))) + friction};
       if (component > 0.0)
         component = std::max(0.0, component - (drag * tick));
