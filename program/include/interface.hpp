@@ -11,7 +11,7 @@ namespace csg
     cursor();
 
   protected:
-    void on_simulate(const double tick) override final;
+    void on_simulate(const double tick) final;
   };
 
   class text final : public cse::interface
@@ -26,7 +26,7 @@ namespace csg
     button(const glm::dvec2 &translation_);
 
   protected:
-    void on_prepare() override final;
-    void on_simulate(const double tick) override final;
+    void on_prepare() final;
+    void on_simulate(const double tick) final;
   };
 }

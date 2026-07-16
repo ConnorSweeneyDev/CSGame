@@ -11,7 +11,7 @@ namespace csg
     camera(const glm::dvec3 &translation_);
 
   protected:
-    void on_simulate(const double tick) override final;
+    void on_simulate(const double tick) final;
 
   private:
     static constexpr double max_velocity{200.0};

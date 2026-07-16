@@ -24,7 +24,7 @@ namespace csg
   {
   }
 
-  void window::on_create()
+  void window::on_prepare()
   {
     const auto &settings = find_as<csg::settings>(game->active.states, "settings");
     active.display = settings->window->display;
@@ -61,7 +61,7 @@ namespace csg
       cse::print<COUT>("VSync toggled off\n");
   }
 
-  void window::on_destroy()
+  void window::on_clean()
   {
     const auto &settings = find_as<csg::settings>(game->active.states, "settings");
     settings->window->display = active.display;

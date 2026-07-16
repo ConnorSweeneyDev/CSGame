@@ -13,8 +13,8 @@ namespace csg
     player(const glm::dvec3 &translation_);
 
   protected:
-    void on_event(const SDL_Event &event) override final;
-    void on_simulate(const double tick) override final;
+    void on_event(const SDL_Event &event) final;
+    void on_simulate(const double tick) final;
 
   private:
     static constexpr double max_velocity{200.0};
@@ -28,7 +28,7 @@ namespace csg
     environment(const glm::dvec3 &translation_, const cse::image &image_, const cse::animation &animation_);
 
   protected:
-    void on_prepare() override final;
-    void on_collide(const double tick) override final;
+    void on_prepare() final;
+    void on_collide(const double tick) final;
   };
 }

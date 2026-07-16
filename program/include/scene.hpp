@@ -12,11 +12,11 @@ namespace csg
   public:
     scene() = default;
 
-    static void main(const std::shared_ptr<scene> &scene);
-    static void other(const std::shared_ptr<scene> &scene);
+    static void main(const std::shared_ptr<scene> &s);
+    static void other(const std::shared_ptr<scene> &s);
 
   protected:
-    void pre_prepare() override final;
-    void pre_event(const SDL_Event &event) override final;
+    void pre_prepare() final;
+    void pre_event(const SDL_Event &event) final;
   };
 }

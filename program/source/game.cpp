@@ -25,7 +25,7 @@ namespace csg
   {
   }
 
-  void game::pre_create()
+  void game::pre_prepare()
   {
     const auto &settings{find_as<csg::settings>(active.states, "settings")};
     settings->read();
@@ -70,7 +70,7 @@ namespace csg
     find(active.interfaces, "frame")->active.text.content = "FPS:" + std::to_string(active.frame.count);
   }
 
-  void game::post_destroy()
+  void game::post_clean()
   {
     const auto &settings{find_as<csg::settings>(active.states, "settings")};
     settings->game->master = active.master.value;

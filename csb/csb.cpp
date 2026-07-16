@@ -1,6 +1,5 @@
 #include "csb.hpp"
 
-#include <filesystem>
 #include <string>
 
 void csb::configure()
@@ -36,9 +35,9 @@ int csb::build()
 
   csb::pack(csb::choose_files({"program/texture"}), csb::choose_files({"program/font"}),
             csb::choose_files({"program/sound"}), csb::choose_files({"program/music"}),
-            [](const std::filesystem::path &file) -> std::string
+            [](const auto &file) -> std::string
             {
-              const auto parent{file.parent_path().filename().string()};
+              auto parent{file.parent_path().filename().string()};
               if (parent == "texture" || parent == "font" || parent == "sound" || parent == "music") return "CSGame";
               return parent;
             },
@@ -64,9 +63,11 @@ int csb::build()
                               {"IndentCaseLabels", "true"},
                               {"NamespaceIndentation", "All"},
                               {"FixNamespaceComments", "false"}});
-  csb::format("22.1.5");
-  csb::generate_clangd({{"Diagnostics", {{"UnusedIncludes", "Strict"}, {"MissingIncludes", "Strict"}}}});
+  csb::format("22.1.8");
+
   csb::generate_compile_commands();
+  csb::generate_clangd({{"Diagnostics", {{"UnusedIncludes", "Strict"}, {"MissingIncludes", "Strict"}}}});
+
   csb::compile();
   csb::link();
   return csb::run();

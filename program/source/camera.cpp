@@ -38,13 +38,14 @@ namespace csg
     acceleration = {0.0, 0.0, 0.0};
     for (int index{}; index < 3; ++index)
     {
-      auto drag = std::abs(velocity[index]) * (1.0 - (friction / max_velocity)) + friction;
-      if (velocity[index] > 0.0)
-        velocity[index] = std::max(0.0, velocity[index] - drag * tick);
-      else if (velocity[index] < -0.0)
-        velocity[index] = std::min(0.0, velocity[index] + drag * tick);
+      auto &component = velocity[index];
+      const auto drag = (std::abs(component) * (1.0 - (friction / max_velocity))) + friction;
+      if (component > 0.0)
+        component = std::max(0.0, component - (drag * tick));
+      else if (component < -0.0)
+        component = std::min(0.0, component + (drag * tick));
       else
-        velocity[index] = 0.0;
+        component = 0.0;
     }
     position += velocity * tick;
 
@@ -54,7 +55,6 @@ namespace csg
     if (keyboard[SDL_SCANCODE_SEMICOLON]) forward_rate += forward_change;
     forward_value += forward_rate * tick;
     forward_rate = 0.0;
-    if (active.fov.value < 30.0) active.fov.value = 30.0;
-    if (active.fov.value > 60.0) active.fov.value = 60.0;
+    active.fov.value = std::min(std::max(active.fov.value, 30.0), 60.0);
   }
 }

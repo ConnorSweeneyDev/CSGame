@@ -15,8 +15,8 @@ class lamp final : public cse::light
 public:
   lamp(const glm::dvec3 &translation_);
 
-private:
-  void on_event(const SDL_Event &event) override final;
+protected:
+  void on_event(const SDL_Event &event) final;
 };
 
 class spot final : public cse::light

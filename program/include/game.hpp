@@ -13,12 +13,12 @@ namespace csg
   public:
     game();
 
-    static void setup(const std::shared_ptr<game> &game);
+    static void setup(const std::shared_ptr<game> &g);
 
   protected:
-    void pre_create() override final;
-    void pre_event(const SDL_Event &event) override final;
-    void pre_simulate(const double tick) override final;
-    void post_destroy() override final;
+    void pre_prepare() final;
+    void pre_event(const SDL_Event &event) final;
+    void pre_simulate(const double tick) final;
+    void post_clean() final;
   };
 }

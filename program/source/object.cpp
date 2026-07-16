@@ -125,13 +125,14 @@ namespace csg
     acceleration = {0.0, 0.0, 0.0};
     for (int index{}; index < 3; ++index)
     {
-      auto drag{std::abs(velocity[index]) * (1.0 - (friction / max_velocity)) + friction};
-      if (velocity[index] > 0.0)
-        velocity[index] = std::max(0.0, velocity[index] - drag * tick);
-      else if (velocity[index] < -0.0)
-        velocity[index] = std::min(0.0, velocity[index] + drag * tick);
+      auto &component = velocity[index];
+      const auto drag{(std::abs(component) * (1.0 - (friction / max_velocity))) + friction};
+      if (component > 0.0)
+        component = std::max(0.0, component - (drag * tick));
+      else if (component < -0.0)
+        component = std::min(0.0, component + (drag * tick));
       else
-        velocity[index] = 0.0;
+        component = 0.0;
     }
     position += velocity * tick;
 
@@ -141,8 +142,7 @@ namespace csg
     if (keyboard[SDL_SCANCODE_G]) transparency_rate += transparency_change;
     transparency_value += transparency_rate * tick;
     transparency_rate = 0.0;
-    if (transparency_value < 0.0) transparency_value = 0.0;
-    if (transparency_value > 1.0) transparency_value = 1.0;
+    transparency_value = std::min(std::max(transparency_value, 0.0), 1.0);
 
     active.timer.call<void(const bool)>("texture_change", active.texture.image == image::redhood);
 
