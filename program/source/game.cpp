@@ -14,7 +14,7 @@
 namespace csg
 {
   game::game()
-    : cse::game({.meta = {.organization = "ConnorSweeneyDev", .application = "CSGame"},
+    : cse::game({.meta = {.organization = "ConnorSweeneyDev", .application = "CSGame", .version = "1.0.0"},
                  .tick = 300.0,
                  .frame = 144.0,
                  .aspect = {.value = 16.0 / 9.0, .interpolate = true},
