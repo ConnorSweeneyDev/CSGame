@@ -24,7 +24,7 @@ namespace csg
            (vsync, bool, {true}));
 
   public:
-    settings() : cse::state("settings") {}
+    settings() : cse::state({.storage = "settings"}) {}
     FIELD(game, settings::game, {});
     FIELD(window, settings::window, {});
   };
