@@ -24,7 +24,7 @@ namespace csg
            (vsync, bool, {true}));
 
   public:
-    settings() : cse::state("CSGame/settings") {}
+    settings() : cse::state("settings") {}
     FIELD(game, settings::game, {});
     FIELD(window, settings::window, {});
   };
