@@ -8,6 +8,7 @@
 # Build Output
 build/
 program/**/resource.*
+program/**/*.rpp
 .clangd
 .clang-tidy
 .clang-format

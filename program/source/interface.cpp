@@ -101,7 +101,7 @@ namespace csg
 
   void button::on_prepare()
   {
-    active.mixer.set({{"sample1", sound::sample1}, {"sample2", sound::sample2}, {"sample3", sound::sample3}});
+    active.mixer.set({{"once", sound::once}, {"twice", sound::twice}});
     if (name == "button1") active.priority = {1, 1};
   }
 
@@ -149,7 +149,7 @@ namespace csg
       {
         auto &song = scene_mixer.get<cse::music>("main");
         song.playing = !song.playing;
-        auto &sfx = active.mixer.get<cse::sound>("sample3");
+        auto &sfx = active.mixer.get<cse::sound>("once");
         sfx.position = 0;
         sfx.playing = true;
       }
