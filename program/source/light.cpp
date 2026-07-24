@@ -18,9 +18,7 @@ sun::sun()
                 .shadow = {.cast = false,
                            .darkness = {.value = 0.0, .interpolate = true},
                            .softness = {.value = 0.0, .interpolate = true}},
-                .priority = 0})
-{
-}
+                .priority = 0}) {};
 
 lamp::lamp(const glm::dvec3 &translation_)
   : cse::light({.translation = {.value = translation_, .interpolate = true},
@@ -34,9 +32,7 @@ lamp::lamp(const glm::dvec3 &translation_)
                 .shadow = {.cast = true,
                            .darkness = {.value = 1.0, .interpolate = true},
                            .softness = {.value = 0.3, .interpolate = true}},
-                .priority = 0})
-{
-}
+                .priority = 0}) {};
 
 void lamp::on_event(const SDL_Event &event)
 {
@@ -63,6 +59,4 @@ spot::spot(const glm::dvec3 &translation_)
                 .shadow = {.cast = true,
                            .darkness = {.value = 1.0, .interpolate = true},
                            .softness = {.value = 0.0, .interpolate = true}},
-                .priority = 0})
-{
-}
+                .priority = 0}) {};

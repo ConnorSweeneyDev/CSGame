@@ -20,9 +20,7 @@ namespace csg
                    .height = 720,
                    .mode = WINDOWED,
                    .vsync = true,
-                   .mouse = {.visible = false, .position = {0.0, 0.0}}})
-  {
-  }
+                   .mouse = {.visible = false, .position = {0.0, 0.0}}}) {};
 
   void window::on_prepare()
   {

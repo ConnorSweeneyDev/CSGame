@@ -39,9 +39,7 @@ namespace csg
                               .cast = true,
                               .darkness = {.value = 1.0, .interpolate = true},
                               .softness = {.value = 1.0, .interpolate = true}},
-                   .priority = {.simulation = 0, .rendering = 1}})
-  {
-  }
+                   .priority = {.simulation = 0, .rendering = 1}}) {};
 
   void player::on_event(const SDL_Event &event)
   {
@@ -190,9 +188,7 @@ namespace csg
                               .cast = true,
                               .darkness = {.value = 1.0, .interpolate = true},
                               .softness = {.value = 1.0, .interpolate = true}},
-                   .priority = {.simulation = 1, .rendering = 0}})
-  {
-  }
+                   .priority = {.simulation = 1, .rendering = 0}}) {};
 
   void environment::on_prepare()
   {

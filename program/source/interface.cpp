@@ -36,9 +36,7 @@ namespace csg
                                .overflow = {.wrap = false, .clip = true},
                                .color = {.tint = {.value = {0.5, 0.5, 0.5, 1.0}, .interpolate = true},
                                          .alpha = {.value = 1.0, .interpolate = true}}},
-                      .priority = {-1000, 1000}})
-  {
-  }
+                      .priority = {-1000, 1000}}) {};
 
   void cursor::on_simulate(const double)
   {

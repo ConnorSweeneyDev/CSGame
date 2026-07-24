@@ -1,3 +1,4 @@
+#include <memory>
 #include <string_view>
 #include <vector>
 
@@ -6,4 +7,4 @@
 
 #include "game.hpp"
 
-int cse::main(const std::vector<std::string_view> &) { return game::create(csg::game::setup)->run(); }
+std::shared_ptr<cse::game> cse::main(const std::vector<std::string_view> &) { return game::create(csg::game::setup); }

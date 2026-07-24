@@ -17,9 +17,7 @@ namespace csg
                    .forward = {.value = {0.0, 0.0, -1.0}, .interpolate = true},
                    .up = {.value = {0.0, 1.0, 0.0}, .interpolate = true},
                    .fov = {.value = 45.0, .interpolate = true},
-                   .clip = {.near = 10.0, .far = 400.0}})
-  {
-  }
+                   .clip = {.near = 10.0, .far = 400.0}}) {};
 
   void camera::on_simulate(const double tick)
   {
