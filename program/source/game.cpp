@@ -5,6 +5,7 @@
 #include "SDL3/SDL_events.h"
 #include "SDL3/SDL_scancode.h"
 #include "cse/container.hpp"
+#include "cse/exception.hpp"
 #include "cse/game.hpp"
 #include "cse/numeric.hpp"
 
@@ -29,7 +30,7 @@ namespace csg
   void game::pre_prepare()
   {
     const auto &settings{find_as<csg::settings>(active.states, "settings")};
-    settings->read();
+    if (!settings->read()) throw cse::exception("Failed to read settings file");
     active.master.value = settings->game->master;
     active.sound.value = settings->game->sound;
     active.music.value = settings->game->music;
@@ -77,6 +78,6 @@ namespace csg
     settings->game->master = active.master.value;
     settings->game->sound = active.sound.value;
     settings->game->music = active.music.value;
-    settings->write();
+    if (!settings->write()) throw cse::exception("Failed to write settings file");
   }
 }
