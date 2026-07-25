@@ -17,7 +17,7 @@ namespace csg
   {
     auto &song = active.mixer.set("main", music::main);
     song.loop = true;
-    song.speed.value = 0.60;
+    song.speed.value = 0.6;
     song.playing = true;
   }
 
