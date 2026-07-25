@@ -148,13 +148,13 @@ namespace csg
         auto &song = scene_mixer.get<cse::music>("main");
         song.playing = !song.playing;
         auto &sfx = active.mixer.get<cse::sound>("once");
-        sfx.position = 0;
+        sfx.elapsed = {};
         sfx.playing = true;
       }
       else if (name == "button2")
       {
         auto &song = scene_mixer.get<cse::music>("main");
-        song.position = 0.0;
+        song.elapsed = {};
         song.speed.value = song.speed.value + 0.1;
       }
     }
