@@ -13,10 +13,10 @@
 namespace csg
 {
   camera::camera(const glm::dvec3 &translation_)
-    : cse::camera({.translation = {.value = translation_, .interpolate = true},
-                   .forward = {.value = {0.0, 0.0, -1.0}, .interpolate = true},
-                   .up = {.value = {0.0, 1.0, 0.0}, .interpolate = true},
-                   .fov = {.value = 45.0, .interpolate = true},
+    : cse::camera({.translation = {translation_},
+                   .forward = {{0.0, 0.0, -1.0}},
+                   .up = {{0.0, 1.0, 0.0}},
+                   .fov = {45.0},
                    .clip = {.near = 10.0, .far = 400.0}}) {};
 
   void camera::on_simulate(const double tick)

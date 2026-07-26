@@ -22,23 +22,16 @@
 namespace csg
 {
   player::player(const glm::dvec3 &translation_)
-    : cse::object({.translation = {.value = translation_, .interpolate = true},
-                   .rotation = {.value = 0.0, .interpolate = true},
-                   .scale = {.value = {1.0, 1.0}, .interpolate = true},
+    : cse::object({.translation = {translation_},
+                   .rotation = {0.0},
+                   .scale = {{1.0, 1.0}},
                    .collidable = true,
-                   .texture = {.image = image::redhood,
-                               .animation = animation::redhood.idle,
-                               .playback = {.frame = 0, .speed = {1.0}, .loop = true, .elapsed = 0.0},
+                   .texture = {.source = {.image = image::redhood, .animation = animation::redhood.idle},
+                               .playback = {.frame = 0, .elapsed = 0.0, .playing = true, .speed = {1.0}, .loop = true},
                                .flip = {.horizontal = false, .vertical = false},
-                               .color = {.tint = {.value = {0.5, 0.5, 0.5, 1.0}, .interpolate = true},
-                                         .alpha = {.value = 1.0, .interpolate = true}}},
-                   .illumination = {.show = true,
-                                    .brightness = {.value = 1.0, .interpolate = true},
-                                    .penetration = {.value = 1.0, .interpolate = true}},
-                   .shadow = {.show = true,
-                              .cast = true,
-                              .darkness = {.value = 1.0, .interpolate = true},
-                              .softness = {.value = 1.0, .interpolate = true}},
+                               .color = {.tint = {{0.5, 0.5, 0.5, 1.0}}, .alpha = {1.0}}},
+                   .illumination = {.show = true, .brightness = {1.0}, .penetration = {1.0}},
+                   .shadow = {.show = true, .cast = true, .darkness = {1.0}, .softness = {1.0}},
                    .priority = {.simulation = 0, .rendering = 1}}) {};
 
   void player::on_event(const SDL_Event &event)
@@ -52,16 +45,11 @@ namespace csg
             .set("texture_change",
                  [this](const bool is_redhood)
                  {
+                   active.texture.playback = {};
                    if (is_redhood)
-                   {
-                     active.texture.image = image::shop;
-                     active.texture.animation = animation::shop.main;
-                     active.texture.playback = {};
-                     return;
-                   }
-                   active.texture.image = image::redhood;
-                   active.texture.animation = animation::redhood.idle;
-                   active.texture.playback = {0, {1.0}, true};
+                     active.texture.source = {image::shop, animation::shop.main};
+                   else
+                     active.texture.source = {image::redhood, animation::redhood.idle};
                  })
             .target = 1.0;
         break;
@@ -94,11 +82,11 @@ namespace csg
         if (!key.repeat && key.type == SDL_EVENT_KEY_DOWN)
         {
           auto &playback{active.texture.playback};
-          auto &animation{active.texture.animation};
+          auto &animation{active.texture.source.animation};
           if (animation == animation::redhood.idle)
           {
             animation = animation::redhood.jump;
-            playback = {0, {1.0}, false};
+            playback = {.loop = false};
           }
         }
         break;
@@ -142,18 +130,18 @@ namespace csg
     transparency_rate = 0.0;
     transparency_value = std::min(std::max(transparency_value, 0.0), 1.0);
 
-    active.timer.call<void(const bool)>("texture_change", active.texture.image == image::redhood);
+    active.timer.call<void(const bool)>("texture_change", active.texture.source.image == image::redhood);
 
-    auto &animation{active.texture.animation};
+    auto &animation{active.texture.source.animation};
     auto &playback{active.texture.playback};
     auto final{animation.frames.size() - 1};
     if (animation == animation::redhood.jump)
       if (playback.frame == final && playback.elapsed >= animation.frames[final].duration)
       {
         animation = animation::redhood.idle;
-        playback = {0, {2.0}, true};
+        playback = {.speed = {2.0}};
       }
-    if (previous.texture.animation == animation && animation == animation::redhood.idle)
+    if (previous.texture.source.animation == animation && animation == animation::redhood.idle)
       if (playback.frame == 0 && previous.texture.playback.frame == final)
       {
         playback.speed.value = 1.0;
@@ -163,7 +151,7 @@ namespace csg
           active.texture.color.tint.value.r = 0.5;
         active.texture.color.tint.instant = true;
       }
-    if (previous.texture.image == image::shop && active.texture.image != image::shop)
+    if (previous.texture.source.image == image::shop && active.texture.source.image != image::shop)
     {
       active.texture.color.tint.value = {0.5, 0.5, 1.0, 1.0};
       active.texture.color.tint.instant = true;
@@ -171,23 +159,16 @@ namespace csg
   }
 
   environment::environment(const glm::dvec3 &translation_, const cse::image &image_, const cse::animation &animation_)
-    : cse::object({.translation = {.value = translation_, .interpolate = true},
-                   .rotation = {.value = 0.0, .interpolate = true},
-                   .scale = {.value = {1.0, 1.0}, .interpolate = true},
+    : cse::object({.translation = {translation_},
+                   .rotation = {0.0},
+                   .scale = {{1.0, 1.0}},
                    .collidable = true,
-                   .texture = {.image = image_,
-                               .animation = animation_,
-                               .playback = {.frame = 0, .speed = {0.0}, .loop = false, .elapsed = 0.0},
+                   .texture = {.source = {.image = image_, .animation = animation_},
+                               .playback = {.frame = 0, .elapsed = 0.0, .playing = true, .speed = {0.0}, .loop = false},
                                .flip = {.horizontal = false, .vertical = false},
-                               .color = {.tint = {.value = {0.5, 0.5, 0.5, 1.0}, .interpolate = true},
-                                         .alpha = {.value = 1.0, .interpolate = true}}},
-                   .illumination = {.show = true,
-                                    .brightness = {.value = 1.0, .interpolate = true},
-                                    .penetration = {.value = 1.0, .interpolate = true}},
-                   .shadow = {.show = true,
-                              .cast = true,
-                              .darkness = {.value = 1.0, .interpolate = true},
-                              .softness = {.value = 1.0, .interpolate = true}},
+                               .color = {.tint = {{0.5, 0.5, 0.5, 1.0}}, .alpha = {1.0}}},
+                   .illumination = {.show = true, .brightness = {1.0}, .penetration = {1.0}},
+                   .shadow = {.show = true, .cast = true, .darkness = {1.0}, .softness = {1.0}},
                    .priority = {.simulation = 1, .rendering = 0}}) {};
 
   void environment::on_prepare()

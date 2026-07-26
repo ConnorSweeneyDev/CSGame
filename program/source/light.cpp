@@ -7,31 +7,27 @@
 #include "glm/ext/vector_double3.hpp"
 
 sun::sun()
-  : cse::light({.translation = {.value = {0.0, 0.0, 0.0}, .interpolate = true},
-                .rotation = {.value = {0.0, 0.0}, .interpolate = true},
+  : cse::light({.translation = {{0.0, 0.0, 0.0}},
+                .rotation = {{0.0, 0.0}},
                 .illumination = {.global = true,
-                                 .brightness = {.value = {0.15, 0.15, 0.2, 1.0}, .interpolate = true},
-                                 .penetration = {.value = 1.0, .interpolate = true},
-                                 .softness = {.value = 0.0, .interpolate = true},
-                                 .range = {.value = 0.0, .interpolate = true},
-                                 .angle = {.value = 0.0, .interpolate = true}},
-                .shadow = {.cast = false,
-                           .darkness = {.value = 0.0, .interpolate = true},
-                           .softness = {.value = 0.0, .interpolate = true}},
+                                 .brightness = {{0.15, 0.15, 0.2, 1.0}},
+                                 .penetration = {1.0},
+                                 .softness = {0.0},
+                                 .range = {0.0},
+                                 .angle = {0.0}},
+                .shadow = {.cast = false, .darkness = {0.0}, .softness = {0.0}},
                 .priority = 0}) {};
 
 lamp::lamp(const glm::dvec3 &translation_)
-  : cse::light({.translation = {.value = translation_, .interpolate = true},
-                .rotation = {.value = {0.0, 0.0}, .interpolate = true},
+  : cse::light({.translation = {translation_},
+                .rotation = {{0.0, 0.0}},
                 .illumination = {.global = false,
-                                 .brightness = {.value = {1.0, 0.7, 0.3, 2.0}, .interpolate = true},
-                                 .penetration = {.value = 0.3, .interpolate = true},
-                                 .softness = {.value = 0.0, .interpolate = true},
-                                 .range = {.value = 80.0, .interpolate = true},
-                                 .angle = {.value = 360.0, .interpolate = true}},
-                .shadow = {.cast = true,
-                           .darkness = {.value = 1.0, .interpolate = true},
-                           .softness = {.value = 0.3, .interpolate = true}},
+                                 .brightness = {{1.0, 0.7, 0.3, 2.0}},
+                                 .penetration = {0.3},
+                                 .softness = {0.0},
+                                 .range = {80.0},
+                                 .angle = {360.0}},
+                .shadow = {.cast = true, .darkness = {1.0}, .softness = {0.3}},
                 .priority = 0}) {};
 
 void lamp::on_event(const SDL_Event &event)
@@ -48,15 +44,13 @@ void lamp::on_event(const SDL_Event &event)
 }
 
 spot::spot(const glm::dvec3 &translation_)
-  : cse::light({.translation = {.value = translation_, .interpolate = true},
-                .rotation = {.value = {0.0, 90.0}, .interpolate = true},
+  : cse::light({.translation = {translation_},
+                .rotation = {{0.0, 90.0}},
                 .illumination = {.global = false,
-                                 .brightness = {.value = {0.45, 1.05, 1.5, 1.0}, .interpolate = true},
-                                 .penetration = {.value = 1.0, .interpolate = true},
-                                 .softness = {.value = 1.0, .interpolate = true},
-                                 .range = {.value = 90.0, .interpolate = true},
-                                 .angle = {.value = 70.0, .interpolate = true}},
-                .shadow = {.cast = true,
-                           .darkness = {.value = 1.0, .interpolate = true},
-                           .softness = {.value = 0.0, .interpolate = true}},
+                                 .brightness = {{0.45, 1.05, 1.5, 1.0}},
+                                 .penetration = {1.0},
+                                 .softness = {1.0},
+                                 .range = {90.0},
+                                 .angle = {70.0}},
+                .shadow = {.cast = true, .darkness = {1.0}, .softness = {0.0}},
                 .priority = 0}) {};

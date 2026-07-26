@@ -18,12 +18,12 @@ namespace csg
     : cse::game({.meta = {.organization = "ConnorSweeneyDev", .application = "CSGame", .version = "1.0.0"},
                  .tick = 300.0,
                  .frame = 144.0,
-                 .aspect = {.value = 16.0 / 9.0, .interpolate = true},
                  .resolution = 100,
-                 .clear = {.value = {0.0, 0.0, 0.0}, .interpolate = true},
-                 .master = {.value = 0.5, .interpolate = true},
-                 .sound = {.value = 1.0, .interpolate = true},
-                 .music = {.value = 1.0, .interpolate = true}}) {};
+                 .clear = {{0.0, 0.0, 0.0}},
+                 .aspect = {16.0 / 9.0},
+                 .master = {0.5},
+                 .sound = {1.0},
+                 .music = {1.0}}) {};
 
   void game::pre_prepare()
   {
