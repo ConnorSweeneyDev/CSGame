@@ -21,14 +21,14 @@ namespace csg
     g->set<window>();
     g->current("main", scene::main);
     g->set<cursor>("cursor");
-    g->set<text>("tick", glm::dvec2{-63.0, 46.0}, glm::dvec2{50.0, 10.0});
-    g->set<text>("frame", glm::dvec2{75.0, 46.0}, glm::dvec2{50.0, 10.0});
+    g->set<text>("tick", glm::dvec2{-133.0, 85.0}, glm::dvec2{50.0, 10.0});
+    g->set<text>("frame", glm::dvec2{145.0, 85.0}, glm::dvec2{50.0, 10.0});
   }
 
   void scene::main(const std::shared_ptr<scene> &s)
   {
-    s->set<button>("button1", glm::dvec2{-22.0, 40.0});
-    s->set<button>("button2", glm::dvec2{22.0, 40.0});
+    s->set<button>("button1", glm::dvec2{-25.0, 79.0});
+    s->set<button>("button2", glm::dvec2{25.0, 79.0});
     s->set<camera>(glm::dvec3{0.0, 0.0, 80.0});
     s->set<player>("player", glm::dvec3{0.0, -6.0, 0.0});
     s->set<environment>("floor", glm::dvec3{0.0, -61.0, 0.0}, image::floor, animation::floor.main);

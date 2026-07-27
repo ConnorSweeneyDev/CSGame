@@ -18,9 +18,8 @@ namespace csg
     : cse::game({.meta = {.organization = "ConnorSweeneyDev", .application = "CSGame", .version = "1.0.0"},
                  .tick = 300.0,
                  .frame = 144.0,
-                 .resolution = 100,
+                 .aspect = {.ratio = 16.0 / 9.0, .resolution = 180, .scaling = VIRTUAL},
                  .clear = {{0.0, 0.0, 0.0}},
-                 .aspect = {16.0 / 9.0},
                  .master = {0.5},
                  .sound = {1.0},
                  .music = {1.0}}) {};
@@ -43,10 +42,10 @@ namespace csg
       case SDL_SCANCODE_T: active.master.value = active.master.value + 0.1; break;
       case SDL_SCANCODE_F7: set<csg::window>(); break;
       case SDL_SCANCODE_F8:
-        if (equal(active.aspect.value, 16.0 / 9.0))
-          active.aspect.value = 4.0 / 3.0;
+        if (active.aspect.scaling == VIRTUAL)
+          active.aspect.scaling = PHYSICAL;
         else
-          active.aspect.value = 16.0 / 9.0;
+          active.aspect.scaling = VIRTUAL;
         break;
       case SDL_SCANCODE_F9:
         if (equal(active.frame.target, 144.0))
