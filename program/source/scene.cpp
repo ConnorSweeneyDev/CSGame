@@ -4,7 +4,6 @@
 
 #include "SDL3/SDL_events.h"
 #include "SDL3/SDL_scancode.h"
-#include "cse/container.hpp"
 #include "cse/game.hpp"
 #include "cse/resource.hpp"
 #include "cse/scene.hpp"
@@ -36,7 +35,7 @@ namespace csg
         if (!key.repeat && key.type == SDL_EVENT_KEY_DOWN) active.mixer.remove<cse::music>("main");
         break;
       case SDL_SCANCODE_9:
-        if (const auto &player{try_find(active.objects, "player")})
+        if (const auto &player{active.objects.find("player")})
         {
           if (!key.repeat && key.type == SDL_EVENT_KEY_DOWN)
             player->active.texture.color.tint.value = {0.25, 0.0, 0.0, 0.5};

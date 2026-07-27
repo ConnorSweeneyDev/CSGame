@@ -4,7 +4,6 @@
 
 #include "SDL3/SDL_events.h"
 #include "SDL3/SDL_scancode.h"
-#include "cse/container.hpp"
 #include "cse/exception.hpp"
 #include "cse/game.hpp"
 #include "cse/numeric.hpp"
@@ -20,13 +19,14 @@ namespace csg
                  .frame = 144.0,
                  .aspect = {.ratio = 16.0 / 9.0, .resolution = 180, .scaling = VIRTUAL},
                  .clear = {{0.0, 0.0, 0.0}},
+                 .memory = {.vram = 512, .ram = 128},
                  .master = {0.5},
                  .sound = {1.0},
                  .music = {1.0}}) {};
 
   void game::pre_prepare()
   {
-    const auto &settings{find_as<csg::settings>(active.states, "settings")};
+    const auto &settings{active.states.as<csg::settings>("settings")};
     if (!settings->read()) throw cse::exception("Failed to read settings file");
     active.master.value = settings->game->master;
     active.sound.value = settings->game->sound;
@@ -65,13 +65,13 @@ namespace csg
 
   void game::pre_simulate(const double)
   {
-    find(active.interfaces, "tick")->active.text.content = "TPS:" + std::to_string(active.tick.count);
-    find(active.interfaces, "frame")->active.text.content = "FPS:" + std::to_string(active.frame.count);
+    active.interfaces["tick"]->active.text.content = "TPS:" + std::to_string(active.tick.count);
+    active.interfaces["frame"]->active.text.content = "FPS:" + std::to_string(active.frame.count);
   }
 
   void game::post_clean()
   {
-    const auto &settings{find_as<csg::settings>(active.states, "settings")};
+    const auto &settings{active.states.as<csg::settings>("settings")};
     settings->game->master = active.master.value;
     settings->game->sound = active.sound.value;
     settings->game->music = active.music.value;

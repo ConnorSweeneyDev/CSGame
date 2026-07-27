@@ -39,7 +39,7 @@ namespace csg
     s->set<sun>("sun");
     s->set<lamp>("lamp1", glm::dvec3{32.0, 3.0, 0.0});
     s->set<lamp>("lamp2", glm::dvec3{130.0, 3.0, 0.0});
-    s->set<spot>("spot", glm::dvec3{-80, 20.0, -9.0});
+    s->set<spot>("spot", glm::dvec3{-80.0, 20.5, -9.0});
   }
 
   void scene::other(const std::shared_ptr<scene> &s)
