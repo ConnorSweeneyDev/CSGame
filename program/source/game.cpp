@@ -7,6 +7,7 @@
 #include "cse/exception.hpp"
 #include "cse/game.hpp"
 #include "cse/numeric.hpp"
+#include "cse/pointer.hpp"
 
 #include "state.hpp"
 #include "window.hpp"
@@ -26,7 +27,7 @@ namespace csg
 
   void game::pre_prepare()
   {
-    const auto &settings{active.states.as<csg::settings>("settings")};
+    const auto &settings{as<csg::settings>(active.states["settings"])};
     if (!settings->read()) throw cse::exception("Failed to read settings file");
     active.master.value = settings->game->master;
     active.sound.value = settings->game->sound;
@@ -71,7 +72,7 @@ namespace csg
 
   void game::post_clean()
   {
-    const auto &settings{active.states.as<csg::settings>("settings")};
+    const auto &settings{as<csg::settings>(active.states["settings"])};
     settings->game->master = active.master.value;
     settings->game->sound = active.sound.value;
     settings->game->music = active.music.value;

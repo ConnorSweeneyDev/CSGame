@@ -3,6 +3,7 @@
 #include "SDL3/SDL_events.h"
 #include "SDL3/SDL_scancode.h"
 #include "cse/game.hpp"
+#include "cse/pointer.hpp"
 #include "cse/print.hpp"
 #include "cse/window.hpp"
 
@@ -23,7 +24,7 @@ namespace csg
 
   void window::on_prepare()
   {
-    const auto &settings = game->active.states.as<csg::settings>("settings");
+    const auto &settings{as<csg::settings>(game->active.states["settings"])};
     active.display = settings->window->display;
     active.left = settings->window->position.first;
     active.top = settings->window->position.second;
@@ -60,7 +61,7 @@ namespace csg
 
   void window::on_clean()
   {
-    const auto &settings = game->active.states.as<csg::settings>("settings");
+    const auto &settings{as<csg::settings>(game->active.states["settings"])};
     settings->window->display = active.display;
     settings->window->position = {active.left, active.top};
     settings->window->size = {active.width, active.height};
