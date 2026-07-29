@@ -5,6 +5,7 @@
 namespace csg
 {
   LANGUAGES(EN, ES, FR);
+
   TRANSLATE(player,          //
             (EN, "Player"),  //
             (ES, "Jugador"), //
