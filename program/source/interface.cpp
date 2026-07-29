@@ -107,12 +107,12 @@ namespace csg
     }
     if (hover)
     {
-      active.text.content = locale::greeting;
+      active.text.content = lexeme::greeting;
       active.timer.remove("hide_text");
     }
     else if (unhover)
     {
-      active.text.content = locale::farewell;
+      active.text.content = lexeme::farewell;
       active.timer.set("hide_text", [this]() { active.text.content = {}; }).target = 0.5;
     }
 

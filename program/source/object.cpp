@@ -32,7 +32,7 @@ namespace csg
                                .color = {.tint = {{0.5, 0.5, 0.5, 1.0}}, .alpha = {1.0}},
                                .illumination = {.show = true, .brightness = {1.0}, .penetration = {1.0}},
                                .shadow = {.show = true, .cast = true, .darkness = {1.0}, .softness = {1.0}}},
-                   .text = {.content = {"[", locale::player, "]"},
+                   .text = {.content = {"[", lexeme::player, "]"},
                             .source = {.font = font::text, .animation = animation::text.main},
                             .playback = {.frame = 0, .elapsed = 0.0, .playing = false, .speed = {0.0}, .loop = false},
                             .align = {.horizontal = {.preset = CENTER, .spacing = {0.0}},
