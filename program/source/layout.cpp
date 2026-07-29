@@ -27,7 +27,7 @@ namespace csg
 
   void scene::main(const std::shared_ptr<scene> &s)
   {
-    s->set<button>("button1", glm::dvec2{-25.0, 79.0});
+    s->set<button>("button1", glm::dvec2{-24.0, 79.0});
     s->set<button>("button2", glm::dvec2{25.0, 79.0});
     s->set<camera>(glm::dvec3{0.0, 0.0, 80.0});
     s->set<player>("player", glm::dvec3{0.0, -6.0, 0.0});

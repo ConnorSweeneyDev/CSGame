@@ -9,6 +9,7 @@
 #include "cse/numeric.hpp"
 #include "cse/pointer.hpp"
 
+#include "locale.hpp"
 #include "state.hpp"
 #include "window.hpp"
 
@@ -21,6 +22,7 @@ namespace csg
                  .aspect = {.ratio = 16.0 / 9.0, .resolution = 180, .scaling = VIRTUAL},
                  .clear = {{0.0, 0.0, 0.0}},
                  .memory = {.vram = 512, .ram = 128},
+                 .language = language::EN,
                  .master = {0.5},
                  .sound = {1.0},
                  .music = {1.0}}) {};
@@ -29,6 +31,7 @@ namespace csg
   {
     const auto &settings{as<csg::settings>(active.states["settings"])};
     if (!settings->read()) throw cse::exception("Failed to read settings file");
+    active.language = settings->game->language;
     active.master.value = settings->game->master;
     active.sound.value = settings->game->sound;
     active.music.value = settings->game->music;
@@ -41,6 +44,12 @@ namespace csg
     {
       case SDL_SCANCODE_Q: active.master.value = active.master.value - 0.1; break;
       case SDL_SCANCODE_T: active.master.value = active.master.value + 0.1; break;
+      case SDL_SCANCODE_P:
+        if (active.language == language::EN)
+          active.language = language::FR;
+        else
+          active.language = language::EN;
+        break;
       case SDL_SCANCODE_F7: set<csg::window>(); break;
       case SDL_SCANCODE_F8:
         if (active.aspect.scaling == VIRTUAL)
@@ -66,13 +75,16 @@ namespace csg
 
   void game::pre_simulate(const double)
   {
-    active.interfaces["tick"]->active.text.content = "TPS:" + std::to_string(active.tick.count);
-    active.interfaces["frame"]->active.text.content = "FPS:" + std::to_string(active.frame.count);
+    static auto tick{active.interfaces["tick"]};
+    static auto frame{active.interfaces["frame"]};
+    tick->active.text.content = "TPS:" + std::to_string(active.tick.count);
+    frame->active.text.content = "FPS:" + std::to_string(active.frame.count);
   }
 
   void game::post_clean()
   {
     const auto &settings{as<csg::settings>(active.states["settings"])};
+    settings->game->language = active.language;
     settings->game->master = active.master.value;
     settings->game->sound = active.sound.value;
     settings->game->music = active.music.value;

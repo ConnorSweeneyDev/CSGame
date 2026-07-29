@@ -1,20 +1,23 @@
 #pragma once
 
+#include <string>
 #include <utility>
 
 #include "SDL3/SDL_video.h"
+#include "cse/state.hpp"
 #include "cse/window.hpp"
 
-#include "cse/state.hpp"
+#include "locale.hpp"
 
 namespace csg
 {
   class settings final : public cse::state
   {
   private:
-    ENLIST(game,                    //
-           (master, double, {0.5}), //
-           (sound, double, {1.0}),  //
+    ENLIST(game,                                    //
+           (language, std::string, {language::EN}), //
+           (master, double, {0.5}),                 //
+           (sound, double, {1.0}),                  //
            (music, double, {1.0}));
     ENLIST(window,                                                       //
            (display, SDL_DisplayID, {PRIMARY}),                          //
@@ -25,7 +28,7 @@ namespace csg
 
   public:
     settings() : cse::state({.storage = "settings"}) {}
-    FIELD(game, settings::game, {});
-    FIELD(window, settings::window, {});
+    STORE(game, settings::game, {});
+    STORE(window, settings::window, {});
   };
 }

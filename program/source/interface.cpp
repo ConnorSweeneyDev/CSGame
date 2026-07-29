@@ -1,7 +1,5 @@
 #include "interface.hpp"
 
-#include <string>
-
 #include "SDL3/SDL_mouse.h"
 #include "cse/game.hpp"
 #include "cse/interface.hpp"
@@ -10,6 +8,7 @@
 #include "cse/window.hpp"
 #include "glm/ext/vector_double2.hpp"
 
+#include "locale.hpp"
 #include "resource.hpp"
 
 namespace csg
@@ -24,7 +23,7 @@ namespace csg
                      .playback = {.frame = 0, .elapsed = 0.0, .playing = false, .speed = {0.0}, .loop = false},
                      .flip = {.horizontal = false, .vertical = false},
                      .color = {.tint = {{0.5, 0.5, 0.5, 1.0}}, .alpha = {1.0}}},
-         .text = {.content = "",
+         .text = {.content = {},
                   .source = {.font = {}, .animation = {}},
                   .playback = {.frame = 0, .elapsed = 0.0, .playing = false, .speed = {0.0}, .loop = false},
                   .align = {.horizontal = {.preset = CENTER, .spacing = {0.0}},
@@ -52,7 +51,7 @@ namespace csg
                      .playback = {.frame = 0, .elapsed = 0.0, .playing = false, .speed = {0.0}, .loop = false},
                      .flip = {.horizontal = false, .vertical = false},
                      .color = {.tint = {{0.5, 0.5, 0.5, 1.0}}, .alpha = {1.0}}},
-         .text = {.content = "",
+         .text = {.content = {},
                   .source = {.font = font::text, .animation = animation::text.main},
                   .playback = {.frame = 0, .elapsed = 0.0, .playing = false, .speed = {0.0}, .loop = false},
                   .align = {.horizontal = {.preset = LEFT, .spacing = {-1.0}},
@@ -75,14 +74,14 @@ namespace csg
                      .playback = {.frame = 0, .elapsed = 0.0, .playing = false, .speed = {0.0}, .loop = false},
                      .flip = {.horizontal = false, .vertical = false},
                      .color = {.tint = {{0.5, 0.5, 0.5, 1.0}}, .alpha = {1.0}}},
-         .text = {.content = "",
+         .text = {.content = {},
                   .source = {.font = font::text, .animation = animation::text.main},
                   .playback = {.frame = 0, .elapsed = 0.0, .playing = false, .speed = {0.0}, .loop = false},
                   .align = {.horizontal = {.preset = CENTER, .spacing = {-1.0}},
                             .vertical = {.preset = MIDDLE, .spacing = {0.0}},
                             .offset = {{0.0, 0.0}}},
                   .scale = {{1.0, 1.0}},
-                  .overflow = {.wrap = false, .clip = true},
+                  .overflow = {.wrap = true, .clip = false},
                   .color = {.tint = {{0.5, 0.5, 0.5, 1.0}}, .alpha = {1.0}}},
          .priority = {0, 0}})
   {
@@ -108,13 +107,13 @@ namespace csg
     }
     if (hover)
     {
-      active.text.content = "Hi";
+      active.text.content = locale::greeting;
       active.timer.remove("hide_text");
     }
     else if (unhover)
     {
-      active.text.content = "Bye";
-      active.timer.set("hide_text", [this]() { active.text.content.clear(); }).target = 0.5;
+      active.text.content = locale::farewell;
+      active.timer.set("hide_text", [this]() { active.text.content = {}; }).target = 0.5;
     }
 
     const auto right_press = active.target.pressed[SDL_BUTTON_RIGHT] == hitbox::box.main;
