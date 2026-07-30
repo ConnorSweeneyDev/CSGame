@@ -25,13 +25,13 @@ namespace csg
   void window::on_prepare()
   {
     const auto &settings{as<csg::settings>(game->active.states["settings"])};
-    active.display = settings->window->display;
-    active.left = settings->window->position.first;
-    active.top = settings->window->position.second;
-    active.width = settings->window->size.first;
-    active.height = settings->window->size.second;
-    active.mode = settings->window->mode;
-    active.vsync = settings->window->vsync;
+    active.display = settings->window.display;
+    active.left = settings->window.position.first;
+    active.top = settings->window.position.second;
+    active.width = settings->window.size.first;
+    active.height = settings->window.size.second;
+    active.mode = settings->window.mode;
+    active.vsync = settings->window.vsync;
   }
 
   void window::on_event(const SDL_Event &event)
@@ -62,10 +62,10 @@ namespace csg
   void window::on_clean()
   {
     const auto &settings{as<csg::settings>(game->active.states["settings"])};
-    settings->window->display = active.display;
-    settings->window->position = {active.left, active.top};
-    settings->window->size = {active.width, active.height};
-    settings->window->mode = active.mode;
-    settings->window->vsync = active.vsync;
+    settings->window.display = active.display;
+    settings->window.position = {active.left, active.top};
+    settings->window.size = {active.width, active.height};
+    settings->window.mode = active.mode;
+    settings->window.vsync = active.vsync;
   }
 }

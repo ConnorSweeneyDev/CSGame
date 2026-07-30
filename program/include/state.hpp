@@ -13,7 +13,6 @@ namespace csg
 {
   class settings final : public cse::state
   {
-  private:
     ENLIST(game,                                    //
            (language, std::string, {language::EN}), //
            (master, double, {0.5}),                 //
@@ -26,9 +25,9 @@ namespace csg
            (mode, ::mode, {WINDOWED}),                                   //
            (vsync, bool, {true}));
 
-  public:
-    settings() : cse::state({.storage = "settings"}) {}
-    STORE(game, settings::game, {});
-    STORE(window, settings::window, {});
+    STORE((game, settings::game, {}), //
+          (window, settings::window, {}));
+
+    settings() : cse::state({.storage = "settings"}) {};
   };
 }

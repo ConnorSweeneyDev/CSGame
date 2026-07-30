@@ -31,10 +31,10 @@ namespace csg
   {
     const auto &settings{as<csg::settings>(active.states["settings"])};
     if (!settings->read()) throw cse::exception("Failed to read settings file");
-    active.language = settings->game->language;
-    active.master.value = settings->game->master;
-    active.sound.value = settings->game->sound;
-    active.music.value = settings->game->music;
+    active.language = settings->game.language;
+    active.master.value = settings->game.master;
+    active.sound.value = settings->game.sound;
+    active.music.value = settings->game.music;
   }
 
   void game::pre_event(const SDL_Event &event)
@@ -84,10 +84,10 @@ namespace csg
   void game::post_clean()
   {
     const auto &settings{as<csg::settings>(active.states["settings"])};
-    settings->game->language = active.language;
-    settings->game->master = active.master.value;
-    settings->game->sound = active.sound.value;
-    settings->game->music = active.music.value;
+    settings->game.language = active.language;
+    settings->game.master = active.master.value;
+    settings->game.sound = active.sound.value;
+    settings->game.music = active.music.value;
     if (!settings->write()) throw cse::exception("Failed to write settings file");
   }
 }
