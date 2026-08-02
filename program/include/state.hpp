@@ -15,7 +15,7 @@ namespace csg
   {
     ENLIST(game,                                    //
            (language, std::string, {language::EN}), //
-           (master, double, {0.5}),                 //
+           (master, double, {0.3}),                 //
            (sound, double, {1.0}),                  //
            (music, double, {1.0}));
     ENLIST(window,                                                       //

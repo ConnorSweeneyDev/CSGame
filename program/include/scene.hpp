@@ -18,5 +18,14 @@ namespace csg
   protected:
     void pre_prepare() final;
     void pre_event(const SDL_Event &event) final;
+    void pre_simulate(const double tick) final;
+
+  private:
+    void fade_out(const double elapsed);
+    void fade_in(const double elapsed);
+
+  private:
+    static constexpr double duration{1.0};
+    double volume{1.0};
   };
 }

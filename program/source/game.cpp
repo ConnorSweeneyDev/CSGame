@@ -23,7 +23,7 @@ namespace csg
                  .clear = {{0.0, 0.0, 0.0}},
                  .memory = {.vram = 512, .ram = 128},
                  .language = language::EN,
-                 .master = {0.5},
+                 .master = {0.3},
                  .sound = {1.0},
                  .music = {1.0}}) {};
 
