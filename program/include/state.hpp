@@ -14,7 +14,7 @@ namespace csg
   class settings final : public cse::state
   {
     ENLIST(game,                                    //
-           (language, std::string, {language::EN}), //
+           (language, std::string, {language::en}), //
            (master, double, {0.3}),                 //
            (sound, double, {1.0}),                  //
            (music, double, {1.0}));

@@ -22,7 +22,7 @@ namespace csg
                  .aspect = {.ratio = 16.0 / 9.0, .resolution = 180, .scaling = VIRTUAL},
                  .clear = {{0.0, 0.0, 0.0}},
                  .memory = {.vram = 512, .ram = 128},
-                 .language = language::EN,
+                 .language = language::en,
                  .master = {0.3},
                  .sound = {1.0},
                  .music = {1.0}}) {};
@@ -45,10 +45,10 @@ namespace csg
       case SDL_SCANCODE_Q: active.master.value = active.master.value - 0.1; break;
       case SDL_SCANCODE_T: active.master.value = active.master.value + 0.1; break;
       case SDL_SCANCODE_P:
-        if (active.language == language::EN)
-          active.language = language::FR;
+        if (active.language == language::en)
+          active.language = language::fr;
         else
-          active.language = language::EN;
+          active.language = language::en;
         break;
       case SDL_SCANCODE_F7: set<csg::window>(); break;
       case SDL_SCANCODE_F8:

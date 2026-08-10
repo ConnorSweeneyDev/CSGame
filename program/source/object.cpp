@@ -16,6 +16,7 @@
 #include "cse/window.hpp"
 #include "glm/ext/vector_double3.hpp"
 
+#include "collision.hpp"
 #include "locale.hpp"
 #include "resource.hpp"
 
@@ -25,7 +26,7 @@ namespace csg
     : cse::object({.translation = {translation_},
                    .rotation = {0.0},
                    .scale = {{1.0, 1.0}},
-                   .collidable = true,
+                   .collider = {.self = collider::character, .target = collider::none},
                    .texture = {.source = {.image = image::redhood, .animation = animation::redhood.idle},
                                .playback = {.frame = 0, .elapsed = 0.0, .playing = true, .speed = {1.0}, .loop = true},
                                .flip = {.horizontal = false, .vertical = false},
@@ -173,7 +174,7 @@ namespace csg
     : cse::object({.translation = {translation_},
                    .rotation = {0.0},
                    .scale = {{1.0, 1.0}},
-                   .collidable = true,
+                   .collider = {.self = collider::none, .target = collider::none},
                    .texture = {.source = {.image = image_, .animation = animation_},
                                .playback = {.frame = 0, .elapsed = 0.0, .playing = true, .speed = {0.0}, .loop = false},
                                .flip = {.horizontal = false, .vertical = false},
@@ -195,6 +196,8 @@ namespace csg
 
   void environment::on_prepare()
   {
+    if (name == "floor") active.collider = {collider::floor, collider::character};
+
     if (name == "shop") active.texture.shadow.cast = false;
     if (name == "background3")
     {

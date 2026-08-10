@@ -4,18 +4,18 @@
 
 namespace csg
 {
-  LANGUAGES(EN, ES, FR);
+  LANGUAGES(en, es, fr);
 
   TRANSLATE(player,          //
-            (EN, "Player"),  //
-            (ES, "Jugador"), //
-            (FR, "Joueur"));
+            (en, "Player"),  //
+            (es, "Jugador"), //
+            (fr, "Joueur"));
   TRANSLATE(greeting,     //
-            (EN, "Hi"),   //
-            (ES, "Hola"), //
-            (FR, "Bonjour"));
+            (en, "Hi"),   //
+            (es, "Hola"), //
+            (fr, "Bonjour"));
   TRANSLATE(farewell,      //
-            (EN, "Bye"),   //
-            (ES, "Adios"), //
-            (FR, "Au revoir"));
+            (en, "Bye"),   //
+            (es, "Adios"), //
+            (fr, "Au revoir"));
 }
