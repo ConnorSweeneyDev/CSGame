@@ -4,7 +4,6 @@
 
 #include "SDL3/SDL_events.h"
 #include "SDL3/SDL_scancode.h"
-#include "cse/exception.hpp"
 #include "cse/game.hpp"
 #include "cse/numeric.hpp"
 #include "cse/pointer.hpp"
@@ -16,8 +15,7 @@
 namespace csg
 {
   game::game()
-    : cse::game({.meta = {.organization = "ConnorSweeneyDev", .application = "CSGame", .version = "1.0.0"},
-                 .tick = 300.0,
+    : cse::game({.tick = 300.0,
                  .frame = 144.0,
                  .aspect = {.ratio = 16.0 / 9.0, .resolution = 180, .scaling = VIRTUAL},
                  .clear = {{0.0, 0.0, 0.0}},
@@ -30,7 +28,7 @@ namespace csg
   void game::pre_prepare()
   {
     const auto &settings{as<csg::settings>(active.states["settings"])};
-    if (!settings->read()) throw cse::exception("Failed to read settings file");
+    settings->read();
     active.language = settings->game.language;
     active.master.value = settings->game.master;
     active.sound.value = settings->game.sound;
@@ -88,6 +86,6 @@ namespace csg
     settings->game.master = active.master.value;
     settings->game.sound = active.sound.value;
     settings->game.music = active.music.value;
-    if (!settings->write()) throw cse::exception("Failed to write settings file");
+    settings->write();
   }
 }

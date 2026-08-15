@@ -1,10 +1,7 @@
-#include <memory>
-#include <string_view>
-#include <vector>
-
-#include "cse/game.hpp"
 #include "cse/main.hpp"
+#include "cse/game.hpp"
 
 #include "game.hpp"
 
-std::shared_ptr<cse::game> cse::main(const std::vector<std::string_view> &) { return game::create(csg::game::setup); }
+auto cse::main(const arguments &) -> application
+{ return {game::create(csg::game::setup), {"ConnorSweeneyDev", "CSGame", "1.0.0"}}; }
