@@ -16,7 +16,7 @@
 #include "cse/window.hpp"
 #include "glm/ext/vector_double3.hpp"
 
-#include "collision.hpp"
+#include "group.hpp"
 #include "locale.hpp"
 #include "resource.hpp"
 
@@ -43,7 +43,7 @@ namespace csg
                             .overflow = {.wrap = false, .clip = false},
                             .color = {.tint = {{0.6, 0.4, 0.3, 1.0}}, .alpha = {1.0}},
                             .illumination = {.show = true, .brightness = {0.7}, .penetration = {1.0}},
-                            .shadow = {.show = false, .cast = true, .darkness = {1.0}, .softness = {0.5}}},
+                            .shadow = {.show = false, .cast = true, .darkness = {1.0}, .softness = {0.8}}},
                    .priority = {.simulation = 0, .rendering = 1}}) {};
 
   void player::on_event(const SDL_Event &event)
