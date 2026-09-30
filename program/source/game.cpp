@@ -17,7 +17,7 @@ namespace csg
   game::game()
     : cse::game({.tick = 300.0,
                  .frame = 144.0,
-                 .aspect = {.ratio = 16.0 / 9.0, .resolution = 180, .scaling = VIRTUAL},
+                 .aspect = {.ratio = 16.0 / 9.0, .resolution = {.world = 0, .canvas = 180}, .scaling = VIRTUAL},
                  .clear = {{0.0, 0.0, 0.0}},
                  .memory = {.vram = 512, .ram = 128},
                  .language = language::en,
@@ -40,13 +40,20 @@ namespace csg
     if (event.type != SDL_EVENT_KEY_DOWN || event.key.repeat) return;
     switch (const auto &key{event.key}; key.scancode)
     {
-      case SDL_SCANCODE_Q: active.master.value = active.master.value - 0.1; break;
-      case SDL_SCANCODE_T: active.master.value = active.master.value + 0.1; break;
+      case SDL_SCANCODE_Q: active.master.value -= 0.1; break;
+      case SDL_SCANCODE_T: active.master.value += 0.1; break;
       case SDL_SCANCODE_P:
         if (active.language == language::en)
           active.language = language::fr;
         else
           active.language = language::en;
+        break;
+      case SDL_SCANCODE_F5: active.scene->active.camera->active.snap = !active.scene->active.camera->active.snap; break;
+      case SDL_SCANCODE_F6:
+        if (active.aspect.resolution.world == 0)
+          active.aspect.resolution.world = 180;
+        else
+          active.aspect.resolution.world = 0;
         break;
       case SDL_SCANCODE_F7: set<csg::window>(); break;
       case SDL_SCANCODE_F8:

@@ -17,7 +17,8 @@ namespace csg
                    .forward = {{0.0, 0.0, -1.0}},
                    .up = {{0.0, 1.0, 0.0}},
                    .fov = {45.0},
-                   .clip = {.near = 10.0, .far = 400.0}}) {};
+                   .clip = {.near = 10.0, .far = 400.0},
+                   .snap = false}) {};
 
   void camera::on_simulate(const double tick)
   {
@@ -53,6 +54,5 @@ namespace csg
     if (keyboard[SDL_SCANCODE_SEMICOLON]) forward_rate += forward_change;
     forward_value += forward_rate * tick;
     forward_rate = 0.0;
-    active.fov.value = std::min(std::max(active.fov.value, 30.0), 60.0);
   }
 }
