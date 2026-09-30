@@ -7,6 +7,7 @@
 #include "SDL3/SDL_scancode.h"
 #include "cse/collision.hpp"
 #include "cse/game.hpp"
+#include "cse/group.hpp"
 #include "cse/name.hpp"
 #include "cse/numeric.hpp"
 #include "cse/object.hpp"
@@ -23,28 +24,38 @@
 namespace csg
 {
   player::player(const glm::dvec3 &translation_)
-    : cse::object({.translation = {translation_},
-                   .rotation = {0.0},
-                   .scale = {{1.0, 1.0}},
-                   .collider = {.self = collider::character, .target = collider::none},
-                   .texture = {.source = {.image = image::redhood, .animation = animation::redhood.idle},
-                               .playback = {.frame = 0, .elapsed = 0.0, .playing = true, .speed = {1.0}, .loop = true},
-                               .flip = {.horizontal = false, .vertical = false},
-                               .color = {.tint = {{0.5, 0.5, 0.5, 1.0}}, .alpha = {1.0}},
-                               .illumination = {.show = true, .brightness = {1.0}, .penetration = {1.0}},
-                               .shadow = {.show = true, .cast = true, .darkness = {1.0}, .softness = {1.0}}},
-                   .text = {.content = {"[", lexeme::player, "]"},
-                            .source = {.font = font::text, .animation = animation::text.main},
-                            .playback = {.frame = 0, .elapsed = 0.0, .playing = false, .speed = {0.0}, .loop = false},
-                            .align = {.horizontal = {.preset = CENTER, .spacing = {0.0}},
-                                      .vertical = {.preset = TOP, .spacing = {0.0}},
-                                      .offset = {{0.0, -5.0}}},
-                            .scale = {{1.0, 1.0}},
-                            .overflow = {.wrap = false, .clip = false},
-                            .color = {.tint = {{0.6, 0.4, 0.3, 1.0}}, .alpha = {1.0}},
-                            .illumination = {.show = true, .brightness = {0.7}, .penetration = {1.0}},
-                            .shadow = {.show = false, .cast = true, .darkness = {1.0}, .softness = {0.8}}},
-                   .priority = {.simulation = 0, .rendering = 1}}) {};
+    : cse::object(
+        {.translation = {translation_},
+         .rotation = {0.0},
+         .scale = {{1.0, 1.0}},
+         .collision = {.self = collider::character, .target = cse::nothing},
+         .texture =
+           {.source = {.image = image::redhood, .animation = animation::redhood.idle},
+            .playback = {.frame = 0, .elapsed = 0.0, .playing = true, .speed = {1.0}, .loop = true},
+            .flip = {.horizontal = false, .vertical = false},
+            .color = {.tint = {{0.5, 0.5, 0.5, 1.0}}, .alpha = {1.0}},
+            .illumination =
+              {.self = cse::everything, .target = cse::everything, .brightness = {1.0}, .penetration = {1.0}},
+            .occlusion = {.self = cse::everything,
+                          .target = {.block = cse::everything, .show = cse::everything, .cast = cse::everything},
+                          .darkness = {1.0},
+                          .softness = {1.0}}},
+         .text = {.content = {"[", lexeme::player, "]"},
+                  .source = {.font = font::text, .animation = animation::text.main},
+                  .playback = {.frame = 0, .elapsed = 0.0, .playing = false, .speed = {0.0}, .loop = false},
+                  .align = {.horizontal = {.preset = CENTER, .spacing = {0.0}},
+                            .vertical = {.preset = TOP, .spacing = {0.0}},
+                            .offset = {{0.0, -5.0}}},
+                  .scale = {{1.0, 1.0}},
+                  .overflow = {.wrap = false, .clip = false},
+                  .color = {.tint = {{0.6, 0.4, 0.3, 1.0}}, .alpha = {1.0}},
+                  .illumination =
+                    {.self = cse::everything, .target = cse::everything, .brightness = {0.7}, .penetration = {1.0}},
+                  .occlusion = {.self = cse::everything,
+                                .target = {.block = cse::everything, .show = cse::nothing, .cast = cse::everything},
+                                .darkness = {1.0},
+                                .softness = {0.8}}},
+         .priority = {.simulation = 0, .rendering = 1}}) {};
 
   void player::on_event(const SDL_Event &event)
   {
@@ -171,38 +182,48 @@ namespace csg
   }
 
   environment::environment(const glm::dvec3 &translation_, const cse::image &image_, const cse::animation &animation_)
-    : cse::object({.translation = {translation_},
-                   .rotation = {0.0},
-                   .scale = {{1.0, 1.0}},
-                   .collider = {.self = collider::none, .target = collider::none},
-                   .texture = {.source = {.image = image_, .animation = animation_},
-                               .playback = {.frame = 0, .elapsed = 0.0, .playing = true, .speed = {0.0}, .loop = false},
-                               .flip = {.horizontal = false, .vertical = false},
-                               .color = {.tint = {{0.5, 0.5, 0.5, 1.0}}, .alpha = {1.0}},
-                               .illumination = {.show = true, .brightness = {1.0}, .penetration = {1.0}},
-                               .shadow = {.show = true, .cast = true, .darkness = {1.0}, .softness = {1.0}}},
-                   .text = {.content = "",
-                            .source = {.font = {}, .animation = {}},
-                            .playback = {.frame = 0, .elapsed = 0.0, .playing = false, .speed = {0.0}, .loop = false},
-                            .align = {.horizontal = {.preset = CENTER, .spacing = {0.0}},
-                                      .vertical = {.preset = MIDDLE, .spacing = {0.0}},
-                                      .offset = {{0.0, 0.0}}},
-                            .scale = {{1.0, 1.0}},
-                            .overflow = {.wrap = false, .clip = true},
-                            .color = {.tint = {{0.5, 0.5, 0.5, 1.0}}, .alpha = {1.0}},
-                            .illumination = {.show = true, .brightness = {1.0}, .penetration = {1.0}},
-                            .shadow = {.show = true, .cast = true, .darkness = {1.0}, .softness = {1.0}}},
-                   .priority = {.simulation = 1, .rendering = 0}}) {};
+    : cse::object(
+        {.translation = {translation_},
+         .rotation = {0.0},
+         .scale = {{1.0, 1.0}},
+         .collision = {.self = cse::nothing, .target = cse::nothing},
+         .texture =
+           {.source = {.image = image_, .animation = animation_},
+            .playback = {.frame = 0, .elapsed = 0.0, .playing = true, .speed = {0.0}, .loop = false},
+            .flip = {.horizontal = false, .vertical = false},
+            .color = {.tint = {{0.5, 0.5, 0.5, 1.0}}, .alpha = {1.0}},
+            .illumination =
+              {.self = cse::everything, .target = cse::everything, .brightness = {1.0}, .penetration = {1.0}},
+            .occlusion = {.self = cse::everything,
+                          .target = {.block = cse::everything, .show = cse::everything, .cast = cse::everything},
+                          .darkness = {1.0},
+                          .softness = {1.0}}},
+         .text = {.content = "",
+                  .source = {.font = {}, .animation = {}},
+                  .playback = {.frame = 0, .elapsed = 0.0, .playing = false, .speed = {0.0}, .loop = false},
+                  .align = {.horizontal = {.preset = CENTER, .spacing = {0.0}},
+                            .vertical = {.preset = MIDDLE, .spacing = {0.0}},
+                            .offset = {{0.0, 0.0}}},
+                  .scale = {{1.0, 1.0}},
+                  .overflow = {.wrap = false, .clip = true},
+                  .color = {.tint = {{0.5, 0.5, 0.5, 1.0}}, .alpha = {1.0}},
+                  .illumination =
+                    {.self = cse::everything, .target = cse::everything, .brightness = {1.0}, .penetration = {1.0}},
+                  .occlusion = {.self = cse::everything,
+                                .target = {.block = cse::everything, .show = cse::everything, .cast = cse::everything},
+                                .darkness = {1.0},
+                                .softness = {1.0}}},
+         .priority = {.simulation = 1, .rendering = 0}}) {};
 
   void environment::on_prepare()
   {
-    if (name == "floor") active.collider = {collider::floor, collider::character};
+    if (name == "floor") active.collision = {collider::floor, collider::character};
 
-    if (name == "shop") active.texture.shadow.cast = false;
+    if (name == "shop") active.texture.occlusion.target.cast = cse::nothing;
     if (name == "background3")
     {
       active.texture.illumination.brightness.value = 0.4;
-      active.texture.shadow.show = false;
+      active.texture.occlusion.target.show = cse::nothing;
     }
   }
 

@@ -1,5 +1,10 @@
 #pragma once
 
-#include "cse/collision.hpp"
+#include "cse/group.hpp"
 
-namespace csg { COLLIDERS(character, floor); }
+namespace csg
+{
+  GROUPS((collider,  //
+          character, //
+          floor));
+}
