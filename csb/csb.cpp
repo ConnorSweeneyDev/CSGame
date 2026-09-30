@@ -63,7 +63,7 @@ int csb::build()
                               {"IndentCaseLabels", "true"},
                               {"NamespaceIndentation", "All"},
                               {"FixNamespaceComments", "false"}});
-  csb::format("22.1.8");
+  csb::format("23.1.1");
 
   csb::generate_compile_commands();
   csb::generate_clangd({{"Diagnostics", {{"UnusedIncludes", "Strict"}, {"MissingIncludes", "Strict"}}}});
