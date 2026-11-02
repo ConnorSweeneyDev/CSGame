@@ -4,7 +4,6 @@
 
 namespace csg
 {
-  GROUPS((collider,  //
-          character, //
-          floor));
+  GROUPS((collider, //
+          character, floor));
 }
