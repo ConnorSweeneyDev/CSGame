@@ -4,4 +4,4 @@
 #include "game.hpp"
 
 auto cse::main(const arglist &) -> application
-{ return {game::create(csg::game::setup), {"ConnorSweeneyDev", "CSGame", "1.0.0"}}; }
+{ return {game::make(csg::game::setup), {"ConnorSweeneyDev", "CSGame", "1.0.0"}}; }

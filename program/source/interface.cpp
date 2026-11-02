@@ -15,23 +15,23 @@ namespace csg
 {
   cursor::cursor()
     : cse::interface(
-        {.translation = {{0.0, 0.0}},
-         .rotation = {0.0},
-         .scale = {{1.0, 1.0}},
+        {.translation = {0.0, 0.0},
+         .rotation = 0.0,
+         .scale = {1.0, 1.0},
          .interactable = false,
          .texture = {.source = {.image = image::cursor, .animation = animation::cursor.main},
-                     .playback = {.frame = 0, .elapsed = 0.0, .playing = false, .speed = {0.0}, .loop = false},
+                     .playback = {.frame = 0, .elapsed = 0.0, .playing = false, .speed = 0.0, .loop = false},
                      .flip = {.horizontal = false, .vertical = false},
-                     .color = {.tint = {{0.5, 0.5, 0.5, 1.0}}, .alpha = {1.0}}},
+                     .color = {.tint = {0.5, 0.5, 0.5, 1.0}, .alpha = 1.0}},
          .text = {.content = {},
                   .source = {.font = {}, .animation = {}},
-                  .playback = {.frame = 0, .elapsed = 0.0, .playing = false, .speed = {0.0}, .loop = false},
-                  .align = {.horizontal = {.preset = CENTER, .spacing = {0.0}},
-                            .vertical = {.preset = MIDDLE, .spacing = {0.0}},
-                            .offset = {{0.0, 0.0}}},
-                  .scale = {{1.0, 1.0}},
+                  .playback = {.frame = 0, .elapsed = 0.0, .playing = false, .speed = 0.0, .loop = false},
+                  .align = {.horizontal = {.preset = CENTER, .spacing = 0.0},
+                            .vertical = {.preset = MIDDLE, .spacing = 0.0},
+                            .offset = {0.0, 0.0}},
+                  .scale = {1.0, 1.0},
                   .overflow = {.wrap = false, .clip = true},
-                  .color = {.tint = {{0.5, 0.5, 0.5, 1.0}}, .alpha = {1.0}}},
+                  .color = {.tint = {0.5, 0.5, 0.5, 1.0}, .alpha = 1.0}},
          .priority = {-1000, 1000}}) {};
 
   void cursor::on_simulate(const double)
@@ -43,46 +43,46 @@ namespace csg
 
   text::text(const glm::dvec2 &translation_, const glm::dvec2 &scale_)
     : cse::interface(
-        {.translation = {translation_},
-         .rotation = {0.0},
-         .scale = {scale_},
+        {.translation = translation_,
+         .rotation = 0.0,
+         .scale = scale_,
          .interactable = false,
          .texture = {.source = {.image = image::empty, .animation = animation::empty.main},
-                     .playback = {.frame = 0, .elapsed = 0.0, .playing = false, .speed = {0.0}, .loop = false},
+                     .playback = {.frame = 0, .elapsed = 0.0, .playing = false, .speed = 0.0, .loop = false},
                      .flip = {.horizontal = false, .vertical = false},
-                     .color = {.tint = {{0.5, 0.5, 0.5, 1.0}}, .alpha = {1.0}}},
+                     .color = {.tint = {0.5, 0.5, 0.5, 1.0}, .alpha = 1.0}},
          .text = {.content = {},
                   .source = {.font = font::text, .animation = animation::text.main},
-                  .playback = {.frame = 0, .elapsed = 0.0, .playing = false, .speed = {0.0}, .loop = false},
-                  .align = {.horizontal = {.preset = LEFT, .spacing = {-1.0}},
-                            .vertical = {.preset = MIDDLE, .spacing = {0.0}},
-                            .offset = {{0.0, 0.0}}},
-                  .scale = {{1.0, 1.0}},
+                  .playback = {.frame = 0, .elapsed = 0.0, .playing = false, .speed = 0.0, .loop = false},
+                  .align = {.horizontal = {.preset = LEFT, .spacing = -1.0},
+                            .vertical = {.preset = MIDDLE, .spacing = 0.0},
+                            .offset = {0.0, 0.0}},
+                  .scale = {1.0, 1.0},
                   .overflow = {.wrap = false, .clip = true},
-                  .color = {.tint = {{0.5, 0.5, 0.5, 1.0}}, .alpha = {1.0}}},
+                  .color = {.tint = {0.5, 0.5, 0.5, 1.0}, .alpha = 1.0}},
          .priority = {-100, 100}})
   {
   }
 
   button::button(const glm::dvec2 &translation_)
     : cse::interface(
-        {.translation = {translation_},
-         .rotation = {0.0},
-         .scale = {{1.0, 1.0}},
+        {.translation = translation_,
+         .rotation = 0.0,
+         .scale = {1.0, 1.0},
          .interactable = true,
          .texture = {.source = {.image = image::box, .animation = animation::box.main},
-                     .playback = {.frame = 0, .elapsed = 0.0, .playing = false, .speed = {0.0}, .loop = false},
+                     .playback = {.frame = 0, .elapsed = 0.0, .playing = false, .speed = 0.0, .loop = false},
                      .flip = {.horizontal = false, .vertical = false},
-                     .color = {.tint = {{0.5, 0.5, 0.5, 1.0}}, .alpha = {1.0}}},
+                     .color = {.tint = {0.5, 0.5, 0.5, 1.0}, .alpha = 1.0}},
          .text = {.content = {},
                   .source = {.font = font::text, .animation = animation::text.main},
-                  .playback = {.frame = 0, .elapsed = 0.0, .playing = false, .speed = {0.0}, .loop = false},
-                  .align = {.horizontal = {.preset = CENTER, .spacing = {-1.0}},
-                            .vertical = {.preset = MIDDLE, .spacing = {0.0}},
-                            .offset = {{0.0, 0.0}}},
-                  .scale = {{1.0, 1.0}},
+                  .playback = {.frame = 0, .elapsed = 0.0, .playing = false, .speed = 0.0, .loop = false},
+                  .align = {.horizontal = {.preset = CENTER, .spacing = -1.0},
+                            .vertical = {.preset = MIDDLE, .spacing = 0.0},
+                            .offset = {0.0, 0.0}},
+                  .scale = {1.0, 1.0},
                   .overflow = {.wrap = true, .clip = false},
-                  .color = {.tint = {{0.5, 0.5, 0.5, 1.0}}, .alpha = {1.0}}},
+                  .color = {.tint = {0.5, 0.5, 0.5, 1.0}, .alpha = 1.0}},
          .priority = {0, 0}})
   {
   }

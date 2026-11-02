@@ -8,25 +8,25 @@
 #include "glm/ext/vector_double3.hpp"
 
 sun::sun()
-  : cse::light({.translation = {{0.0, 0.0, 0.0}},
-                .rotation = {{0.0, 0.0}},
+  : cse::light({.translation = {0.0, 0.0, 0.0},
+                .rotation = {0.0, 0.0},
                 .illumination = {.self = cse::everything,
                                  .target = cse::everything,
-                                 .brightness = {{0.15, 0.15, 0.2, 1.0}},
-                                 .penetration = {1.0},
-                                 .shape = {.global = true, .range = {0.0}, .angle = {0.0}, .feather = {0.0}}},
-                .occlusion = {.self = cse::everything, .target = cse::nothing, .darkness = {0.0}, .softness = {0.0}},
+                                 .brightness = {0.15, 0.15, 0.2, 1.0},
+                                 .penetration = 1.0,
+                                 .shape = {.global = true, .range = 0.0, .angle = 0.0, .feather = 0.0}},
+                .occlusion = {.self = cse::everything, .target = cse::nothing, .darkness = 0.0, .softness = 0.0},
                 .priority = 0}) {};
 
 lamp::lamp(const glm::dvec3 &translation_)
-  : cse::light({.translation = {translation_},
-                .rotation = {{0.0, 0.0}},
+  : cse::light({.translation = translation_,
+                .rotation = {0.0, 0.0},
                 .illumination = {.self = cse::everything,
                                  .target = cse::everything,
-                                 .brightness = {{1.0, 0.7, 0.3, 2.0}},
-                                 .penetration = {0.3},
-                                 .shape = {.global = false, .range = {80.0}, .angle = {360.0}, .feather = {0.0}}},
-                .occlusion = {.self = cse::everything, .target = cse::everything, .darkness = {1.0}, .softness = {2.0}},
+                                 .brightness = {1.0, 0.7, 0.3, 2.0},
+                                 .penetration = 0.3,
+                                 .shape = {.global = false, .range = 80.0, .angle = 360.0, .feather = 0.0}},
+                .occlusion = {.self = cse::everything, .target = cse::everything, .darkness = 1.0, .softness = 2.0},
                 .priority = 0}) {};
 
 void lamp::on_event(const SDL_Event &event)
@@ -43,12 +43,12 @@ void lamp::on_event(const SDL_Event &event)
 }
 
 spot::spot(const glm::dvec3 &translation_)
-  : cse::light({.translation = {translation_},
-                .rotation = {{0.0, 90.0}},
+  : cse::light({.translation = translation_,
+                .rotation = {0.0, 90.0},
                 .illumination = {.self = cse::everything,
                                  .target = cse::everything,
-                                 .brightness = {{0.45, 1.05, 1.5, 1.0}},
-                                 .penetration = {1.0},
-                                 .shape = {.global = false, .range = {90.0}, .angle = {70.0}, .feather = {1.0}}},
-                .occlusion = {.self = cse::everything, .target = cse::everything, .darkness = {1.0}, .softness = {0.0}},
+                                 .brightness = {0.45, 1.05, 1.5, 1.0},
+                                 .penetration = 1.0,
+                                 .shape = {.global = false, .range = 90.0, .angle = 70.0, .feather = 1.0}},
+                .occlusion = {.self = cse::everything, .target = cse::everything, .darkness = 1.0, .softness = 0.0},
                 .priority = 0}) {};

@@ -13,10 +13,10 @@
 namespace csg
 {
   camera::camera(const glm::dvec3 &translation_)
-    : cse::camera({.translation = {translation_},
-                   .forward = {{0.0, 0.0, -1.0}},
-                   .up = {{0.0, 1.0, 0.0}},
-                   .fov = {45.0},
+    : cse::camera({.translation = translation_,
+                   .forward = {0.0, 0.0, -1.0},
+                   .up = {0.0, 1.0, 0.0},
+                   .fov = 45.0,
                    .clip = {.near = 10.0, .far = 400.0},
                    .snap = false}) {};
 
@@ -25,8 +25,7 @@ namespace csg
     const auto &keyboard{scene->game->active.window->active.keyboard};
 
     auto &position{active.translation.value};
-    auto &velocity{active.translation.rate};
-    auto &acceleration{active.translation.curve};
+    glm::dvec3 acceleration{};
     if (keyboard[SDL_SCANCODE_I]) acceleration.y += max_velocity;
     if (keyboard[SDL_SCANCODE_K]) acceleration.y -= max_velocity;
     if (keyboard[SDL_SCANCODE_L]) acceleration.x += max_velocity;
@@ -34,7 +33,6 @@ namespace csg
     if (keyboard[SDL_SCANCODE_U]) acceleration.z -= max_velocity;
     if (keyboard[SDL_SCANCODE_O]) acceleration.z += max_velocity;
     velocity += acceleration * tick;
-    acceleration = {0.0, 0.0, 0.0};
     for (int index{}; index < 3; ++index)
     {
       auto &component{velocity[index]};
@@ -49,10 +47,9 @@ namespace csg
     position += velocity * tick;
 
     auto &forward_value{active.forward.value.x};
-    auto &forward_rate{active.forward.rate.x};
+    double forward_rate{};
     if (keyboard[SDL_SCANCODE_APOSTROPHE]) forward_rate -= forward_change;
     if (keyboard[SDL_SCANCODE_SEMICOLON]) forward_rate += forward_change;
     forward_value += forward_rate * tick;
-    forward_rate = 0.0;
   }
 }

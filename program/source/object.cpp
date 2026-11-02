@@ -25,36 +25,35 @@ namespace csg
 {
   player::player(const glm::dvec3 &translation_)
     : cse::object(
-        {.translation = {translation_},
-         .rotation = {0.0},
-         .scale = {{1.0, 1.0}},
+        {.translation = translation_,
+         .rotation = 0.0,
+         .scale = {1.0, 1.0},
          .collision = {.self = collider::character, .target = cse::nothing},
          .texture =
            {.source = {.image = image::redhood, .animation = animation::redhood.idle},
-            .playback = {.frame = 0, .elapsed = 0.0, .playing = true, .speed = {1.0}, .loop = true},
+            .playback = {.frame = 0, .elapsed = 0.0, .playing = true, .speed = 1.0, .loop = true},
             .flip = {.horizontal = false, .vertical = false},
-            .color = {.tint = {{0.5, 0.5, 0.5, 1.0}}, .alpha = {1.0}},
-            .illumination =
-              {.self = cse::everything, .target = cse::everything, .brightness = {1.0}, .penetration = {1.0}},
+            .color = {.tint = {0.5, 0.5, 0.5, 1.0}, .alpha = 1.0},
+            .illumination = {.self = cse::everything, .target = cse::everything, .brightness = 1.0, .penetration = 1.0},
             .occlusion = {.self = cse::everything,
                           .target = {.block = cse::everything, .show = cse::everything, .cast = cse::everything},
-                          .darkness = {1.0},
-                          .softness = {1.0}}},
-         .text = {.content = {"[", lexeme::player, "]"},
-                  .source = {.font = font::text, .animation = animation::text.main},
-                  .playback = {.frame = 0, .elapsed = 0.0, .playing = false, .speed = {0.0}, .loop = false},
-                  .align = {.horizontal = {.preset = CENTER, .spacing = {0.0}},
-                            .vertical = {.preset = TOP, .spacing = {0.0}},
-                            .offset = {{0.0, -5.0}}},
-                  .scale = {{1.0, 1.0}},
-                  .overflow = {.wrap = false, .clip = false},
-                  .color = {.tint = {{0.6, 0.4, 0.3, 1.0}}, .alpha = {1.0}},
-                  .illumination =
-                    {.self = cse::everything, .target = cse::everything, .brightness = {0.7}, .penetration = {1.0}},
-                  .occlusion = {.self = cse::everything,
-                                .target = {.block = cse::everything, .show = cse::nothing, .cast = cse::everything},
-                                .darkness = {1.0},
-                                .softness = {0.8}}},
+                          .darkness = 1.0,
+                          .softness = 1.0}},
+         .text =
+           {.content = {"[", lexeme::player, "]"},
+            .source = {.font = font::text, .animation = animation::text.main},
+            .playback = {.frame = 0, .elapsed = 0.0, .playing = false, .speed = 0.0, .loop = false},
+            .align = {.horizontal = {.preset = CENTER, .spacing = 0.0},
+                      .vertical = {.preset = TOP, .spacing = 0.0},
+                      .offset = {0.0, -5.0}},
+            .scale = {1.0, 1.0},
+            .overflow = {.wrap = false, .clip = false},
+            .color = {.tint = {0.6, 0.4, 0.3, 1.0}, .alpha = 1.0},
+            .illumination = {.self = cse::everything, .target = cse::everything, .brightness = 0.7, .penetration = 1.0},
+            .occlusion = {.self = cse::everything,
+                          .target = {.block = cse::everything, .show = cse::nothing, .cast = cse::everything},
+                          .darkness = 1.0,
+                          .softness = 0.8}},
          .priority = {.simulation = 0, .rendering = 1}}) {};
 
   void player::on_event(const SDL_Event &event)
@@ -122,8 +121,7 @@ namespace csg
     const auto &keyboard{scene->game->active.window->active.keyboard};
 
     auto &position{active.translation.value};
-    auto &velocity{active.translation.rate};
-    auto &acceleration{active.translation.curve};
+    glm::dvec3 acceleration{};
     if (keyboard[SDL_SCANCODE_E]) acceleration.y += max_velocity;
     if (keyboard[SDL_SCANCODE_D]) acceleration.y -= max_velocity;
     if (keyboard[SDL_SCANCODE_F]) acceleration.x += max_velocity;
@@ -131,7 +129,6 @@ namespace csg
     if (keyboard[SDL_SCANCODE_W]) acceleration.z += max_velocity;
     if (keyboard[SDL_SCANCODE_R]) acceleration.z -= max_velocity;
     velocity += acceleration * tick;
-    acceleration = {0.0, 0.0, 0.0};
     for (int index{}; index < 3; ++index)
     {
       auto &component{velocity[index]};
@@ -146,11 +143,10 @@ namespace csg
     position += velocity * tick;
 
     auto &transparency_value{active.texture.color.alpha.value};
-    auto &transparency_rate{active.texture.color.alpha.rate};
+    double transparency_rate{};
     if (keyboard[SDL_SCANCODE_A]) transparency_rate -= transparency_change;
     if (keyboard[SDL_SCANCODE_G]) transparency_rate += transparency_change;
     transparency_value += transparency_rate * tick;
-    transparency_rate = 0.0;
     transparency_value = std::min(std::max(transparency_value, 0.0), 1.0);
 
     active.timer.call<void(const bool)>("texture_change", active.texture.source.image == image::redhood);
@@ -162,7 +158,7 @@ namespace csg
       if (playback.frame == final && playback.elapsed >= animation.frames[final].duration)
       {
         animation = animation::redhood.idle;
-        playback = {.speed = {2.0}};
+        playback = {.speed = 2.0};
       }
     if (previous.texture.source.animation == animation && animation == animation::redhood.idle)
       if (playback.frame == 0 && previous.texture.playback.frame == final)
@@ -183,36 +179,35 @@ namespace csg
 
   environment::environment(const glm::dvec3 &translation_, const cse::image &image_, const cse::animation &animation_)
     : cse::object(
-        {.translation = {translation_},
-         .rotation = {0.0},
-         .scale = {{1.0, 1.0}},
+        {.translation = translation_,
+         .rotation = 0.0,
+         .scale = {1.0, 1.0},
          .collision = {.self = cse::nothing, .target = cse::nothing},
          .texture =
            {.source = {.image = image_, .animation = animation_},
-            .playback = {.frame = 0, .elapsed = 0.0, .playing = true, .speed = {0.0}, .loop = false},
+            .playback = {.frame = 0, .elapsed = 0.0, .playing = true, .speed = 0.0, .loop = false},
             .flip = {.horizontal = false, .vertical = false},
-            .color = {.tint = {{0.5, 0.5, 0.5, 1.0}}, .alpha = {1.0}},
-            .illumination =
-              {.self = cse::everything, .target = cse::everything, .brightness = {1.0}, .penetration = {1.0}},
+            .color = {.tint = {0.5, 0.5, 0.5, 1.0}, .alpha = 1.0},
+            .illumination = {.self = cse::everything, .target = cse::everything, .brightness = 1.0, .penetration = 1.0},
             .occlusion = {.self = cse::everything,
                           .target = {.block = cse::everything, .show = cse::everything, .cast = cse::everything},
-                          .darkness = {1.0},
-                          .softness = {1.0}}},
-         .text = {.content = "",
-                  .source = {.font = {}, .animation = {}},
-                  .playback = {.frame = 0, .elapsed = 0.0, .playing = false, .speed = {0.0}, .loop = false},
-                  .align = {.horizontal = {.preset = CENTER, .spacing = {0.0}},
-                            .vertical = {.preset = MIDDLE, .spacing = {0.0}},
-                            .offset = {{0.0, 0.0}}},
-                  .scale = {{1.0, 1.0}},
-                  .overflow = {.wrap = false, .clip = true},
-                  .color = {.tint = {{0.5, 0.5, 0.5, 1.0}}, .alpha = {1.0}},
-                  .illumination =
-                    {.self = cse::everything, .target = cse::everything, .brightness = {1.0}, .penetration = {1.0}},
-                  .occlusion = {.self = cse::everything,
-                                .target = {.block = cse::everything, .show = cse::everything, .cast = cse::everything},
-                                .darkness = {1.0},
-                                .softness = {1.0}}},
+                          .darkness = 1.0,
+                          .softness = 1.0}},
+         .text =
+           {.content = "",
+            .source = {.font = {}, .animation = {}},
+            .playback = {.frame = 0, .elapsed = 0.0, .playing = false, .speed = 0.0, .loop = false},
+            .align = {.horizontal = {.preset = CENTER, .spacing = 0.0},
+                      .vertical = {.preset = MIDDLE, .spacing = 0.0},
+                      .offset = {0.0, 0.0}},
+            .scale = {1.0, 1.0},
+            .overflow = {.wrap = false, .clip = true},
+            .color = {.tint = {0.5, 0.5, 0.5, 1.0}, .alpha = 1.0},
+            .illumination = {.self = cse::everything, .target = cse::everything, .brightness = 1.0, .penetration = 1.0},
+            .occlusion = {.self = cse::everything,
+                          .target = {.block = cse::everything, .show = cse::everything, .cast = cse::everything},
+                          .darkness = 1.0,
+                          .softness = 1.0}},
          .priority = {.simulation = 1, .rendering = 0}}) {};
 
   void environment::on_prepare()
@@ -237,7 +232,7 @@ namespace csg
       if (!is<player>(contact.target.pointer)) continue;
 
       auto &position{contact.target.pointer->active.translation.value};
-      auto &velocity{contact.target.pointer->active.translation.rate};
+      auto &velocity{as<player>(contact.target.pointer)->velocity};
       position.x += contact.penetration.x;
       position.y += contact.penetration.y;
       const auto into{(velocity.x * contact.normal.x) + (velocity.y * contact.normal.y)};

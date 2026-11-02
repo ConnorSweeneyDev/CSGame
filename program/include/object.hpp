@@ -16,6 +16,9 @@ namespace csg
     void on_event(const SDL_Event &event) final;
     void on_simulate(const double tick) final;
 
+  public:
+    glm::dvec3 velocity{};
+
   private:
     static constexpr double max_velocity{200.0};
     static constexpr double friction{50.0};

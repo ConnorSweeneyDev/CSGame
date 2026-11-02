@@ -18,12 +18,12 @@ namespace csg
     : cse::game({.tick = 300.0,
                  .frame = 144.0,
                  .aspect = {.ratio = 16.0 / 9.0, .resolution = {.world = 0, .canvas = 180}, .scaling = VIRTUAL},
-                 .clear = {{0.0, 0.0, 0.0}},
+                 .clear = {0.0, 0.0, 0.0},
                  .memory = {.vram = 512, .ram = 128},
                  .language = language::en,
-                 .master = {0.3},
-                 .sound = {1.0},
-                 .music = {1.0}}) {};
+                 .master = 0.3,
+                 .sound = 1.0,
+                 .music = 1.0}) {};
 
   void game::pre_prepare()
   {
